@@ -24,7 +24,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/exchanGoLogo.jpg"
+      "favicon": "./assets/images/exchanGoLogoNoBg.png"
     },
     "plugins": [
       "expo-router"
