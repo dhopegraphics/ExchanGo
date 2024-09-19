@@ -4,14 +4,27 @@
     "strict": true,
     "paths": {
       "@/*": [
-        "./*"
+        "./*",
+        "../*"
       ]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/_layout.jsx", "app/index.jsx" , "app/*" , 
+"Context/ThemeContext.js", 
+"app/(Root)/(tabs)/home", 
+"app/(Root)/Settings/securityRoom" , 
+"app/Chat/*",
+"lib/*",
+"Context/*",
+"hooks/*",
+"constants/*",
+"components/*"
+]
 }
