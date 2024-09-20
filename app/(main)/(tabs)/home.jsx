@@ -16,16 +16,21 @@ import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
-  useScrollViewOffset,
   useAnimatedScrollHandler,
   useSharedValue,
+  interpolateColor,
 } from "react-native-reanimated";
 import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { SCREEN_WIDTH } from "@/constants/Screen";
+import { HelloWave } from "../../../components/HelloWave";
+import { Collapsible } from "../../../components/Collapsible";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
   const { showToast } = useToast();
   const scrollRef = useAnimatedRef();
   const scrollOffset = useSharedValue(0);
@@ -58,57 +63,98 @@ const HomeScreen = () => {
       opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]),
     };
   });
+  const headerTitleAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      color: interpolateColor(
+        scrollOffset.value,
+        [0, IMG_HEIGHT / 1.5],
+        ["white", "black"]
+      ),
+    };
+  });
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <Stack.Screen
         options={{
           headerTransparent: true,
-          headerTitle: "Clinic Details",
-          headerLeft: () => {
-            return <View></View>;
-          },
+          headerTitle: () => (
+            <Animated.Text
+              style={[styles.headerTitle, headerTitleAnimatedStyle]}
+            >
+              ExchanGo
+            </Animated.Text>
+          ),
           headerBackground: () => (
             <Animated.View style={[styles.header, headerAnimatedStyle]} />
           ),
         }}
       />
 
-      <View style={styles.bottomSection}>
+      <View
+        style={[styles.bottomSection, { backgroundColor: backgroundColor }]}
+      >
         <Animated.ScrollView
           ref={scrollRef}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           onScroll={scrollHandler}
         >
-          <Animated.Image
-            source={{
-              uri: "https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649",
-            }}
-            style={[styles.image, imageAnimatedStyle]}
-          />
-
+          <Animated.View style={[styles.image, imageAnimatedStyle]}>
+            <Image
+              source={{
+                uri: "https://img.freepik.com/premium-photo/portrait-colorful-leaves-with-word-rain-them_1077802-370441.jpg",
+              }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <View style={{ position: "absolute", top: 80, left: 20 }}>
+              <HelloWave />
+            </View>
+          </Animated.View>
           <View style={{ height: 830, backgroundColor: "white" }}>
-            <ScrollView style={styles.contentContainer}>
+            <ScrollView
+              style={[
+                styles.contentContainer,
+                { backgroundColor: backgroundColor },
+              ]}
+            >
               <View style={styles.section}>
-                <Text style={styles.title}>Welcome to ExchanGo</Text>
-                <Text style={styles.description}>
+                <Text style={[styles.title, { color: textColor }]}>
+                  Welcome to ExchanGo
+                </Text>
+                <Text style={[styles.description, { color: textColor }]}>
                   Exchange your skills and services with others. No money
                   involved, just pure talent trading!
                 </Text>
               </View>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Popular Skills</Text>
-                {/* Add components or content to showcase popular skills */}
-              </View>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Recent Trades</Text>
-                {/* Add components or content to showcase recent trades */}
-              </View>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Categories</Text>
-                {/* Add components or content to showcase different categories */}
-              </View>
+
+              <Collapsible title="Popular Skills">
+                <View style={styles.section}>
+                  <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    Popular Skills
+                  </Text>
+                  {/* Add components or content to showcase popular skills */}
+                </View>
+              </Collapsible>
+
+              <Collapsible title="Recent Trades">
+                <View style={styles.section}>
+                  <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    Recent Trades
+                  </Text>
+                  {/* Add components or content to showcase recent trades */}
+                </View>
+              </Collapsible>
+
+              <Collapsible title="Categories">
+                <View style={styles.section}>
+                  <Text style={[styles.sectionTitle, { color: textColor }]}>
+                    Categories
+                  </Text>
+                  {/* Add components or content to showcase different categories */}
+                </View>
+              </Collapsible>
             </ScrollView>
           </View>
         </Animated.ScrollView>
@@ -150,7 +196,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   bottomSection: {
-    backgroundColor: "#ffffff", // White background
+    flex: 1,
     borderTopLeftRadius: 40, // Rounded top-left corner
     borderTopRightRadius: 40, // Rounded top-right corner
     marginTop: -15, // Negative margin to overlap with the blue background
@@ -160,6 +206,10 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "white",
     height: 100,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
   image: {
     width: SCREEN_WIDTH,
