@@ -35,6 +35,8 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
         return "home";
       case "profile":
         return "user";
+      case "message":
+        return "message-circle";
       case "settings":
         return "settings";
       default:
@@ -65,7 +67,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   return (
     <View style={styles.tabBarContainer}>
       <Svg width={SCREEN_WIDTH} height={tHeight} style={styles.shadowMd}>
-        <AnimatedPath fill={"black"} animatedProps={animatedProps} />
+        <AnimatedPath fill={"#008080"} animatedProps={animatedProps} />
       </Svg>
       <AnimatedCircle circleX={circleXCoordinate} />
       <View style={[styles.tabItemsContainer, { height: tHeight }]}>
