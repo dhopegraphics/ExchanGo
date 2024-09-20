@@ -1,10 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const ProfileScreen = () => {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Profile Screen</Text>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.text, { color: textColor }]}>Profile Screen</Text>
     </View>
   );
 };

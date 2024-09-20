@@ -14,6 +14,7 @@ import usePath from "../../hooks/usePath";
 import { SCREEN_WIDTH } from "../../constants/Screen";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { interpolatePath } from "react-native-redash";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -64,10 +65,12 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
     navigation.navigate(tab);
   };
 
+  const backgroundColor = useThemeColor({}, "tabBarBackground");
+
   return (
     <View style={styles.tabBarContainer}>
       <Svg width={SCREEN_WIDTH} height={tHeight} style={styles.shadowMd}>
-        <AnimatedPath fill={"#008080"} animatedProps={animatedProps} />
+        <AnimatedPath fill={backgroundColor} animatedProps={animatedProps} />
       </Svg>
       <AnimatedCircle circleX={circleXCoordinate} />
       <View style={[styles.tabItemsContainer, { height: tHeight }]}>

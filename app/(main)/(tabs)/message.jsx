@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SearchBar } from "react-native-elements";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const contacts = [
   {
@@ -44,21 +45,27 @@ const contacts = [
 ];
 
 const groups = [
-  { id: "1", name: "Campsite Res...", image: "https://via.placeholder.com/50" },
+  { id: "1", name: "Campsite", image: "https://via.placeholder.com/50" },
   { id: "2", name: "Camping", image: "https://via.placeholder.com/50" },
-  { id: "3", name: "Hawaii Trav...", image: "https://via.placeholder.com/50" },
+  { id: "3", name: "Hawaii", image: "https://via.placeholder.com/50" },
   // Add more groups as needed
 ];
 
 const ContactListScreen = () => {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
   const [search, setSearch] = React.useState("");
 
   const renderContactItem = ({ item }) => (
-    <View style={styles.contactItem}>
+    <View style={[styles.contactItem, { backgroundColor: backgroundColor }]}>
       <Image source={{ uri: item.image }} style={styles.contactImage} />
       <View style={styles.contactInfo}>
-        <Text style={styles.contactName}>{item.name}</Text>
-        <Text style={styles.contactPhone}>{item.phone}</Text>
+        <Text style={[styles.contactName, { color: textColor }]}>
+          {item.name}
+        </Text>
+        <Text style={[styles.contactPhone, { color: textColor }]}>
+          {item.phone}
+        </Text>
       </View>
       <TouchableOpacity style={styles.inviteButton}>
         <Text style={styles.inviteButtonText}>Invite</Text>
@@ -69,7 +76,7 @@ const ContactListScreen = () => {
   const renderGroupItem = ({ item }) => (
     <View style={styles.groupItem}>
       <Image source={{ uri: item.image }} style={styles.groupImage} />
-      <Text style={styles.groupName}>{item.name}</Text>
+      <Text style={[styles.groupName, { color: textColor }]}>{item.name}</Text>
       <TouchableOpacity style={styles.inviteButton}>
         <Text style={styles.inviteButtonText}>Swap</Text>
       </TouchableOpacity>
@@ -77,9 +84,9 @@ const ContactListScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Select Members</Text>
-      <Text style={styles.subHeader}>
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.header, { color: textColor }]}>Select Members</Text>
+      <Text style={[styles.subHeader, { color: textColor }]}>
         Select contacts to add to an existing Split or create a new one with
         them
       </Text>
@@ -100,13 +107,13 @@ const ContactListScreen = () => {
         style={styles.groupList}
       />
       <View style={{ paddingTop: -10 }}>
-        <Text style={[styles.header]}>Contacts</Text>
+        <Text style={[styles.header, { color: textColor }]}>Contacts</Text>
       </View>
       <FlatList
         data={contacts}
         renderItem={renderContactItem}
         keyExtractor={(item) => item.id}
-        style={styles.contactList}
+        style={[styles.contactList, { backgroundColor: backgroundColor }]}
       />
     </View>
   );
@@ -115,7 +122,6 @@ const ContactListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     padding: 10,
   },
   header: {
@@ -138,12 +144,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#e9e9e9",
   },
   groupList: {
+    paddingLeft: 20,
     paddingBottom: 20,
   },
   groupItem: {
     flex: 1,
     alignItems: "center",
-    marginRight: 10,
+    marginRight: 20,
   },
   groupImage: {
     width: 50,

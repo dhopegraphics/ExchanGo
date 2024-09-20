@@ -11,6 +11,7 @@ import { Feather } from "@expo/vector-icons";
 import { getPathXCenterByIndex } from "../../utils/Path";
 import usePath from "../../hooks/usePath";
 import { SCREEN_WIDTH } from "../../constants/Screen";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type TabProps = {
   label: string;
@@ -32,6 +33,7 @@ const TabItem: FC<TabProps> = ({
   onTabPress,
 }) => {
   const { curvedPaths } = usePath();
+  const tabButtonColor = useThemeColor({}, "tabIconColor");
   const animatedActiveIndex = useSharedValue(activeIndex);
   const iconPosition = getPathXCenterByIndex(curvedPaths, index);
   const labelPosition = getPathXCenterByIndex(curvedPaths, index);
@@ -59,14 +61,16 @@ const TabItem: FC<TabProps> = ({
     };
   });
 
-  const iconColor = useSharedValue(activeIndex === index ? "#fff" : "#FF7F50");
+  const iconColor = useSharedValue(
+    activeIndex === index ? "#fff" : tabButtonColor
+  );
 
   useEffect(() => {
     animatedActiveIndex.value = activeIndex;
     if (activeIndex === index + 1) {
       iconColor.value = withTiming("#fff");
     } else {
-      iconColor.value = withTiming("#FF7F50");
+      iconColor.value = withTiming(tabButtonColor);
     }
   }, [activeIndex]);
 
