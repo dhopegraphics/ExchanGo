@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useColorScheme } from "react-native";
@@ -11,17 +11,30 @@ const ProfileScreen = () => {
 
   return (
     <View className="flex-1" style={{ backgroundColor }}>
-      <View className="items-center mt-10">
+      <View className="items-center justify-center mt-10 flex-row">
         <Image
-          source={{ uri: "https://example.com/avatar.png" }} // Replace with actual image URL
+          source={{
+            uri: "https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg",
+          }} // Replace with actual image URL
           className="w-24 h-24 rounded-full"
         />
-        <Text className="text-xl font-bold mt-4" style={{ color: textColor }}>
-          Edward Larry
-        </Text>
-        <Text className="text-sm" style={{ color: textColor }}>
-          Senior Designer
-        </Text>
+        <View className=" ml-5 items-start justify-start flex-col">
+          <Text className="text-xl font-bold mt-4" style={{ color: textColor }}>
+            Edward Larry
+          </Text>
+          <Text className="text-sm" style={{ color: textColor }}>
+            Senior Designer
+          </Text>
+        </View>
+        <View className="flex-row ml-5 mt-7">
+          <TouchableOpacity>
+            <Icon
+              name="edit"
+              size={24}
+              color={theme === "light" ? "#000" : "#fff"}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View className="mt-8 px-4">
