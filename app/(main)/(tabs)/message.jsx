@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { router, Stack } from "expo-router";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
+  ScrollView,
   Image,
   TouchableOpacity,
 } from "react-native";
+import Animated, {
+  interpolate,
+  useAnimatedRef,
+  useAnimatedStyle,
+  useAnimatedScrollHandler,
+  useSharedValue,
+  interpolateColor,
+} from "react-native-reanimated";
 import { SearchBar } from "react-native-elements";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { SCREEN_WIDTH } from "@/constants/Screen";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const contacts = [
   {
@@ -44,6 +56,8 @@ const contacts = [
   // Add more contacts as needed
 ];
 
+const IMG_HEIGHT = 300;
+
 const groups = [
   { id: "1", name: "Campsite", image: "https://via.placeholder.com/50" },
   { id: "2", name: "Camping", image: "https://via.placeholder.com/50" },
@@ -53,8 +67,43 @@ const groups = [
 
 const ContactListScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
+  const TabTopBackgroundColor = useThemeColor({}, "tabBarBackground");
+  const insets = useSafeAreaInsets();
   const textColor = useThemeColor({}, "text");
   const [search, setSearch] = React.useState("");
+  const scrollRef = useAnimatedRef();
+  const scrollOffset = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollOffset.value = event.contentOffset.y;
+  });
+  const imageAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            scrollOffset.value,
+            [-IMG_HEIGHT, 0, IMG_HEIGHT],
+            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+          ),
+        },
+      ],
+    };
+  });
+
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]),
+    };
+  });
+  const headerTitleAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      color: interpolateColor(
+        scrollOffset.value,
+        [0, IMG_HEIGHT / 1.5],
+        ["white", "white"]
+      ),
+    };
+  });
 
   const renderContactItem = ({ item }) => (
     <View style={[styles.contactItem, { backgroundColor: backgroundColor }]}>
@@ -85,36 +134,80 @@ const ContactListScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
-      <Text style={[styles.header, { color: textColor }]}>Select Members</Text>
-      <Text style={[styles.subHeader, { color: textColor }]}>
-        Select contacts to add to an existing Split or create a new one with
-        them
-      </Text>
-      <SearchBar
-        placeholder="Type a name or number"
-        onChangeText={setSearch}
-        value={search}
-        lightTheme
-        round
-        containerStyle={styles.searchBarContainer}
-        inputContainerStyle={styles.searchBarInput}
+      <Stack.Screen
+        options={{
+          headerTransparent: true,
+          headerTitle: () => (
+            <Animated.Text
+              style={[styles.headerTitle, headerTitleAnimatedStyle]}
+            >
+              Contacts
+            </Animated.Text>
+          ),
+          headerBackground: () => (
+            <Animated.View
+              style={[
+                styles.headerTop,
+                headerAnimatedStyle,
+                { backgroundColor: backgroundColor },
+              ]}
+            />
+          ),
+        }}
       />
-      <FlatList
-        data={groups}
-        renderItem={renderGroupItem}
-        keyExtractor={(item) => item.id}
-        horizontal
-        style={styles.groupList}
-      />
-      <View style={{ paddingTop: -10 }}>
-        <Text style={[styles.header, { color: textColor }]}>Contacts</Text>
+      <View
+        style={[styles.bottomSection, { backgroundColor: backgroundColor }]}
+      >
+        <Animated.ScrollView
+          ref={scrollRef}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          onScroll={scrollHandler}
+        >
+          <Animated.View
+            style={[
+              imageAnimatedStyle,
+              { paddingTop: insets.top, padding: 5, marginTop: 30 },
+            ]}
+          >
+            <Text style={[styles.header, { color: textColor }]}>
+              Select Members
+            </Text>
+            <Text style={[styles.subHeader, { color: textColor }]}>
+              Select contacts to add to an existing Split or create a new one
+              with them
+            </Text>
+            <SearchBar
+              placeholder="Type a name or number"
+              onChangeText={setSearch}
+              value={search}
+              lightTheme
+              round
+              containerStyle={styles.searchBarContainer}
+              inputContainerStyle={styles.searchBarInput}
+            />
+            <FlatList
+              data={groups}
+              renderItem={renderGroupItem}
+              keyExtractor={(item) => item.id}
+              horizontal
+              style={styles.groupList}
+            />
+          </Animated.View>
+          <View style={{ paddingTop: -10 }}>
+            <Text style={[styles.header, { color: textColor }]}>Contacts</Text>
+          </View>
+          <View style={{ height: 830 }}>
+            <FlatList
+              data={contacts}
+              renderItem={renderContactItem}
+              keyExtractor={(item) => item.id}
+              style={[styles.contactList, { backgroundColor: backgroundColor }]}
+              scrollEnabled={false}
+            />
+          </View>
+        </Animated.ScrollView>
       </View>
-      <FlatList
-        data={contacts}
-        renderItem={renderContactItem}
-        keyExtractor={(item) => item.id}
-        style={[styles.contactList, { backgroundColor: backgroundColor }]}
-      />
     </View>
   );
 };
@@ -201,6 +294,25 @@ const styles = StyleSheet.create({
   inviteButtonText: {
     color: "#fff",
     fontSize: 14,
+  },
+  image: {},
+  section: {
+    marginBottom: 24,
+  },
+  bottomSection: {
+    flex: 1,
+    borderTopLeftRadius: 40, // Rounded top-left corner
+    borderTopRightRadius: 40, // Rounded top-right corner
+    marginTop: -15, // Negative margin to overlap with the blue background
+    flexGrow: 1, // Allows the ScrollView to expand
+    paddingTop: 10,
+  },
+  headerTop: {
+    height: 100,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 

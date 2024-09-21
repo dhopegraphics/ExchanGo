@@ -14,7 +14,7 @@ export default function TabLayout() {
         <Tabs.Screen name="home" />
         <Tabs.Screen name="profile" options={{ headerShown: false }} />
         <Tabs.Screen name="message" />
-        <Tabs.Screen name="settings" />
+        <Tabs.Screen name="settings" options={{ headerShown: false }} />
       </Tabs>
     </>
   );

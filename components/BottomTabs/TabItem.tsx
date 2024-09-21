@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
+  useDerivedValue,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import { getPathXCenterByIndex } from "../../utils/Path";
@@ -34,7 +35,7 @@ const TabItem: FC<TabProps> = ({
 }) => {
   const { curvedPaths } = usePath();
   const tabButtonColor = useThemeColor({}, "tabIconColor");
-  const animatedActiveIndex = useSharedValue(activeIndex);
+  const animatedActiveIndex = useSharedValue(activeIndex); // Initialize with activeIndex
   const iconPosition = getPathXCenterByIndex(curvedPaths, index);
   const labelPosition = getPathXCenterByIndex(curvedPaths, index);
 
@@ -45,7 +46,7 @@ const TabItem: FC<TabProps> = ({
       width: ICON_SIZE,
       height: ICON_SIZE,
       transform: [
-        { translateY: withTiming(translateY) },
+        { translateY: withSpring(translateY) },
         { translateX: iconPositionX - ICON_SIZE / 2 },
       ],
     };
@@ -61,18 +62,22 @@ const TabItem: FC<TabProps> = ({
     };
   });
 
-  const iconColor = useSharedValue(
-    activeIndex === index ? "#fff" : tabButtonColor
-  );
+  const iconColor = useDerivedValue(() => {
+    return animatedActiveIndex.value - 1 === index
+      ? withTiming("#fff")
+      : withTiming(tabButtonColor);
+  }, [animatedActiveIndex, tabButtonColor]);
 
   useEffect(() => {
     animatedActiveIndex.value = activeIndex;
-    if (activeIndex === index + 1) {
-      iconColor.value = withTiming("#fff");
-    } else {
-      iconColor.value = withTiming(tabButtonColor);
-    }
   }, [activeIndex]);
+
+  // Force color update on mount
+  useEffect(() => {
+    iconColor.value = withTiming(
+      activeIndex === index + 1 ? "#fff" : tabButtonColor
+    );
+  }, []);
 
   const AnimatedIconProps = useAnimatedProps(() => ({
     color: iconColor.value,

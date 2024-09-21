@@ -23,6 +23,7 @@ import Animated, {
 import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { SCREEN_WIDTH } from "@/constants/Screen";
 import { HelloWave } from "../../../components/HelloWave";
+``;
 import { Collapsible } from "../../../components/Collapsible";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -68,7 +69,7 @@ const HomeScreen = () => {
       color: interpolateColor(
         scrollOffset.value,
         [0, IMG_HEIGHT / 1.5],
-        ["white", "black"]
+        ["white", "white"]
       ),
     };
   });
@@ -80,13 +81,26 @@ const HomeScreen = () => {
           headerTransparent: true,
           headerTitle: () => (
             <Animated.Text
-              style={[styles.headerTitle, headerTitleAnimatedStyle]}
+              style={[
+                styles.headerTitle,
+                headerTitleAnimatedStyle,
+                { flexDirection: "row" },
+              ]}
             >
+              <View style={{ marginTop: -8, marginLeft: 15 }}>
+                <HelloWave />
+              </View>
               ExchanGo
             </Animated.Text>
           ),
           headerBackground: () => (
-            <Animated.View style={[styles.header, headerAnimatedStyle]} />
+            <Animated.View
+              style={[
+                styles.header,
+                headerAnimatedStyle,
+                { backgroundColor: backgroundColor },
+              ]}
+            />
           ),
         }}
       />
@@ -108,9 +122,6 @@ const HomeScreen = () => {
               style={styles.image}
               resizeMode="cover"
             />
-            <View style={{ position: "absolute", top: 80, left: 20 }}>
-              <HelloWave />
-            </View>
           </Animated.View>
           <View style={{ height: 830, backgroundColor: "white" }}>
             <ScrollView
