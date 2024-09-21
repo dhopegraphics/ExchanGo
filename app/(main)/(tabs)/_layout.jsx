@@ -12,7 +12,7 @@ export default function TabLayout() {
         tabBar={(props) => <CustomBottomTab {...props} />}
       >
         <Tabs.Screen name="home" />
-        <Tabs.Screen name="profile" />
+        <Tabs.Screen name="profile" options={{ headerShown: false }} />
         <Tabs.Screen name="message" />
         <Tabs.Screen name="settings" />
       </Tabs>

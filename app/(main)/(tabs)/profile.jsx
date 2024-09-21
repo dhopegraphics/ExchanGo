@@ -3,14 +3,24 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useColorScheme } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 const ProfileScreen = () => {
   const theme = useColorScheme() ?? "light";
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1" style={{ backgroundColor }}>
+    <View
+      className="flex-1"
+      style={{
+        backgroundColor,
+        paddingTop: insets.top,
+      }}
+    >
+      <StatusBar style="auto" />
       <View className="items-center justify-center mt-10 flex-row">
         <Image
           source={{
