@@ -1,35 +1,16 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableHighlight } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-
-const SettingItem = ({ icon, label, color, onPress }) => (
-  <TouchableHighlight
-    onPress={onPress}
-    underlayColor="#3a3a3a"
-    className="py-2 border-b border-gray-700"
-  >
-    <View className="flex-row items-center">
-      <View
-        className={`w-8 h-8 rounded-lg ml-5 mr-3 items-center justify-center`}
-        style={{ backgroundColor: color }}
-      >
-        {icon}
-      </View>
-      <Text className="text-white text-base flex-1">{label}</Text>
-      <View className="mr-5">
-        <Ionicons name="chevron-forward" size={16} color="gray" />
-      </View>
-    </View>
-  </TouchableHighlight>
-);
-
-const SettingsGroup = ({ children }) => (
-  <View className="bg-gray-800 rounded-xl mb-3  overflow-hidden">
-    {children}
-  </View>
-);
+import { SettingItem, SettingsGroup } from "@/components/SettingsSection";
 
 const SettingsScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -43,12 +24,75 @@ const SettingsScreen = () => {
   return (
     <View
       className="flex-1 p-4"
-      style={{ backgroundColor: backgroundColor, paddingTop: insets.top }}
+      style={{
+        backgroundColor: backgroundColor,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
     >
-      <ScrollView className="px-3">
+      <ScrollView className="px-3" style={{ marginBottom: 100 }}>
         <Text className="text-white text-2xl font-bold my-3">Settings</Text>
+        {/* Search Bar */}
+        <View className="bg-gray-800 rounded-lg mb-4">
+          <TextInput
+            className="text-white p-3"
+            placeholder="Search"
+            placeholderTextColor="#999"
+          />
+        </View>
 
-        <SettingsGroup>
+        {/* Avatar Section */}
+        <TouchableOpacity>
+          <View className="bg-gray-800 rounded-xl mb-4 p-4 flex-row items-center">
+            <Image
+              source={{
+                uri: "https://cdn.pixabay.com/photo/2023/07/23/20/09/female-8145765_1280.jpg",
+              }}
+              className="w-16 h-16 rounded-full mr-4"
+            />
+            <View className="flex-1">
+              <Text className="text-white text-lg font-semibold">
+                Dhope Graphics
+              </Text>
+              <Text className="text-gray-400">
+                I am skilled with programs...
+              </Text>
+            </View>
+            <TouchableOpacity className="p-2">
+              <Ionicons name="share-outline" size={24} color="#3B82F6" />
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+
+        {/* New Section */}
+        <SettingsGroup SectionHeader="Profile">
+          <SettingItem
+            icon={<Ionicons name="person" size={20} color="white" />}
+            label="Avatar"
+            color="#3B82F6"
+            onPress={() => handlePress("Avatar")}
+          />
+          <SettingItem
+            icon={<Ionicons name="megaphone" size={20} color="white" />}
+            label="Advertise"
+            color="#8B5CF6"
+            onPress={() => handlePress("Advertise")}
+          />
+          <SettingItem
+            icon={<Ionicons name="briefcase" size={20} color="white" />}
+            label="Business tools"
+            color="#3B82F6"
+            onPress={() => handlePress("Business tools")}
+          />
+          <SettingItem
+            icon={<Ionicons name="checkmark-circle" size={20} color="white" />}
+            label="Meta Verified"
+            color="#3B82F6"
+            onPress={() => handlePress("Meta Verified")}
+          />
+        </SettingsGroup>
+
+        <SettingsGroup SectionHeader="General">
           <SettingItem
             icon={<Ionicons name="heart" size={20} color="white" />}
             label="Favourites"
@@ -81,7 +125,7 @@ const SettingsScreen = () => {
           />
         </SettingsGroup>
 
-        <SettingsGroup>
+        <SettingsGroup SectionHeader="Account">
           <SettingItem
             icon={<Ionicons name="key" size={20} color="white" />}
             label="Account"
@@ -114,7 +158,7 @@ const SettingsScreen = () => {
           />
         </SettingsGroup>
 
-        <SettingsGroup>
+        <SettingsGroup SectionHeader="Help">
           <SettingItem
             icon={
               <Ionicons name="information-circle" size={20} color="white" />
