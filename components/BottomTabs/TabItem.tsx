@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
   useDerivedValue,
 } from "react-native-reanimated";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { getPathXCenterByIndex } from "../../utils/Path";
 import usePath from "../../hooks/usePath";
 import { SCREEN_WIDTH } from "../../constants/Screen";
@@ -35,7 +35,7 @@ const TabItem: FC<TabProps> = ({
 }) => {
   const { curvedPaths } = usePath();
   const tabButtonColor = useThemeColor({}, "tabIconColor");
-  const animatedActiveIndex = useSharedValue(activeIndex); // Initialize with activeIndex
+  const animatedActiveIndex = useSharedValue(activeIndex);
   const iconPosition = getPathXCenterByIndex(curvedPaths, index);
   const labelPosition = getPathXCenterByIndex(curvedPaths, index);
 
@@ -63,21 +63,14 @@ const TabItem: FC<TabProps> = ({
   });
 
   const iconColor = useDerivedValue(() => {
-    return animatedActiveIndex.value - 1 === index
+    return activeIndex === index + 1
       ? withTiming("#fff")
       : withTiming(tabButtonColor);
-  }, [animatedActiveIndex, tabButtonColor]);
+  }, [activeIndex, tabButtonColor]);
 
   useEffect(() => {
     animatedActiveIndex.value = activeIndex;
   }, [activeIndex]);
-
-  // Force color update on mount
-  useEffect(() => {
-    iconColor.value = withTiming(
-      activeIndex === index + 1 ? "#fff" : tabButtonColor
-    );
-  }, []);
 
   const AnimatedIconProps = useAnimatedProps(() => ({
     color: iconColor.value,

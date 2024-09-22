@@ -17,7 +17,9 @@ export const SettingItem = ({ icon, label, color, onPress }) => (
       >
         {icon}
       </View>
-      <Text className="text-white text-base flex-1">{label}</Text>
+      <Text className="text-white font-JakartaMedium text-sm flex-1">
+        {label}
+      </Text>
       <View className="mr-5">
         <Ionicons name="chevron-forward" size={16} color="gray" />
       </View>

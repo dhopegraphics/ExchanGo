@@ -30,7 +30,7 @@ const SignUpScreen = ({ navigation }) => {
       />
 
       <TouchableOpacity
-        onPress={() => router.replace("(main)/(tabs)/home")}
+        onPress={() => router.replace("(main)/(tabs)/Explore")}
         style={styles.button}
       >
         <Text style={styles.buttonText}>Sign Up</Text>

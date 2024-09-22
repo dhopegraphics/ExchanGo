@@ -32,13 +32,13 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
 
   const selectIcon = (routeName: string) => {
     switch (routeName) {
-      case "home":
+      case "Explore":
         return "home";
-      case "profile":
-        return "user";
-      case "message":
+      case "SwapCenter":
+        return "link-2";
+      case "Chat":
         return "message-circle";
-      case "settings":
+      case "Settings":
         return "settings";
       default:
         return "home";

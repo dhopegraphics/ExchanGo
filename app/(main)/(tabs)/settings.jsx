@@ -30,7 +30,7 @@ const SettingsScreen = () => {
         paddingBottom: insets.bottom,
       }}
     >
-      <ScrollView className="px-3" style={{ marginBottom: 100 }}>
+      <ScrollView className="px-3" style={{}}>
         <Text className="text-white text-2xl font-bold my-3">Settings</Text>
         {/* Search Bar */}
         <View className="bg-gray-800 rounded-lg mb-4">
@@ -158,22 +158,24 @@ const SettingsScreen = () => {
           />
         </SettingsGroup>
 
-        <SettingsGroup SectionHeader="Help">
-          <SettingItem
-            icon={
-              <Ionicons name="information-circle" size={20} color="white" />
-            }
-            label="Help"
-            color="#007AFF"
-            onPress={() => handlePress("Help")}
-          />
-          <SettingItem
-            icon={<Ionicons name="person-add" size={20} color="white" />}
-            label="Invite a contact"
-            color="#FFCC00"
-            onPress={() => handlePress("Invite a contact")}
-          />
-        </SettingsGroup>
+        <View className="mb-20">
+          <SettingsGroup SectionHeader="Help">
+            <SettingItem
+              icon={
+                <Ionicons name="information-circle" size={20} color="white" />
+              }
+              label="Help"
+              color="#007AFF"
+              onPress={() => handlePress("Help")}
+            />
+            <SettingItem
+              icon={<Ionicons name="person-add" size={20} color="white" />}
+              label="Invite a contact"
+              color="#FFCC00"
+              onPress={() => handlePress("Invite a contact")}
+            />
+          </SettingsGroup>
+        </View>
       </ScrollView>
     </View>
   );
