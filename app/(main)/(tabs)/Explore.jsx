@@ -25,8 +25,6 @@ import { SearchBarHeader } from "@/components/searchBarHeader";
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
-  const [isSearchActive, setIsSearchActive] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const { showToast } = useToast();
@@ -108,7 +106,12 @@ const HomeScreen = () => {
 
           {/* Featured Listings */}
           <View className="my-4">
-            <Text className="text-xl font-bold px-4 mb-2">Featured Skills</Text>
+            <Text
+              className="text-xl font-bold px-4 mb-2"
+              style={{ color: textColor }}
+            >
+              Featured Skills
+            </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {featuredListings.map((listing) => (
                 <View
@@ -152,7 +155,12 @@ const HomeScreen = () => {
 
           {/* Skill Listings Grid */}
           <View className="px-4">
-            <Text className="text-xl font-bold mb-4">Available Skills</Text>
+            <Text
+              className="text-xl font-bold mb-4"
+              style={{ color: textColor }}
+            >
+              Available Skills
+            </Text>
             <View className="flex-row flex-wrap justify-between">
               {skillListings.map((skill) => (
                 <View
