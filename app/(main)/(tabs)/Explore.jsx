@@ -21,10 +21,13 @@ import { useScrollAnimation } from "@/components/CollapsibleScrollAnimated";
 import AnimatedHeaderScrollView from "@/components/AnimatedViewCollapse";
 import { categories, featuredListings, skillListings } from "@/constants/data";
 import { SearchBarHeader } from "@/components/searchBarHeader";
+import { imageDataURL } from "../../../constants/ImageData";
+import { useNavigation } from "@react-navigation/native";
 
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const { showToast } = useToast();
@@ -42,6 +45,11 @@ const HomeScreen = () => {
         options={{
           headerTransparent: true,
           headerTitle: () => <SearchBarHeader />,
+          headerLeft: () => (
+            <TouchableOpacity onPress={navigation.openDrawer} className="ml-4">
+              <Ionicons name="menu" size={24} color={textColor} />
+            </TouchableOpacity>
+          ),
           headerBackground: () => (
             <Animated.View
               style={[
@@ -53,7 +61,7 @@ const HomeScreen = () => {
           ),
           headerRight: () => (
             <TouchableOpacity className="mr-4">
-              <Ionicons name="settings-outline" size={24} color={textColor} />
+              <Ionicons name="notifications" size={24} color={textColor} />
             </TouchableOpacity>
           ),
         }}
@@ -67,7 +75,7 @@ const HomeScreen = () => {
           <Animated.View style={[styles.image, imageAnimatedStyle]}>
             <Image
               source={{
-                uri: "https://img.freepik.com/premium-photo/portrait-colorful-leaves-with-word-rain-them_1077802-370441.jpg",
+                uri: imageDataURL[7],
               }}
               style={styles.image}
               resizeMode="cover"

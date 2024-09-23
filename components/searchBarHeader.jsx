@@ -17,7 +17,7 @@ export const SearchBarHeader = () => {
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      width: withSpring(isSearchActive ? "100%" : 0),
+      width: withSpring(searchBarWidth.value),
     };
   });
 

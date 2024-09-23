@@ -12,6 +12,8 @@ export const Colors = {
     tabBarBackground: "#008080",
     tabIconColor: "#000",
     statusBar: "light",
+    drawerActiveItemBackground: "#151718",
+    drawerActiveItemText: "#fff",
   },
   dark: {
     text: "#ECEDEE",
@@ -23,5 +25,7 @@ export const Colors = {
     tabBarBackground: "#030608",
     tabIconColor: "#00FFFF",
     statusBar: "dark",
+    drawerActiveItemBackground: "#E5E5E5",
+    drawerActiveItemText: "#000",
   },
 };
