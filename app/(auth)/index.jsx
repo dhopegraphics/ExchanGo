@@ -7,139 +7,169 @@ import {
   Dimensions,
   Image,
   ScrollView,
+  Animated,
 } from "react-native";
 import Swiper from "react-native-swiper";
 import { useRouter } from "expo-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Svg, { Circle } from "react-native-svg";
+import Feather from "@expo/vector-icons/Feather";
 import { StatusBar } from "expo-status-bar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
 const Onboarding = () => {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const swiperRef = useRef(null);
+  const progress = useRef(new Animated.Value(0)).current;
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleGetStarted = () => {
     router.replace("/(auth)/Sign-in");
   };
 
+  useEffect(() => {
+    Animated.timing(progress, {
+      toValue: (activeIndex + 1) / 3, // Assuming there are 3 slides
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [activeIndex]);
+
+  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+  const circumference = 2 * Math.PI * 28; // 28 is the radius of the circle
+  const strokeDashoffset = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [circumference, 0],
+  });
+
   return (
     <>
       <StatusBar style="dark" />
-      <Swiper
-        ref={swiperRef}
-        loop={false}
-        showsPagination={true}
-        paginationStyle={styles.pagination}
-        dot={<View style={styles.dot} />}
-        activeDot={<View style={styles.activeDot} />}
-        onIndexChanged={(index) => setActiveIndex(index)}
+      <View
+        className="flex-1 bg-white"
+        style={{
+          paddingTop: insets.top,
+        }}
       >
-        <View style={styles.slide}>
-          <Image
-            source={require("../../assets/images/exchanGoLogo.jpg")}
-            style={styles.logo}
-          />
-          <Text style={styles.title}>Welcome to SkillSwap</Text>
-          <Text style={styles.subtitle}>Exchange talents, not money</Text>
-
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>• Share your skills with others</Text>
-            <Text style={styles.infoText}>
-              • Learn new talents from experts
+        <View className="flex flex-col gap-2 justify-end items-end mr-4">
+          <TouchableOpacity onPress={handleGetStarted}>
+            <Text className=" text-[#f79c41] text-lg font-JakartaSemiBold">
+              Skip
             </Text>
-            <Text style={styles.infoText}>
-              • Build a community of skilled individuals
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.slide}>
-          <Icon name="list-alt" size={80} color="#0066FF" style={styles.icon} />
-          <Text style={styles.title}>Essential Features</Text>
-          <Text style={styles.subtitle}>
-            SkillSwap offers a range of essential features to enhance your
-            experience.
-          </Text>
-        </View>
-
-        <View style={styles.slide}>
-          <Icon name="lock" size={80} color="#0066FF" style={styles.icon} />
-          <Text style={styles.title}>Your Privacy Matters</Text>
-          <Text style={styles.message}>
-            We prioritize your safety and privacy with top-tier encryption and
-            secure storage.
-          </Text>
-          <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-            <Text style={styles.buttonText}>Get Started</Text>
           </TouchableOpacity>
         </View>
-      </Swiper>
+        <Swiper
+          ref={swiperRef}
+          loop={false}
+          showsPagination={true}
+          paginationStyle={styles.pagination}
+          dot={<View style={styles.dot} />}
+          activeDot={<View style={styles.activeDot} />}
+          onIndexChanged={(index) => setActiveIndex(index)}
+        >
+          <View style={styles.slide}>
+            <Image
+              source={require("../../assets/images/exchanGoLogo.jpg")}
+              style={{
+                width: 170,
+                height: 170,
+                marginBottom: 20,
+              }}
+            />
+            <Text className="text-2xl font-JakartaSemiBold">
+              Welcome to SkillSwap
+            </Text>
+            <Text className="text-base text-gray-600 font-JakartaSemiBold mb-5">
+              Exchange Talents, Not Money
+            </Text>
+
+            <View className="self-stretch mb-10">
+              <Text className="text-base text-gray-400 font-JakartaMedium mb-2">
+                • Share your skills with others
+              </Text>
+              <Text className="text-base text-gray-400 font-JakartaMedium mb-2">
+                • Learn new talents from experts
+              </Text>
+              <Text className="text-base text-gray-400 font-JakartaMedium mb-2">
+                • Build a community of skilled individuals
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.slide}>
+            <Icon name="list-alt" size={80} color="#0066FF" />
+
+            <View className="flex flex-col gap-2 mt-10">
+              <Text className="text-2xl font-JakartaSemiBold">
+                Essential Features
+              </Text>
+              <Text className="text-base text-gray-400 font-JakartaMedium">
+                Skill Swap offers a range of essential features to enhance your
+                experience.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.slide}>
+            <Icon name="lock" size={80} color="#0066FF" />
+            <Text className="text-2xl  font-JakartaSemiBold">
+              Your Privacy Matters
+            </Text>
+            <Text className="text-base text-gray-400 font-JakartaMedium">
+              We prioritize your safety and privacy with top-tier encryption and
+              secure storage.
+            </Text>
+            <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
+              <Text className="text-white text-base font-JakartaBold">
+                Get Started
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Swiper>
+        <View className="flex absolute bottom-10 right-10 items-center justify-center">
+          <Svg height="64" width="64" viewBox="0 0 64 64">
+            <AnimatedCircle
+              cx="32"
+              cy="32"
+              r="28"
+              stroke="#f79c41"
+              strokeWidth="8"
+              fill="transparent"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="square"
+              rotation="-90"
+              origin="32, 32"
+            />
+          </Svg>
+          <TouchableOpacity
+            className="bg-[#131313] p-2 items-center justify-center w-12 h-12 rounded-full"
+            style={{ position: "absolute" }}
+          >
+            <Feather name="arrow-right" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#F7F9FC",
-  },
   slide: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: 15,
     width,
     height,
     backgroundColor: "#fff",
     borderRadius: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4.65,
-    elevation: 8,
-  },
-  icon: {
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  message: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 30,
-    textAlign: "center",
-    paddingHorizontal: 15,
-    fontWeight: "600",
-  },
-  FeatureMessage: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    fontWeight: "700",
-  },
-  featureList: {
-    marginTop: 20,
-  },
-  featureItem: {
-    flexDirection: "column",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  featureIcon: {
-    marginRight: 15,
-    marginBottom: 5,
   },
   button: {
     backgroundColor: "#0066FF",
@@ -154,13 +184,8 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
-  },
   pagination: {
-    bottom: 15,
+    bottom: 20,
   },
   dot: {
     width: 10,
@@ -172,47 +197,12 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     width: 32,
-    height: 6,
+    height: 8,
     marginHorizontal: 4,
-    backgroundColor: "#0066FF",
+    backgroundColor: "#f79c41",
     borderRadius: 4,
     marginLeft: -260,
     marginBottom: 30,
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 30,
-    color: "#666",
-  },
-  infoContainer: {
-    alignSelf: "stretch",
-    marginBottom: 30,
-  },
-  infoText: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: "#444",
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  loginText: {
-    color: "#007AFF",
-    fontSize: 16,
-  },
-  logo: {
-    width: 170,
-    height: 170,
-    marginBottom: 20,
   },
 });
 
