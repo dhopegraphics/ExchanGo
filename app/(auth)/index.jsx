@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
   Animated,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Swiper from "react-native-swiper";
 import { useRouter } from "expo-router";
@@ -29,12 +30,16 @@ const Onboarding = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleGetStarted = () => {
-    router.replace("/(auth)/Sign-in");
+    router.replace("/(auth)/signUp");
+  };
+
+  const handleNextSlide = () => {
+    swiperRef.current.scrollBy(1);
   };
 
   useEffect(() => {
     Animated.timing(progress, {
-      toValue: (activeIndex + 1) / 3, // Assuming there are 3 slides
+      toValue: (activeIndex + 1) / 4, // Assuming there are 3 slides
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -50,13 +55,13 @@ const Onboarding = () => {
 
   return (
     <>
-      <StatusBar style="dark" />
       <View
         className="flex-1 bg-white"
         style={{
           paddingTop: insets.top,
         }}
       >
+        <StatusBar style="dark" />
         <View className="flex flex-col gap-2 justify-end items-end mr-4">
           <TouchableOpacity onPress={handleGetStarted}>
             <Text className=" text-[#f79c41] text-lg font-JakartaSemiBold">
@@ -103,11 +108,38 @@ const Onboarding = () => {
           </View>
 
           <View style={styles.slide}>
-            <Icon name="list-alt" size={80} color="#0066FF" />
+            <Image
+              source={require("../../assets/images/exchanGoLogoNoBg.png")}
+              style={{
+                width: 200,
+                height: 200,
+              }}
+            />
 
             <View className="flex flex-col gap-2 mt-10">
               <Text className="text-2xl font-JakartaSemiBold">
-                Essential Features
+                Teach & Learn Anytime, Anywhere
+              </Text>
+              <Text className="text-base text-gray-400 font-JakartaMedium">
+                Discover a world of knowledge at your fingertips. Connect with
+                others and start your journey today by learning and teaching.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.slide}>
+            <Image
+              source={require("../../assets/images/exchanGoLogoNoBg.png")}
+              resizeMode="contain"
+              style={{
+                width: 200,
+                height: 200,
+              }}
+            />
+
+            <View className="flex flex-col gap-2 mt-10">
+              <Text className="text-2xl font-JakartaSemiBold">
+                Ready To Dive In ?
               </Text>
               <Text className="text-base text-gray-400 font-JakartaMedium">
                 Skill Swap offers a range of essential features to enhance your
@@ -117,13 +149,20 @@ const Onboarding = () => {
           </View>
 
           <View style={styles.slide}>
-            <Icon name="lock" size={80} color="#0066FF" />
-            <Text className="text-2xl  font-JakartaSemiBold">
-              Your Privacy Matters
+            <Image
+              source={require("../../assets/images/exchanGoLogoNoBg.png")}
+              resizeMode="contain"
+              style={{
+                width: 200,
+                height: 200,
+              }}
+            />
+
+            <Text className="text-2xl mr-12  font-JakartaSemiBold">
+              Skill and Service Trading Platform
             </Text>
             <Text className="text-base text-gray-400 font-JakartaMedium">
-              We prioritize your safety and privacy with top-tier encryption and
-              secure storage.
+              Users exchange talents and skills instead of money
             </Text>
             <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
               <Text className="text-white text-base font-JakartaBold">
@@ -132,7 +171,7 @@ const Onboarding = () => {
             </TouchableOpacity>
           </View>
         </Swiper>
-        <View className="flex absolute bottom-10 right-10 items-center justify-center">
+        <View className="flex absolute bottom-16 right-10 items-center justify-center">
           <Svg height="64" width="64" viewBox="0 0 64 64">
             <AnimatedCircle
               cx="32"
@@ -151,6 +190,8 @@ const Onboarding = () => {
           <TouchableOpacity
             className="bg-[#131313] p-2 items-center justify-center w-12 h-12 rounded-full"
             style={{ position: "absolute" }}
+            onPress={handleNextSlide}
+            activeOpacity={0.8}
           >
             <Feather name="arrow-right" size={24} color="white" />
           </TouchableOpacity>
@@ -172,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   button: {
-    backgroundColor: "#0066FF",
+    backgroundColor: "#f79c41",
     padding: 15,
     borderRadius: 30,
     marginTop: 40,

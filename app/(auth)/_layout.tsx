@@ -9,8 +9,17 @@ const AuthLayout = () => {
         name="index"
         options={{ headerTitle: "Welcome", headerShown: false }}
       />
-      <Stack.Screen name="logIn" options={{ title: "Log In" }} />
-      <Stack.Screen name="signUp" options={{ title: "Sign Up" }} />
+      <Stack.Screen
+        name="logIn"
+        options={{ title: "Log In", headerShown: false, presentation: "modal" }}
+      />
+      <Stack.Screen
+        name="signUp"
+        options={{
+          title: "Sign Up",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 };

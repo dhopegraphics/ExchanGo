@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const LogInScreen = ({ navigation }) => {
+const ForgotPasswordScreen = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -113,4 +113,4 @@ const LogInScreen = ({ navigation }) => {
   );
 };
 
-export default LogInScreen;
+export default ForgotPasswordScreen;
