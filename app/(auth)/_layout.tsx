@@ -20,6 +20,22 @@ const AuthLayout = () => {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="forgotPassword"
+        options={{
+          title: "Forgot Password",
+          headerShown: false,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="verification"
+        options={{
+          title: "OTP Verification",
+          headerShown: false,
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 };

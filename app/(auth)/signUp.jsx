@@ -146,7 +146,7 @@ const SignUpScreen = ({ navigation }) => {
         <Text className="text-center text-gray-600">
           Already have an account?{" "}
           <View className="flex flex-row -mt-1">
-            <TouchableOpacity onPress={() => router.navigate("/(auth)/logIn")}>
+            <TouchableOpacity onPress={() => router.push("/(auth)/logIn")}>
               <Text className="text-orange-400  font-semibold">Log In</Text>
             </TouchableOpacity>
           </View>

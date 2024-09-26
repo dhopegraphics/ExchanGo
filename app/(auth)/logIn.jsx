@@ -84,9 +84,7 @@ const LogInScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <View className="flex justify-center items-center mt-1 mb-4">
-        <TouchableOpacity
-          onPress={() => router.navigate("/(auth)/forgotPassword")}
-        >
+        <TouchableOpacity onPress={() => router.push("/(auth)/forgotPassword")}>
           <Text className="text-black text-lg font-semibold">
             Forgot Password?
           </Text>

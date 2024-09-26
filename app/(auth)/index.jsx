@@ -28,13 +28,18 @@ const Onboarding = () => {
   const swiperRef = useRef(null);
   const progress = useRef(new Animated.Value(0)).current;
   const [activeIndex, setActiveIndex] = useState(0);
+  const totalSlides = 4; // Update this if you change the number of slides
 
   const handleGetStarted = () => {
     router.replace("/(auth)/signUp");
   };
 
   const handleNextSlide = () => {
-    swiperRef.current.scrollBy(1);
+    if (activeIndex < totalSlides - 1) {
+      swiperRef.current.scrollBy(1);
+    } else {
+      router.replace("/(auth)/signUp");
+    }
   };
 
   useEffect(() => {
