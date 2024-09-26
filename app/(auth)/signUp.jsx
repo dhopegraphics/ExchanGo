@@ -72,7 +72,7 @@ const SignUpScreen = ({ navigation }) => {
       </View>
 
       <TouchableOpacity
-        onPress={() => router.replace("(main)/(tabs)/Explore")}
+        onPress={() => router.replace("account/profileCreation")}
         className="bg-orange-400 rounded-lg py-3 mb-4"
       >
         <Text className="text-white text-center font-semibold">
@@ -87,7 +87,10 @@ const SignUpScreen = ({ navigation }) => {
       </View>
 
       <View className=" justify-center ">
-        <TouchableOpacity className="bg-black rounded-lg py-3 mb-3 flex-row  justify-center items-center">
+        <TouchableOpacity
+          className="bg-black rounded-lg py-3 mb-3 flex-row  justify-center items-center"
+          activeOpacity={0.8}
+        >
           <View className="ml-2 flex-row items-center justify-center">
             <Ionicons name="logo-google" size={24} color="white" />
             <Text className="text-white ml-6 text-left font-semibold">

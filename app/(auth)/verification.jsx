@@ -8,8 +8,14 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
+import { useRouter } from "expo-router";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const OTPVerification = () => {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const router = useRouter();
+
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(30);
 
@@ -25,6 +31,7 @@ const OTPVerification = () => {
     const completeOtp = otp.join("");
     // Implement verification logic here
     console.log("Verifying OTP:", completeOtp);
+    router.navigate("(auth)/resetPassword");
   };
 
   const handleResendCode = () => {
