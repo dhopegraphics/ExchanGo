@@ -53,13 +53,7 @@ export const SearchBarHeader = () => {
               onBlur={toggleSearch}
             />
           </Animated.View>
-          <TouchableOpacity>
-            <Ionicons
-              name="notifications-outline"
-              size={24}
-              color={textColor}
-            />
-          </TouchableOpacity>
+          <TouchableOpacity></TouchableOpacity>
         </>
       ) : (
         <TouchableOpacity onPress={toggleSearch}>

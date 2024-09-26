@@ -83,7 +83,7 @@ const HomeScreen = () => {
           </Animated.View>
         }
       >
-        <ScrollView className="flex-1 pt-20">
+        <ScrollView className="flex-1 pt-8">
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}

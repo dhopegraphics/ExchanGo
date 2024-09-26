@@ -22,6 +22,7 @@ const interests = [
 
 export default function FieldOfInterest() {
   const [activeTab, setActiveTab] = useState("Teach");
+  const [error, setError] = useState("");
   const insets = useSafeAreaInsets();
   const [teachInterests, setTeachInterests] = useState([]);
   const [learnInterests, setLearnInterests] = useState([]);
@@ -49,6 +50,22 @@ export default function FieldOfInterest() {
       );
     }
   };
+
+  const handleContinue = () => {
+    if (teachInterests.length === 0 || learnInterests.length === 0) {
+      setError(
+        "Please select at least one interest for both Teach and Learn categories."
+      );
+    } else {
+      setError("");
+      console.log("Final Selection:");
+      console.log("Teach Interests:", teachInterests);
+      console.log("Learn Interests:", learnInterests);
+      router.navigate("/(main)/(tabs)/Explore");
+      // Add navigation logic here
+    }
+  };
+
   return (
     <View className="flex-1 bg-white p-4" style={{ paddingTop: insets.top }}>
       <Text className="text-2xl font-bold mb-4">
@@ -138,12 +155,13 @@ export default function FieldOfInterest() {
       </Text>
 
       <TouchableOpacity
-        className="bg-black py-4 rounded-lg"
-        onPress={() => {
-          console.log("Final Selection:");
-          console.log("Teach Interests:", teachInterests);
-          console.log("Learn Interests:", learnInterests);
-        }}
+        className={`py-4 rounded-lg ${
+          teachInterests.length > 0 && learnInterests.length > 0
+            ? "bg-black"
+            : "bg-gray-300"
+        }`}
+        onPress={handleContinue}
+        disabled={teachInterests.length === 0 || learnInterests.length === 0}
       >
         <Text className="text-white text-center font-semibold">Continue</Text>
       </TouchableOpacity>
