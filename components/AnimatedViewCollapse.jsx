@@ -26,7 +26,12 @@ const AnimatedHeaderScrollView = ({
         <Animated.View style={[styles.image, imageAnimatedStyle]}>
           {underContentChild}
         </Animated.View>
-        <View style={{ height: 1000, backgroundColor: backgroundColor }}>
+        <View
+          style={{
+            height: 1100,
+            backgroundColor: backgroundColor,
+          }}
+        >
           {children}
         </View>
       </Animated.ScrollView>

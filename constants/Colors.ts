@@ -16,7 +16,7 @@ export const Colors = {
     drawerActiveItemText: "#fff",
     tintText: "#808080",
     tintBackground: "#A9A9A9",
-    cardBackground: "#A9A9A9",
+    cardBackground: "#F5F6F8",
   },
   dark: {
     text: "#ECEDEE",

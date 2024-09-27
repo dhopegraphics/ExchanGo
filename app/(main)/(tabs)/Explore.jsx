@@ -23,6 +23,13 @@ import { SearchBarHeader } from "@/components/searchBarHeader";
 import { imageDataURL } from "../../../constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
 import { ModernCollapsible } from "@/components/ModernCollapsible";
+import {
+  discoverData,
+  exploreCategories,
+  forYouCommunity,
+} from "../../../constants/data";
+import CommunityCard from "@/components/CommunityCard";
+import { trendingCommunity } from "../../../constants/data";
 
 const IMG_HEIGHT = 300;
 
@@ -81,7 +88,10 @@ const HomeScreen = () => {
           </Animated.View>
         }
       >
-        <ScrollView className="flex-1">
+        <ScrollView
+          className="flex-1 pb-16 mb-16 "
+          showsVerticalScrollIndicator={false}
+        >
           {/* Trending Section */}
           <View className="px-4 pt-4">
             <View className="flex-row justify-between items-center mb-4">
@@ -94,59 +104,8 @@ const HomeScreen = () => {
             </View>
 
             {/* Trending Card */}
-            <View style={{ backgroundColor: backgroundColor }}>
-              <TouchableOpacity activeOpacity={0.8}>
-                <View className=" w-full h-40 rounded-xl overflow-hidden mb-2">
-                  <Image
-                    source={{ uri: imageDataURL[5] }}
-                    className="w-full h-40"
-                    resizeMode="cover"
-                  />
-                </View>
-              </TouchableOpacity>
 
-              <View className="p-3">
-                <View className="flex-row justify-between items-center">
-                  <Text
-                    style={{ color: textColor }}
-                    className="text-lg font-semibold mb-1"
-                  >
-                    Animation Community
-                  </Text>
-                  <View className="flex-row items-center">
-                    <TouchableOpacity>
-                      <Ionicons
-                        name="bookmark-outline"
-                        size={24}
-                        color={textColor}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View className="flex-row mb-4 items-center">
-                  <View className="flex-row mr-2">
-                    {[1, 2, 3, 4].map((_, index) => (
-                      <Image
-                        key={index}
-                        source={{
-                          uri: `https://i.pravatar.cc/32?img=${index}`,
-                        }}
-                        className={`w-6 h-6 rounded-full border-2 border-white ${
-                          index > 0 ? "-ml-3" : ""
-                        }`}
-                      />
-                    ))}
-                  </View>
-
-                  <Text
-                    style={{ color: textColor }}
-                    className="text-xs font-JakartaSemiBold text-gray-600"
-                  >
-                    669 Members
-                  </Text>
-                </View>
-              </View>
-            </View>
+            <CommunityCard community={trendingCommunity} />
           </View>
 
           {/* Explore Categories */}
@@ -155,14 +114,7 @@ const HomeScreen = () => {
             seeAllPress={() => console.log("See All")}
           >
             <View className="flex-row flex-wrap flex-grow space-x-2 ">
-              {[
-                { name: "Animation", icon: "film" },
-                { name: "Language", icon: "language" },
-                { name: "Architecture", icon: "building" },
-                { name: "Photography", icon: "camera" },
-                { name: "Illustration", icon: "paint-brush" },
-                { name: "Music", icon: "music" },
-              ].map((category, index) => (
+              {exploreCategories.map((category, index) => (
                 <TouchableOpacity key={index}>
                   <View className="flex-row items-center  justify-center mb-4 border-2 border-gray-400 bg-gray-100 rounded-lg p-[6px] px-[10px] py-[8px] ">
                     <FontAwesome5
@@ -191,17 +143,11 @@ const HomeScreen = () => {
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="flex-row">
-                {[
-                  { name: "Kavitha", skill: "Interior Design" },
-                  { name: "Dinesh", skill: "Full Stack Development" },
-                  { name: "Abin", skill: "Graphic Design" },
-                  { name: "Sara", skill: "UX Design" },
-                  { name: "Mike", skill: "Data Science" },
-                ].map((person, index) => (
+              <View className="flex-row mr-36 pr-36  mb-4">
+                {discoverData.map((person, index) => (
                   <View
                     key={index}
-                    className="items-center w-[22%]  rounded-lg p-2 mr-4"
+                    className="items-center w-[22%]  rounded-lg p-3 mr-4"
                     style={{
                       backgroundColor: cardBackground,
                       borderWidth: 1,
@@ -213,14 +159,14 @@ const HomeScreen = () => {
                         source={{
                           uri: `https://i.pravatar.cc/64?img=${index + 10}`,
                         }}
-                        className="w-16 h-16 rounded-full"
+                        className="w-16 h-16 rounded-full border-2 border-white"
                       />
                       <TouchableOpacity className="absolute -top-1 -right-1 bg-gray-100 rounded-full p-1">
                         <Ionicons name="close" size={16} color="#4B5563" />
                       </TouchableOpacity>
                     </View>
                     <Text
-                      className="mt-2 text-sm font-medium"
+                      className="mt-2 text-sm font-JakartaSemiBold"
                       style={{ color: textColor }}
                     >
                       {person.name}
@@ -232,7 +178,7 @@ const HomeScreen = () => {
                       {person.skill}
                     </Text>
                     <TouchableOpacity className="mt-2 bg-orange-400 px-4 py-1 rounded-full">
-                      <Text className="text-white text-xs font-medium">
+                      <Text className="text-white text-xs font-JakartaMedium">
                         Connect
                       </Text>
                     </TouchableOpacity>
@@ -240,6 +186,16 @@ const HomeScreen = () => {
                 ))}
               </View>
             </ScrollView>
+            <View className="flex-row justify-between items-center">
+              <Text className="text-lg font-bold" style={{ color: textColor }}>
+                For You
+              </Text>
+              <TouchableOpacity>
+                <Text className="text-sm text-blue-500">See All</Text>
+              </TouchableOpacity>
+            </View>
+            <CommunityCard community={forYouCommunity} />
+            <CommunityCard community={forYouCommunity} />
           </View>
         </ScrollView>
       </AnimatedHeaderScrollView>

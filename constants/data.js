@@ -40,3 +40,49 @@ export const skillListings = [
   },
   // Add more skill listings
 ];
+
+export const discoverData = [
+  { name: "Kavitha", skill: "Interior Design" },
+  { name: "Dinesh", skill: "Full Stack Development" },
+  { name: "Abin", skill: "Graphic Design" },
+  { name: "Sara", skill: "UX Design" },
+  { name: "Mike", skill: "Data Science" },
+];
+
+export const exploreCategories = [
+  { name: "Animation", icon: "film" },
+  { name: "Language", icon: "language" },
+  { name: "Architecture", icon: "building" },
+  { name: "Photography", icon: "camera" },
+  { name: "Illustration", icon: "paint-brush" },
+  { name: "Music", icon: "music" },
+];
+
+export const trendingCommunity = {
+  name: "Animation Community",
+  memberCount: 669,
+  profileImage: "https://i.pravatar.cc/32?img=5",
+  avatars: [
+    { uri: "https://i.pravatar.cc/32?img=0" },
+    { uri: "https://i.pravatar.cc/32?img=1" },
+    { uri: "https://i.pravatar.cc/32?img=2" },
+    { uri: "https://i.pravatar.cc/32?img=3" },
+  ],
+  bookmarkPress: () =>
+    console.log(`Bookmark Pressed ${trendingCommunity.name}`),
+  onPress: () => console.log(`Community Pressed ${trendingCommunity.name}`),
+};
+
+export const forYouCommunity = {
+  name: "For You Community",
+  memberCount: 669,
+  profileImage: "https://i.pravatar.cc/32?img=5",
+  avatars: [
+    { uri: "https://i.pravatar.cc/32?img=0" },
+    { uri: "https://i.pravatar.cc/32?img=1" },
+    { uri: "https://i.pravatar.cc/32?img=2" },
+    { uri: "https://i.pravatar.cc/32?img=3" },
+  ],
+  bookmarkPress: () => console.log(`Bookmark Pressed ${forYouCommunity.name}`),
+  onPress: () => console.log(`Community Pressed ${forYouCommunity.name}`),
+};
