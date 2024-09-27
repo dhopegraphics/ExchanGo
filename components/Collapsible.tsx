@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   useColorScheme,
   TouchableWithoutFeedback,
+  View,
+  Text,
 } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -19,7 +21,7 @@ export function Collapsible({
   const theme = useColorScheme() ?? "light";
 
   return (
-    <ThemedView>
+    <ThemedView className="ml-6  ">
       <TouchableOpacity
         style={styles.heading}
         onPress={() => setIsOpen((value) => !value)}
@@ -30,7 +32,9 @@ export function Collapsible({
           size={18}
           color={theme === "light" ? Colors.light.icon : Colors.dark.icon}
         />
-        <ThemedText type="defaultSemiBold">{title}</ThemedText>
+        <ThemedText className="text-xl" type="defaultSemiBold">
+          {title}
+        </ThemedText>
       </TouchableOpacity>
       {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
     </ThemedView>
@@ -45,6 +49,6 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 6,
-    marginLeft: 24,
+    marginLeft: 8,
   },
 });

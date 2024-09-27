@@ -19,25 +19,23 @@ import { Collapsible } from "../../../components/Collapsible";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useScrollAnimation } from "@/components/CollapsibleScrollAnimated";
 import AnimatedHeaderScrollView from "@/components/AnimatedViewCollapse";
-import { categories, featuredListings, skillListings } from "@/constants/data";
 import { SearchBarHeader } from "@/components/searchBarHeader";
 import { imageDataURL } from "../../../constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
+import { ModernCollapsible } from "@/components/ModernCollapsible";
 
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const backgroundColor = useThemeColor({}, "background");
+  const cardBackground = useThemeColor({}, "cardBackground");
   const textColor = useThemeColor({}, "text");
+  const tintText = useThemeColor({}, "tintText");
+  const tintBackground = useThemeColor({}, "tintBackground");
   const { showToast } = useToast();
-  const {
-    scrollRef,
-    scrollHandler,
-    imageAnimatedStyle,
-    headerAnimatedStyle,
-    headerTitleAnimatedStyle,
-  } = useScrollAnimation();
+  const { scrollRef, scrollHandler, imageAnimatedStyle, headerAnimatedStyle } =
+    useScrollAnimation();
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
@@ -83,116 +81,166 @@ const HomeScreen = () => {
           </Animated.View>
         }
       >
-        <ScrollView className="flex-1 pt-8">
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="py-4"
-          >
-            {categories.map((category, index) => (
-              <TouchableOpacity
-                key={index}
-                className="mx-2 items-center"
-                style={{
-                  backgroundColor: category.gradient[0],
-                  borderRadius: 12,
-                  padding: 12,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 4,
-                  elevation: 3,
-                }}
-              >
-                <FontAwesome5 name={category.icon} size={24} color="white" />
-                <Text className="text-white font-bold mt-2">
-                  {category.name}
-                </Text>
+        <ScrollView className="flex-1">
+          {/* Trending Section */}
+          <View className="px-4 pt-4">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-lg font-bold" style={{ color: textColor }}>
+                Trending
+              </Text>
+              <TouchableOpacity>
+                <Text className="text-sm text-blue-500">See All</Text>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
+            </View>
 
-          {/* Featured Listings */}
-          <View className="my-4">
-            <Text
-              className="text-xl font-bold px-4 mb-2"
-              style={{ color: textColor }}
-            >
-              Featured Skills
-            </Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {featuredListings.map((listing) => (
-                <View
-                  key={listing.id}
-                  className="mx-2 bg-white rounded-lg shadow-md p-4 w-64"
-                >
-                  <View className="flex-row items-center mb-2">
-                    <Image
-                      source={{ uri: listing.image }}
-                      className="w-12 h-12 rounded-full mr-4"
-                    />
-                    <View>
-                      <Text className="font-bold">{listing.name}</Text>
-                      <Text>{listing.skill}</Text>
-                    </View>
-                  </View>
-                  <View className="flex-row items-center mb-2">
-                    {[...Array(5)].map((_, i) => (
+            {/* Trending Card */}
+            <View style={{ backgroundColor: backgroundColor }}>
+              <TouchableOpacity activeOpacity={0.8}>
+                <View className=" w-full h-40 rounded-xl overflow-hidden mb-2">
+                  <Image
+                    source={{ uri: imageDataURL[5] }}
+                    className="w-full h-40"
+                    resizeMode="cover"
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <View className="p-3">
+                <View className="flex-row justify-between items-center">
+                  <Text
+                    style={{ color: textColor }}
+                    className="text-lg font-semibold mb-1"
+                  >
+                    Animation Community
+                  </Text>
+                  <View className="flex-row items-center">
+                    <TouchableOpacity>
                       <Ionicons
-                        key={i}
-                        name={
-                          i < Math.floor(listing.rating)
-                            ? "star"
-                            : "star-outline"
-                        }
-                        size={16}
-                        color="#FFD700"
+                        name="bookmark-outline"
+                        size={24}
+                        color={textColor}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View className="flex-row mb-4 items-center">
+                  <View className="flex-row mr-2">
+                    {[1, 2, 3, 4].map((_, index) => (
+                      <Image
+                        key={index}
+                        source={{
+                          uri: `https://i.pravatar.cc/32?img=${index}`,
+                        }}
+                        className={`w-6 h-6 rounded-full border-2 border-white ${
+                          index > 0 ? "-ml-3" : ""
+                        }`}
                       />
                     ))}
-                    <Text className="ml-2">{listing.rating}</Text>
                   </View>
-                  <TouchableOpacity className="bg-blue-500 rounded-full py-2 px-4">
-                    <Text className="text-white text-center font-bold">
-                      Request Swap
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </ScrollView>
-          </View>
 
-          {/* Skill Listings Grid */}
-          <View className="px-4">
-            <Text
-              className="text-xl font-bold mb-4"
-              style={{ color: textColor }}
-            >
-              Available Skills
-            </Text>
-            <View className="flex-row flex-wrap justify-between">
-              {skillListings.map((skill) => (
-                <View
-                  key={skill.id}
-                  className="w-[48%] bg-white rounded-lg shadow-md p-4 mb-4"
-                >
-                  <Image
-                    source={{ uri: `https://i.pravatar.cc/100?u=${skill.id}` }}
-                    className="w-16 h-16 rounded-full mb-2 self-center"
-                  />
-                  <Text className="font-bold text-center">{skill.skill}</Text>
-                  <Text className="text-center">{skill.name}</Text>
-                  <View className="flex-row items-center justify-center mt-2">
-                    <Ionicons name="location-outline" size={16} color="gray" />
-                    <Text className="text-gray-600 ml-1">{skill.location}</Text>
-                  </View>
-                  <Text className="text-center text-gray-600 mt-1">
-                    {skill.availability}
+                  <Text
+                    style={{ color: textColor }}
+                    className="text-xs font-JakartaSemiBold text-gray-600"
+                  >
+                    669 Members
                   </Text>
                 </View>
-              ))}
+              </View>
             </View>
           </View>
-          {/* Filter Button */}
+
+          {/* Explore Categories */}
+          <ModernCollapsible
+            title="Explore"
+            seeAllPress={() => console.log("See All")}
+          >
+            <View className="flex-row flex-wrap flex-grow space-x-2 ">
+              {[
+                { name: "Animation", icon: "film" },
+                { name: "Language", icon: "language" },
+                { name: "Architecture", icon: "building" },
+                { name: "Photography", icon: "camera" },
+                { name: "Illustration", icon: "paint-brush" },
+                { name: "Music", icon: "music" },
+              ].map((category, index) => (
+                <TouchableOpacity key={index}>
+                  <View className="flex-row items-center  justify-center mb-4 border-2 border-gray-400 bg-gray-100 rounded-lg p-[6px] px-[10px] py-[8px] ">
+                    <FontAwesome5
+                      name={category.icon}
+                      size={18}
+                      color="#4B5563"
+                    />
+                    <Text className=" font-JakartaMedium ml-2 text-xs text-gray-700">
+                      {category.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ModernCollapsible>
+
+          {/* Discover Section */}
+          <View className="px-4">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-lg font-bold" style={{ color: textColor }}>
+                Discover
+              </Text>
+              <TouchableOpacity>
+                <Text className="text-sm text-blue-500">See All</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View className="flex-row">
+                {[
+                  { name: "Kavitha", skill: "Interior Design" },
+                  { name: "Dinesh", skill: "Full Stack Development" },
+                  { name: "Abin", skill: "Graphic Design" },
+                  { name: "Sara", skill: "UX Design" },
+                  { name: "Mike", skill: "Data Science" },
+                ].map((person, index) => (
+                  <View
+                    key={index}
+                    className="items-center w-[22%]  rounded-lg p-2 mr-4"
+                    style={{
+                      backgroundColor: cardBackground,
+                      borderWidth: 1,
+                      borderColor: tintBackground,
+                    }}
+                  >
+                    <View className="relative">
+                      <Image
+                        source={{
+                          uri: `https://i.pravatar.cc/64?img=${index + 10}`,
+                        }}
+                        className="w-16 h-16 rounded-full"
+                      />
+                      <TouchableOpacity className="absolute -top-1 -right-1 bg-gray-100 rounded-full p-1">
+                        <Ionicons name="close" size={16} color="#4B5563" />
+                      </TouchableOpacity>
+                    </View>
+                    <Text
+                      className="mt-2 text-sm font-medium"
+                      style={{ color: textColor }}
+                    >
+                      {person.name}
+                    </Text>
+                    <Text
+                      style={{ color: tintText }}
+                      className="text-xs font-JakartaSemiBold "
+                    >
+                      {person.skill}
+                    </Text>
+                    <TouchableOpacity className="mt-2 bg-orange-400 px-4 py-1 rounded-full">
+                      <Text className="text-white text-xs font-medium">
+                        Connect
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
         </ScrollView>
       </AnimatedHeaderScrollView>
       <TouchableOpacity

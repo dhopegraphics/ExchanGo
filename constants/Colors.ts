@@ -14,6 +14,9 @@ export const Colors = {
     statusBar: "light",
     drawerActiveItemBackground: "#151718",
     drawerActiveItemText: "#fff",
+    tintText: "#808080",
+    tintBackground: "#A9A9A9",
+    cardBackground: "#A9A9A9",
   },
   dark: {
     text: "#ECEDEE",
@@ -27,5 +30,8 @@ export const Colors = {
     statusBar: "dark",
     drawerActiveItemBackground: "#E5E5E5",
     drawerActiveItemText: "#000",
+    tintText: "#808080",
+    tintBackground: "#A9A9A9",
+    cardBackground: "#1C1E1F",
   },
 };

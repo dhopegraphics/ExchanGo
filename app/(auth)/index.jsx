@@ -19,10 +19,13 @@ import Svg, { Circle } from "react-native-svg";
 import Feather from "@expo/vector-icons/Feather";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const { width, height } = Dimensions.get("window");
 
 const Onboarding = () => {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const swiperRef = useRef(null);
@@ -61,12 +64,13 @@ const Onboarding = () => {
   return (
     <>
       <View
-        className="flex-1 bg-white"
+        className="flex-1"
         style={{
           paddingTop: insets.top,
+          backgroundColor: backgroundColor,
         }}
       >
-        <StatusBar style="dark" />
+        <StatusBar style="auto" />
         <View className="flex flex-col gap-2 justify-end items-end mr-4">
           <TouchableOpacity onPress={handleGetStarted}>
             <Text className=" text-[#f79c41] text-lg font-JakartaSemiBold">
@@ -78,21 +82,29 @@ const Onboarding = () => {
           ref={swiperRef}
           loop={false}
           showsPagination={true}
-          paginationStyle={styles.pagination}
+          paginationStyle={{
+            bottom: 20,
+            backgroundColor: backgroundColor,
+          }}
           dot={<View style={styles.dot} />}
           activeDot={<View style={styles.activeDot} />}
           onIndexChanged={(index) => setActiveIndex(index)}
         >
-          <View style={styles.slide}>
+          <View style={[styles.slide, { backgroundColor: backgroundColor }]}>
             <Image
-              source={require("../../assets/images/exchanGoLogo.jpg")}
+              source={require("../../assets/images/exchanGoLogoNoBg.png")}
               style={{
                 width: 170,
                 height: 170,
                 marginBottom: 20,
+                tintColor: textColor,
               }}
+              resizeMode="contain"
             />
-            <Text className="text-2xl font-JakartaSemiBold">
+            <Text
+              style={{ color: textColor }}
+              className="text-2xl font-JakartaSemiBold"
+            >
               Welcome to SkillSwap
             </Text>
             <Text className="text-base text-gray-600 font-JakartaSemiBold mb-5">
@@ -100,73 +112,103 @@ const Onboarding = () => {
             </Text>
 
             <View className="self-stretch mb-10">
-              <Text className="text-base text-gray-400 font-JakartaMedium mb-2">
+              <Text
+                style={{ color: textColor }}
+                className="text-base text-gray-400 font-JakartaMedium mb-2"
+              >
                 • Share your skills with others
               </Text>
-              <Text className="text-base text-gray-400 font-JakartaMedium mb-2">
+              <Text
+                style={{ color: textColor }}
+                className="text-base text-gray-400 font-JakartaMedium mb-2"
+              >
                 • Learn new talents from experts
               </Text>
-              <Text className="text-base text-gray-400 font-JakartaMedium mb-2">
+              <Text
+                style={{ color: textColor }}
+                className="text-base text-gray-400 font-JakartaMedium mb-2"
+              >
                 • Build a community of skilled individuals
               </Text>
             </View>
           </View>
 
-          <View style={styles.slide}>
+          <View style={[styles.slide, { backgroundColor: backgroundColor }]}>
             <Image
               source={require("../../assets/images/exchanGoLogoNoBg.png")}
               style={{
                 width: 200,
                 height: 200,
+                tintColor: textColor,
               }}
             />
 
             <View className="flex flex-col gap-2 mt-10">
-              <Text className="text-2xl font-JakartaSemiBold">
+              <Text
+                style={{ color: textColor }}
+                className="text-2xl font-JakartaSemiBold"
+              >
                 Teach & Learn Anytime, Anywhere
               </Text>
-              <Text className="text-base text-gray-400 font-JakartaMedium">
+              <Text
+                style={{ color: textColor }}
+                className="text-base text-gray-400 font-JakartaMedium"
+              >
                 Discover a world of knowledge at your fingertips. Connect with
                 others and start your journey today by learning and teaching.
               </Text>
             </View>
           </View>
 
-          <View style={styles.slide}>
+          <View style={[styles.slide, { backgroundColor: backgroundColor }]}>
             <Image
               source={require("../../assets/images/exchanGoLogoNoBg.png")}
               resizeMode="contain"
               style={{
                 width: 200,
                 height: 200,
+                tintColor: textColor,
               }}
             />
 
             <View className="flex flex-col gap-2 mt-10">
-              <Text className="text-2xl font-JakartaSemiBold">
+              <Text
+                style={{ color: textColor }}
+                className="text-2xl font-JakartaSemiBold"
+              >
                 Ready To Dive In ?
               </Text>
-              <Text className="text-base text-gray-400 font-JakartaMedium">
+              <Text
+                style={{ color: textColor }}
+                className="text-base text-gray-400 font-JakartaMedium"
+              >
                 Skill Swap offers a range of essential features to enhance your
                 experience.
               </Text>
             </View>
           </View>
 
-          <View style={styles.slide}>
+          <View style={[styles.slide, { backgroundColor: backgroundColor }]}>
             <Image
               source={require("../../assets/images/exchanGoLogoNoBg.png")}
               resizeMode="contain"
               style={{
                 width: 200,
                 height: 200,
+                tintColor: textColor,
               }}
             />
 
-            <Text className="text-2xl mr-12  font-JakartaSemiBold">
+            <Text
+              style={{ color: textColor }}
+              className="text-2xl mr-12  font-JakartaSemiBold"
+            >
               Skill and Service Trading Platform
             </Text>
-            <Text className="text-base text-gray-400 font-JakartaMedium">
+            <Text
+              style={{ color: textColor }}
+              className="text-base text-gray-400 font-JakartaMedium"
+            >
               Users exchange talents and skills instead of money
             </Text>
             <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
@@ -214,7 +256,6 @@ const styles = StyleSheet.create({
     padding: 15,
     width,
     height,
-    backgroundColor: "#fff",
     borderRadius: 15,
   },
   button: {
@@ -224,7 +265,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     width: "80%",
     alignItems: "center",
-    shadowColor: "#0066FF",
+    shadowColor: "#f79c41",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
