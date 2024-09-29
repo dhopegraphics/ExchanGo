@@ -190,3 +190,27 @@ export const requestData = [
     imageUrl: imageDataURL[1],
   },
 ];
+
+export const connections = [
+  {
+    id: "1",
+    name: "Sithara",
+    avatar: imageDataURL[6],
+    primarySkill: "UI Design",
+    secondarySkill: "Web Development",
+    location: "Mylapore, Chennai",
+    rating: 4,
+    featured: false,
+  },
+  {
+    id: "2",
+    name: "Tara",
+    avatar: imageDataURL[7],
+    primarySkill: "Photography",
+    secondarySkill: "Animation",
+    location: "Mylapore, Chennai",
+    rating: 4,
+    featured: true,
+  },
+  // Add more connection data here
+];

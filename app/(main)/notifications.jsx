@@ -77,7 +77,7 @@ const Notifications = () => {
             style={{ color: textColor }}
             className="text-xl ml-6 font-JakartaBold"
           >
-            Messages
+            Notifications
           </Text>
           <TouchableOpacity onPress={handlePresentModalPress}>
             <MaterialCommunityIcons

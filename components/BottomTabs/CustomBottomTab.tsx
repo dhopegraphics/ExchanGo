@@ -36,8 +36,8 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
         return "home";
       case "SwapCenter":
         return "link-2";
-      case "Chat":
-        return "message-circle";
+      case "Communities":
+        return "grid";
       case "Settings":
         return "settings";
       default:

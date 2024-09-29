@@ -13,7 +13,7 @@ export default function TabLayout() {
       >
         <Tabs.Screen name="Explore" />
         <Tabs.Screen name="SwapCenter" options={{ headerShown: false }} />
-        <Tabs.Screen name="Chat" />
+        <Tabs.Screen name="Communities" />
         <Tabs.Screen name="Settings" options={{ headerShown: false }} />
       </Tabs>
     </>

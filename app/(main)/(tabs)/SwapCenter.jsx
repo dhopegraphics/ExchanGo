@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -7,133 +7,94 @@ import {
   StyleSheet,
   Image,
   TextInput,
-  Animated,
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AirbnbRating } from "@rneui/themed";
-import { Rating } from "@rneui/themed";
-import { imageDataURL } from "../../../constants/ImageData";
-import { BlurView } from "expo-blur"; // Make sure to install expo-blur
-
-const ConnectionCard = ({ item }) => {
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
-      <Image source={{ uri: item.avatar }} style={styles.avatar} />
-      <View style={styles.cardContent}>
-        <Text style={styles.name}>{item.name}</Text>
-        <View style={styles.skillContainer}>
-          <Text style={styles.skill}>{item.primarySkill}</Text>
-          <Ionicons name="arrow-forward" size={16} color="#666" />
-          <Text style={styles.skill}>{item.secondarySkill}</Text>
-        </View>
-        <View className="items-start">
-          <AirbnbRating
-            count={5}
-            defaultRating={item.rating}
-            size={16}
-            showRating={false}
-            isDisabled={true}
-          />
-        </View>
-        <Text style={styles.location}>{item.location}</Text>
-      </View>
-      <TouchableOpacity style={styles.favoriteButton}>
-        <Ionicons name="heart-outline" size={24} color="#666" />
-      </TouchableOpacity>
-      {item.featured && (
-        <View style={styles.featuredBadge}>
-          <Text style={styles.featuredText}>Featured</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
-};
+import { ConnectionCard } from "@/components/SwapConnect";
+import { connections } from "@/constants/data";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import Animated, { Easing } from "react-native-reanimated";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FilterScreen from "../../../components/FilterBottomitems";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const insets = useSafeAreaInsets();
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const connections = [
-    {
-      id: "1",
-      name: "Sithara",
-      avatar: imageDataURL[6],
-      primarySkill: "UI Design",
-      secondarySkill: "Web Development",
-      location: "Mylapore, Chennai",
-      rating: 4,
-      featured: false,
-    },
-    {
-      id: "2",
-      name: "Tara",
-      avatar: imageDataURL[7],
-      primarySkill: "Photography",
-      secondarySkill: "Animation",
-      location: "Mylapore, Chennai",
-      rating: 4,
-      featured: true,
-    },
-    // Add more connection data here
-  ];
-
-  const headerBackgroundOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [1, 0],
-    extrapolate: "clamp",
-  });
+  const filterSheetBottomSheetRef = useRef(null);
+  const handlePresentFilterModalPress = useCallback(() => {
+    filterSheetBottomSheetRef.current?.present();
+  }, []);
 
   return (
     <>
-      <Animated.View
-        style={[
-          styles.headerBackground,
-          {
-            paddingTop: insets.top,
-            backgroundColor,
-            opacity: headerBackgroundOpacity,
-          },
-        ]}
-      />
-      <View style={[styles.header, { paddingTop: insets.top }]}>
-        <Text style={[styles.title, { color: textColor }]}>Connect</Text>
-        <TouchableOpacity>
-          <FontAwesome name="filter" size={24} color={textColor} />
-        </TouchableOpacity>
-      </View>
-      <View
-        style={[styles.searchContainer, { backgroundColor: backgroundColor }]}
-      >
-        <Ionicons
-          name="search"
-          size={20}
-          color="#666"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={[styles.searchInput, { backgroundColor: backgroundColor }]}
-          placeholder="Search"
-          placeholderTextColor="#666"
-        />
-      </View>
-      <View style={{ flex: 1, backgroundColor: backgroundColor }}>
-        <Animated.FlatList
-          data={connections}
-          renderItem={({ item }) => <ConnectionCard item={item} />}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContainer}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
-          )}
-          scrollEventThrottle={16}
-        />
-      </View>
+      <BottomSheetModalProvider>
+        <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+          <View
+            style={[
+              styles.header,
+              { paddingTop: insets.top, backgroundColor: backgroundColor },
+            ]}
+          >
+            <Text style={[styles.title, { color: textColor }]}>Connect</Text>
+            <View className="flex-row space-x-4">
+              <TouchableOpacity onPress={handlePresentFilterModalPress}>
+                <FontAwesome name="filter" size={24} color={textColor} />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={24}
+                  color={textColor}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={[styles.searchContainer, { marginBottom: 10 }]}>
+            <Ionicons
+              name="search"
+              size={20}
+              color="#666"
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={[styles.searchInput]}
+              placeholder="Search"
+              placeholderTextColor="#666"
+            />
+          </View>
+          <View style={{ flex: 1, padding: 10 }}>
+            <FlatList
+              data={connections}
+              renderItem={({ item }) => <ConnectionCard item={item} />}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.listContainer}
+              scrollEventThrottle={16}
+            />
+          </View>
+        </View>
+
+        <BottomSheetModal
+          ref={filterSheetBottomSheetRef}
+          index={0}
+          snapPoints={["50%", "70%", "80%", "90%"]}
+          animationConfigs={{
+            duration: 800,
+            easing: Easing.elastic(1),
+          }}
+          backgroundStyle={{
+            backgroundColor: "#f1f5f9",
+          }}
+          enablePanDownToClose={true}
+        >
+          <FilterScreen />
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     </>
   );
 };
@@ -147,14 +108,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
+    padding: 10,
   },
-  headerBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 120, // Adjust this value to cover both header and search container
-  },
+
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -179,65 +135,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingBottom: 16,
-  },
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#f1f5f9",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    marginRight: 12,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  skillContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  skill: {
-    fontSize: 14,
-    color: "#666",
-    marginRight: 4,
-  },
-  location: {
-    fontSize: 12,
-    color: "#999",
-  },
-  favoriteButton: {
-    padding: 4,
-  },
-  featuredBadge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    backgroundColor: "#FFD700",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderTopRightRadius: 12,
-    borderBottomLeftRadius: 12,
-  },
-  featuredText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#000",
   },
 });
 

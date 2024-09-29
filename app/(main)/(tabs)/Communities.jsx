@@ -171,11 +171,10 @@ const ContactListScreen = () => {
             ]}
           >
             <Text style={[styles.header, { color: textColor }]}>
-              Select Members
+              Discover Communities
             </Text>
             <Text style={[styles.subHeader, { color: textColor }]}>
-              Select contacts to add to an existing Split or create a new one
-              with them
+              Find communities to join or create your own
             </Text>
             <SearchBar
               placeholder="Type a name or number"
