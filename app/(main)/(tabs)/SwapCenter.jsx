@@ -81,68 +81,79 @@ const SwapCenter = () => {
     // Add more connection data here
   ];
 
-  const backgroundOpacity = scrollY.interpolate({
+  const headerBackgroundOpacity = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: [1, 0],
     extrapolate: "clamp",
   });
 
   return (
-    <View
-      style={[
-        styles.container,
-        { paddingTop: insets.top, backgroundColor: backgroundColor },
-      ]}
-    >
-      <Animated.View style={[{ backgroundColor, opacity: backgroundOpacity }]}>
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: textColor }]}>Connect</Text>
-          <TouchableOpacity>
-            <FontAwesome name="filter" size={24} color={textColor} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.searchContainer}>
-          <Ionicons
-            name="search"
-            size={20}
-            color="#666"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#666"
-          />
-        </View>
-      </Animated.View>
-
-      <Animated.FlatList
-        data={connections}
-        renderItem={({ item }) => <ConnectionCard item={item} />}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContainer}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        scrollEventThrottle={16}
+    <>
+      <Animated.View
+        style={[
+          styles.headerBackground,
+          {
+            paddingTop: insets.top,
+            backgroundColor,
+            opacity: headerBackgroundOpacity,
+          },
+        ]}
       />
-    </View>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <Text style={[styles.title, { color: textColor }]}>Connect</Text>
+        <TouchableOpacity>
+          <FontAwesome name="filter" size={24} color={textColor} />
+        </TouchableOpacity>
+      </View>
+      <View
+        style={[styles.searchContainer, { backgroundColor: backgroundColor }]}
+      >
+        <Ionicons
+          name="search"
+          size={20}
+          color="#666"
+          style={styles.searchIcon}
+        />
+        <TextInput
+          style={[styles.searchInput, { backgroundColor: backgroundColor }]}
+          placeholder="Search"
+          placeholderTextColor="#666"
+        />
+      </View>
+      <View style={{ flex: 1, backgroundColor: backgroundColor }}>
+        <Animated.FlatList
+          data={connections}
+          renderItem={({ item }) => <ConnectionCard item={item} />}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
+        />
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
+  },
+  headerBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 120, // Adjust this value to cover both header and search container
   },
   title: {
     fontSize: 24,
