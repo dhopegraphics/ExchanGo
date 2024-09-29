@@ -6,10 +6,11 @@ import Animated, {
   withRepeat,
   withSequence,
 } from "react-native-reanimated";
+import { ReactNode } from "react";
 
 import { ThemedText } from "./ThemedText";
 
-export function HelloWave() {
+export function HelloWave({ children }: { children: ReactNode }) {
   const rotationAnimation = useSharedValue(0);
 
   rotationAnimation.value = withRepeat(
@@ -24,11 +25,7 @@ export function HelloWave() {
     transform: [{ rotate: `${rotationAnimation.value}deg` }],
   }));
 
-  return (
-    <Animated.View style={animatedStyle}>
-      <ThemedText style={styles.text}>👋</ThemedText>
-    </Animated.View>
-  );
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
 }
 
 const styles = StyleSheet.create({

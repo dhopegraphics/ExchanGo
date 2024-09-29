@@ -16,26 +16,34 @@ import { Colors } from "@/constants/Colors";
 export function Collapsible({
   children,
   title,
-}: PropsWithChildren & { title: string }) {
-  const [isOpen, setIsOpen] = useState(false);
+  seeAllPress,
+}: PropsWithChildren & { title: string; seeAllPress: () => void }) {
+  const [isOpen, setIsOpen] = useState(true);
   const theme = useColorScheme() ?? "light";
 
   return (
-    <ThemedView className="ml-6  ">
-      <TouchableOpacity
-        style={styles.heading}
-        onPress={() => setIsOpen((value) => !value)}
-        activeOpacity={0.9}
-      >
-        <Ionicons
-          name={isOpen ? "chevron-down" : "chevron-forward-outline"}
-          size={18}
-          color={theme === "light" ? Colors.light.icon : Colors.dark.icon}
-        />
-        <ThemedText className="text-xl" type="defaultSemiBold">
-          {title}
-        </ThemedText>
-      </TouchableOpacity>
+    <ThemedView className=" mb-4 ">
+      <View className="flex-row items-center justify-between">
+        <TouchableOpacity
+          style={styles.heading}
+          onPress={() => setIsOpen((value) => !value)}
+          activeOpacity={0.9}
+        >
+          <Ionicons
+            name={isOpen ? "chevron-down" : "chevron-forward-outline"}
+            size={18}
+            color={theme === "light" ? Colors.light.icon : Colors.dark.icon}
+          />
+          <ThemedText className="text-xl" type="defaultSemiBold">
+            {title}
+          </ThemedText>
+        </TouchableOpacity>
+        <View>
+          <TouchableOpacity onPress={seeAllPress}>
+            <Text className="text-sm mr-4 text-blue-500">See All</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
     </ThemedView>
   );
@@ -46,6 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+    marginLeft: 12,
   },
   content: {
     marginTop: 6,

@@ -31,9 +31,9 @@ const MainLayout = () => {
   }, [loaded]);
 
   return (
-    <View style={styles.container}>
-      <ThemeProvider>
-        <ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -46,10 +46,18 @@ const MainLayout = () => {
               name="ProfileSetup/fieldOfInterest"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="message/[MessageBox]"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="message/messageCenter"
+              options={{ headerShown: false }}
+            />
           </Stack>
-        </ToastProvider>
-      </ThemeProvider>
-    </View>
+        </GestureHandlerRootView>
+      </ToastProvider>
+    </ThemeProvider>
   );
 };
 

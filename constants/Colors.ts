@@ -17,6 +17,8 @@ export const Colors = {
     tintText: "#808080",
     tintBackground: "#A9A9A9",
     cardBackground: "#F5F6F8",
+    inputKeyboard: "#808080",
+    notificationSheetBackground: "#808080",
   },
   dark: {
     text: "#ECEDEE",
@@ -33,5 +35,7 @@ export const Colors = {
     tintText: "#808080",
     tintBackground: "#A9A9A9",
     cardBackground: "#1C1E1F",
+    inputKeyboard: "#1e2021",
+    notificationSheetBackground: "#1e2021",
   },
 };

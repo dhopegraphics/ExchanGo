@@ -55,11 +55,26 @@ export const useScrollAnimation = () => {
     };
   });
 
+  const filterButtonStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollOffset.value,
+      [0, 700], // Adjust these values to control when the button starts fading
+      [1, 0],
+      "clamp"
+    );
+
+    return {
+      opacity,
+    };
+  });
+
   return {
     scrollRef,
     scrollHandler,
     imageAnimatedStyle,
     headerAnimatedStyle,
     headerTitleAnimatedStyle,
+    scrollOffset,
+    filterButtonStyle,
   };
 };

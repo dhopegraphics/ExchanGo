@@ -3,24 +3,13 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-
-const interests = [
-  "Illustration",
-  "Animation",
-  "Photography",
-  "Languages",
-  "Cinematography",
-  "UI Design",
-  "UX Design",
-  "Architecture",
-  "Digital Marketing",
-  "Music",
-  "Graphic Design",
-  "Web Development",
-  "Other",
-];
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { interests } from "@/constants/data";
 
 export default function FieldOfInterest() {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintText = useThemeColor({}, "tintText");
   const [activeTab, setActiveTab] = useState("Teach");
   const [error, setError] = useState("");
   const insets = useSafeAreaInsets();
@@ -61,17 +50,23 @@ export default function FieldOfInterest() {
       console.log("Final Selection:");
       console.log("Teach Interests:", teachInterests);
       console.log("Learn Interests:", learnInterests);
-      router.navigate("/(main)/(tabs)/Explore");
+      router.replace("/(main)/(tabs)/Explore");
       // Add navigation logic here
     }
   };
 
   return (
-    <View className="flex-1 bg-white p-4" style={{ paddingTop: insets.top }}>
-      <Text className="text-2xl font-bold mb-4">
+    <View
+      className="flex-1  p-4"
+      style={{ paddingTop: insets.top, backgroundColor: backgroundColor }}
+    >
+      <Text
+        style={{ color: textColor }}
+        className="text-2xl font-JakartaSemiBold mb-4"
+      >
         Pick Your Field Of Interest
       </Text>
-      <Text className="text-gray-600 mb-6">
+      <Text style={{ color: tintText }} className="text-gray-600 mb-6">
         Select your area of interest you like to teach and learn, you can also
         choose any one as you prefer
       </Text>
@@ -150,14 +145,17 @@ export default function FieldOfInterest() {
         </ScrollView>
       </View>
 
-      <Text className="text-gray-500 text-center my-4">
+      <Text
+        style={{ color: tintText }}
+        className="text-gray-500 text-center my-4"
+      >
         Note: you can change this later if your interest changes
       </Text>
 
       <TouchableOpacity
         className={`py-4 rounded-lg ${
           teachInterests.length > 0 && learnInterests.length > 0
-            ? "bg-black"
+            ? "bg-orange-400"
             : "bg-gray-300"
         }`}
         onPress={handleContinue}

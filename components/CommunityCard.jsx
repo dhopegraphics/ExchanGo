@@ -8,9 +8,25 @@ const CommunityCard = ({ community }) => {
   const textColor = useThemeColor({}, "text");
   const tintBackground = useThemeColor({}, "tintBackground");
 
+  const handlePress = () => {
+    if (community.onPress) {
+      community.onPress();
+    } else {
+      console.log(`Community Pressed: ${community.name}`);
+    }
+  };
+
+  const handleBookmarkPress = () => {
+    if (community.bookmarkPress) {
+      community.bookmarkPress();
+    } else {
+      console.log(`Bookmark Pressed: ${community.name}`);
+    }
+  };
+
   return (
     <View style={{ backgroundColor: backgroundColor, marginTop: 2 }}>
-      <TouchableOpacity activeOpacity={0.8} onPress={community.onPress}>
+      <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
         <View className=" w-full h-40 rounded-xl overflow-hidden mb-2">
           <Image
             source={{ uri: community.profileImage }}
@@ -28,7 +44,7 @@ const CommunityCard = ({ community }) => {
             {community.name}
           </Text>
           <View className="flex-row items-center">
-            <TouchableOpacity onPress={community.bookmarkPress}>
+            <TouchableOpacity onPress={handleBookmarkPress}>
               <Ionicons name="bookmark-outline" size={24} color={textColor} />
             </TouchableOpacity>
           </View>

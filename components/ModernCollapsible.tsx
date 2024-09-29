@@ -23,7 +23,7 @@ export function ModernCollapsible({
   const textColor = useThemeColor({}, "text");
 
   return (
-    <View className="ml-3 mb-4">
+    <View className="flex-1 ml-3 mb-4">
       <View className="flex-row items-center justify-between">
         <TouchableOpacity
           style={styles.heading}

@@ -184,7 +184,7 @@ export default function ProfileCreation() {
             <TouchableOpacity
               activeOpacity={0.8}
               className="bg-orange-400 rounded-md py-3 mt-8"
-              onPress={() => router.navigate("ProfileSetup/fieldOfInterest")}
+              onPress={() => router.replace("ProfileSetup/fieldOfInterest")}
             >
               <Text className="text-white text-center font-semibold">
                 Continue

@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, Image } from "react-native";
-import React, { useEffect } from "react";
+import React from "react";
 import { Drawer } from "expo-router/drawer";
 import { CustomDrawerContent } from "@/components/CustomDrawer";
 import { useThemeColor } from "@/hooks/useThemeColor";

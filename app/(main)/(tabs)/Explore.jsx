@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  FlatList,
 } from "react-native";
 import Animated from "react-native-reanimated";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
@@ -22,7 +23,6 @@ import AnimatedHeaderScrollView from "@/components/AnimatedViewCollapse";
 import { SearchBarHeader } from "@/components/searchBarHeader";
 import { imageDataURL } from "../../../constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
-import { ModernCollapsible } from "@/components/ModernCollapsible";
 import {
   discoverData,
   exploreCategories,
@@ -30,7 +30,8 @@ import {
 } from "../../../constants/data";
 import CommunityCard from "@/components/CommunityCard";
 import { trendingCommunity } from "../../../constants/data";
-
+import DiscoverCard from "../../../components/DiscoveryCard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
@@ -41,11 +42,22 @@ const HomeScreen = () => {
   const tintText = useThemeColor({}, "tintText");
   const tintBackground = useThemeColor({}, "tintBackground");
   const { showToast } = useToast();
-  const { scrollRef, scrollHandler, imageAnimatedStyle, headerAnimatedStyle } =
-    useScrollAnimation();
+  const {
+    scrollRef,
+    scrollHandler,
+    imageAnimatedStyle,
+    headerAnimatedStyle,
+    filterButtonStyle,
+  } = useScrollAnimation();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: backgroundColor, paddingBottom: insets.bottom },
+      ]}
+    >
       <Stack.Screen
         options={{
           headerTransparent: true,
@@ -65,9 +77,18 @@ const HomeScreen = () => {
             />
           ),
           headerRight: () => (
-            <TouchableOpacity className="mr-4">
-              <Ionicons name="notifications" size={24} color={textColor} />
-            </TouchableOpacity>
+            <HelloWave>
+              <TouchableOpacity
+                className="mr-4"
+                onPress={() => router.navigate("/message/messageCenter")}
+              >
+                <Ionicons
+                  name="chatbubbles-sharp"
+                  size={24}
+                  color={textColor}
+                />
+              </TouchableOpacity>
+            </HelloWave>
           ),
         }}
       />
@@ -88,10 +109,7 @@ const HomeScreen = () => {
           </Animated.View>
         }
       >
-        <ScrollView
-          className="flex-1 pb-16 mb-16 "
-          showsVerticalScrollIndicator={false}
-        >
+        <View className="flex-1 pb-16 mb-16 ">
           {/* Trending Section */}
           <View className="px-4 pt-4">
             <View className="flex-row justify-between items-center mb-4">
@@ -109,10 +127,7 @@ const HomeScreen = () => {
           </View>
 
           {/* Explore Categories */}
-          <ModernCollapsible
-            title="Explore"
-            seeAllPress={() => console.log("See All")}
-          >
+          <Collapsible title="Explore Categories">
             <View className="flex-row flex-wrap flex-grow space-x-2 ">
               {exploreCategories.map((category, index) => (
                 <TouchableOpacity key={index}>
@@ -129,84 +144,42 @@ const HomeScreen = () => {
                 </TouchableOpacity>
               ))}
             </View>
-          </ModernCollapsible>
+          </Collapsible>
 
           {/* Discover Section */}
-          <View className="px-4">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-lg font-bold" style={{ color: textColor }}>
-                Discover
-              </Text>
-              <TouchableOpacity>
-                <Text className="text-sm text-blue-500">See All</Text>
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View className="flex-row mr-36 pr-36  mb-4">
-                {discoverData.map((person, index) => (
-                  <View
-                    key={index}
-                    className="items-center w-[22%]  rounded-lg p-3 mr-4"
-                    style={{
-                      backgroundColor: cardBackground,
-                      borderWidth: 1,
-                      borderColor: tintBackground,
-                    }}
-                  >
-                    <View className="relative">
-                      <Image
-                        source={{
-                          uri: `https://i.pravatar.cc/64?img=${index + 10}`,
-                        }}
-                        className="w-16 h-16 rounded-full border-2 border-white"
-                      />
-                      <TouchableOpacity className="absolute -top-1 -right-1 bg-gray-100 rounded-full p-1">
-                        <Ionicons name="close" size={16} color="#4B5563" />
-                      </TouchableOpacity>
-                    </View>
-                    <Text
-                      className="mt-2 text-sm font-JakartaSemiBold"
-                      style={{ color: textColor }}
-                    >
-                      {person.name}
-                    </Text>
-                    <Text
-                      style={{ color: tintText }}
-                      className="text-xs font-JakartaSemiBold "
-                    >
-                      {person.skill}
-                    </Text>
-                    <TouchableOpacity className="mt-2 bg-orange-400 px-4 py-1 rounded-full">
-                      <Text className="text-white text-xs font-JakartaMedium">
-                        Connect
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-            </ScrollView>
-            <View className="flex-row justify-between items-center">
-              <Text className="text-lg font-bold" style={{ color: textColor }}>
-                For You
-              </Text>
-              <TouchableOpacity>
-                <Text className="text-sm text-blue-500">See All</Text>
-              </TouchableOpacity>
-            </View>
-            <CommunityCard community={forYouCommunity} />
-            <CommunityCard community={forYouCommunity} />
+          <View>
+            <Collapsible title="Discover">
+              <FlatList
+                data={discoverData}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => <DiscoverCard person={item} />}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ padding: 10 }}
+              />
+            </Collapsible>
+            <Collapsible title="For You">
+              <FlatList
+                data={forYouCommunity}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => <CommunityCard community={item} />}
+                contentContainerStyle={{ padding: 16 }}
+                scrollEnabled={false}
+              />
+            </Collapsible>
           </View>
-        </ScrollView>
+        </View>
       </AnimatedHeaderScrollView>
-      <TouchableOpacity
-        className="absolute bottom-40 right-6 bg-blue-500 rounded-full p-4 shadow-lg"
-        onPress={() => {
-          /* Implement filter modal */
-        }}
-      >
-        <Ionicons name="filter" size={24} color="white" />
-      </TouchableOpacity>
+      <Animated.View style={[filterButtonStyle]}>
+        <TouchableOpacity
+          className="absolute bottom-40 right-6 bg-blue-500 rounded-full p-4 shadow-lg"
+          onPress={() => {
+            /* Implement filter modal */
+          }}
+        >
+          <Ionicons name="filter" size={24} color="white" />
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 };

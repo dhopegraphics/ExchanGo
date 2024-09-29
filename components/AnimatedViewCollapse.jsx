@@ -28,7 +28,7 @@ const AnimatedHeaderScrollView = ({
         </Animated.View>
         <View
           style={{
-            height: 1100,
+            height: 1350,
             backgroundColor: backgroundColor,
           }}
         >

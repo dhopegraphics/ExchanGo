@@ -9,8 +9,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const SignUpScreen = ({ navigation }) => {
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintText = useThemeColor({}, "tintText");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -20,18 +24,30 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <View className="flex-1 justify-center p-6 bg-gray-100">
-      <StatusBar style="dark" />
+    <View
+      style={{ backgroundColor: backgroundColor }}
+      className="flex-1 justify-center p-6"
+    >
+      <StatusBar style="auto" />
       <View className="flex flex-col items-start justify-start">
-        <Text className="text-3xl font-bold mb-2 text-center text-gray-800">
+        <Text
+          style={{ color: textColor }}
+          className="text-3xl font-bold mb-2 text-center text-gray-800"
+        >
           Create an account
         </Text>
-        <Text className="text-sm text-gray-600 mb-8 text-left">
+        <Text
+          style={{ color: tintText }}
+          className="text-sm text-gray-600 mb-8 text-left"
+        >
           Create an account with ExchanGo. Enter your Email and Password
         </Text>
       </View>
       <View className="flex flex-col items-start justify-start">
-        <Text className="text-base font-JakartaSemiBold text-gray-600 mb-2 ">
+        <Text
+          style={{ color: textColor }}
+          className="text-base font-JakartaSemiBold text-gray-600 mb-2 "
+        >
           Email
         </Text>
       </View>
@@ -46,7 +62,10 @@ const SignUpScreen = ({ navigation }) => {
         />
       </View>
       <View className="flex flex-col items-start justify-start">
-        <Text className="text-base font-JakartaSemiBold text-gray-600 mb-2 ">
+        <Text
+          style={{ color: textColor }}
+          className="text-base font-JakartaSemiBold text-gray-600 mb-2 "
+        >
           Password
         </Text>
       </View>
