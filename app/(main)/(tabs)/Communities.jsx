@@ -21,49 +21,13 @@ import { SearchBar } from "react-native-elements";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { SCREEN_WIDTH } from "@/constants/Screen";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Feather from "@expo/vector-icons/Feather";
+import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-const contacts = [
-  {
-    id: "1",
-    name: "Lori Anderson",
-    phone: "1-(774)514-7528",
-    image: "https://via.placeholder.com/50",
-  },
-  {
-    id: "2",
-    name: "Eugene Willis",
-    phone: "3-(046)015-0121",
-    image: "https://via.placeholder.com/50",
-  },
-  {
-    id: "3",
-    name: "Judy Gonzales",
-    phone: "3-(046)015-0121",
-    image: "https://via.placeholder.com/50",
-  },
-  {
-    id: "4",
-    name: "Douglas Hill",
-    phone: "3-(421)692-9472",
-    image: "https://via.placeholder.com/50",
-  },
-  {
-    id: "5",
-    name: "Emma Hart",
-    phone: "3-(294)667-4878",
-    image: "https://via.placeholder.com/50",
-  },
-  // Add more contacts as needed
-];
+import { communityDiscoverData } from "@/constants/data";
 
 const IMG_HEIGHT = 300;
-
-const groups = [
-  { id: "1", name: "Campsite", image: "https://via.placeholder.com/50" },
-  { id: "2", name: "Camping", image: "https://via.placeholder.com/50" },
-  { id: "3", name: "Hawaii", image: "https://via.placeholder.com/50" },
-  // Add more groups as needed
-];
 
 const ContactListScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -102,35 +66,21 @@ const ContactListScreen = () => {
         [0, IMG_HEIGHT / 1.5],
         ["white", "white"]
       ),
+      opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.5], [0, 1]),
     };
   });
+  const filterButtonStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollOffset.value,
+      [0, 1000], // Adjust these values to control when the button starts fading
+      [0, 1],
+      "clamp"
+    );
 
-  const renderContactItem = ({ item }) => (
-    <View style={[styles.contactItem, { backgroundColor: backgroundColor }]}>
-      <Image source={{ uri: item.image }} style={styles.contactImage} />
-      <View style={styles.contactInfo}>
-        <Text style={[styles.contactName, { color: textColor }]}>
-          {item.name}
-        </Text>
-        <Text style={[styles.contactPhone, { color: textColor }]}>
-          {item.phone}
-        </Text>
-      </View>
-      <TouchableOpacity style={styles.inviteButton}>
-        <Text style={styles.inviteButtonText}>Invite</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderGroupItem = ({ item }) => (
-    <View style={styles.groupItem}>
-      <Image source={{ uri: item.image }} style={styles.groupImage} />
-      <Text style={[styles.groupName, { color: textColor }]}>{item.name}</Text>
-      <TouchableOpacity style={styles.inviteButton}>
-        <Text style={styles.inviteButtonText}>Swap</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    return {
+      opacity,
+    };
+  });
 
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
@@ -138,11 +88,29 @@ const ContactListScreen = () => {
         options={{
           headerTransparent: true,
           headerTitle: () => (
-            <Animated.Text
-              style={[styles.headerTitle, headerTitleAnimatedStyle]}
+            <Animated.View
+              style={{ flexDirection: "row", justifyContent: "flex-start" }}
             >
-              Contacts
-            </Animated.Text>
+              <Animated.Text
+                style={[styles.headerTitle, headerTitleAnimatedStyle]}
+              >
+                Discover Communities
+              </Animated.Text>
+              <Animated.View style={{ marginLeft: 100, flexDirection: "row" }}>
+                <TouchableOpacity>
+                  <Feather name="plus" size={24} color="white" />
+                </TouchableOpacity>
+
+                <TouchableOpacity>
+                  <Feather
+                    name="more-vertical"
+                    size={24}
+                    color="white"
+                    style={{ marginLeft: 20 }}
+                  />
+                </TouchableOpacity>
+              </Animated.View>
+            </Animated.View>
           ),
           headerBackground: () => (
             <Animated.View
@@ -155,6 +123,7 @@ const ContactListScreen = () => {
           ),
         }}
       />
+
       <View
         style={[styles.bottomSection, { backgroundColor: backgroundColor }]}
       >
@@ -185,27 +154,53 @@ const ContactListScreen = () => {
               containerStyle={styles.searchBarContainer}
               inputContainerStyle={styles.searchBarInput}
             />
-            <FlatList
-              data={groups}
-              renderItem={renderGroupItem}
-              keyExtractor={(item) => item.id}
-              horizontal
-              style={styles.groupList}
-            />
+            <Text
+              className="text-lg font-bold mb-2"
+              style={{ color: textColor }}
+            >
+              Recently Visited
+            </Text>
+            <CommunityDiscoverCard community={communityDiscoverData[5]} />
           </Animated.View>
-          <View style={{ paddingTop: -10 }}>
-            <Text style={[styles.header, { color: textColor }]}>Contacts</Text>
-          </View>
-          <View style={{ height: 830 }}>
+          <View style={{ height: 2000, backgroundColor: backgroundColor }}>
+            <Text
+              className="text-lg font-JakartaBold"
+              style={{ color: textColor }}
+            >
+              Discover More
+            </Text>
             <FlatList
-              data={contacts}
-              renderItem={renderContactItem}
-              keyExtractor={(item) => item.id}
-              style={[styles.contactList, { backgroundColor: backgroundColor }]}
+              data={communityDiscoverData}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <CommunityDiscoverCard community={item} />
+              )}
+              contentContainerStyle={{ padding: 16 }}
               scrollEnabled={false}
             />
           </View>
         </Animated.ScrollView>
+        <Animated.View
+          style={[
+            filterButtonStyle,
+            { justifyContent: "center", alignItems: "center" },
+          ]}
+          className="justify-center items-center"
+        >
+          <TouchableOpacity
+            className="absolute bottom-40  w-12 h-12 right-6 bg-blue-500 rounded-full p-4 shadow-lg"
+            onPress={() => {
+              scrollRef.current?.scrollTo({ y: 0, animated: true });
+            }}
+          >
+            <Feather
+              name="arrow-up"
+              size={20}
+              color="white"
+              style={{ marginLeft: -2, marginTop: -2 }}
+            />
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     </View>
   );
