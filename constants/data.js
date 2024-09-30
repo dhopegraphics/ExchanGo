@@ -227,6 +227,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Let's talk about UX Design and everything related to it and share your thoughts on this to share and gain knowledge ",
   },
   {
     id: 2,

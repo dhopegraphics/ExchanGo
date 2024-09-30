@@ -35,6 +35,15 @@ const ContactListScreen = () => {
   const insets = useSafeAreaInsets();
   const textColor = useThemeColor({}, "text");
   const [search, setSearch] = React.useState("");
+  const [visibleItems, setVisibleItems] = useState(5);
+
+  const handleShowMore = () => {
+    if (visibleItems + 5 >= communityDiscoverData.length) {
+      setVisibleItems(communityDiscoverData.length);
+    } else {
+      setVisibleItems(visibleItems + 5);
+    }
+  };
   const scrollRef = useAnimatedRef();
   const scrollOffset = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -74,6 +83,19 @@ const ContactListScreen = () => {
       scrollOffset.value,
       [0, 1000], // Adjust these values to control when the button starts fading
       [0, 1],
+      "clamp"
+    );
+
+    return {
+      opacity,
+    };
+  });
+
+  const NameAnimatedStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollOffset.value,
+      [0, 70], // Adjust these values to control when the button starts fading
+      [1, 0],
       "clamp"
     );
 
@@ -139,14 +161,16 @@ const ContactListScreen = () => {
               { paddingTop: insets.top, padding: 5, marginTop: 30 },
             ]}
           >
-            <Text style={[styles.header, { color: textColor }]}>
+            <Animated.Text
+              style={[styles.header, { color: textColor }, NameAnimatedStyle]}
+            >
               Discover Communities
-            </Text>
-            <Text style={[styles.subHeader, { color: textColor }]}>
+            </Animated.Text>
+            <Text style={[{ color: textColor }]}>
               Find communities to join or create your own
             </Text>
             <SearchBar
-              placeholder="Type a name or number"
+              placeholder="Search communities"
               onChangeText={setSearch}
               value={search}
               lightTheme
@@ -162,7 +186,13 @@ const ContactListScreen = () => {
             </Text>
             <CommunityDiscoverCard community={communityDiscoverData[5]} />
           </Animated.View>
-          <View style={{ height: 2000, backgroundColor: backgroundColor }}>
+          <View
+            style={{
+              height: "auto",
+              backgroundColor: backgroundColor,
+              paddingBottom: insets.bottom,
+            }}
+          >
             <Text
               className="text-lg font-JakartaBold"
               style={{ color: textColor }}
@@ -170,7 +200,7 @@ const ContactListScreen = () => {
               Discover More
             </Text>
             <FlatList
-              data={communityDiscoverData}
+              data={communityDiscoverData.slice(0, visibleItems)}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <CommunityDiscoverCard community={item} />
@@ -178,6 +208,22 @@ const ContactListScreen = () => {
               contentContainerStyle={{ padding: 16 }}
               scrollEnabled={false}
             />
+            {visibleItems < communityDiscoverData.length ? (
+              <TouchableOpacity onPress={handleShowMore} className="ml-4">
+                <View className="mb-4 mr-4">
+                  <Text
+                    className="text-sm font-JakartaBold mb-4 "
+                    style={{ color: textColor }}
+                  >
+                    Show More
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <Text style={styles.endOfListText}>
+                End of the previews, search your type community
+              </Text>
+            )}
           </View>
         </Animated.ScrollView>
         <Animated.View
@@ -188,7 +234,7 @@ const ContactListScreen = () => {
           className="justify-center items-center"
         >
           <TouchableOpacity
-            className="absolute bottom-40  w-12 h-12 right-6 bg-blue-500 rounded-full p-4 shadow-lg"
+            className="absolute bottom-32  w-12 h-12 right-6 bg-blue-500 rounded-full p-4 shadow-lg"
             onPress={() => {
               scrollRef.current?.scrollTo({ y: 0, animated: true });
             }}
@@ -216,11 +262,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  subHeader: {
-    fontSize: 14,
-    color: "#888",
-    marginBottom: 20,
-  },
   searchBarContainer: {
     backgroundColor: "transparent",
     borderTopWidth: 0,
@@ -230,66 +271,7 @@ const styles = StyleSheet.create({
   searchBarInput: {
     backgroundColor: "#e9e9e9",
   },
-  groupList: {
-    paddingLeft: 20,
-    paddingBottom: 20,
-  },
-  groupItem: {
-    flex: 1,
-    alignItems: "center",
-    marginRight: 20,
-  },
-  groupImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginBottom: 5,
-  },
-  groupName: {
-    marginBottom: 5,
-    fontSize: 12,
-    textAlign: "center",
-  },
-  contactList: {
-    marginBottom: 90,
-  },
-  contactItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  contactImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  contactInfo: {
-    flex: 1,
-  },
-  contactName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  contactPhone: {
-    fontSize: 14,
-    color: "#888",
-  },
-  inviteButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    backgroundColor: "#007bff",
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  inviteButtonText: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  image: {},
+
   section: {
     marginBottom: 24,
   },
@@ -300,6 +282,7 @@ const styles = StyleSheet.create({
     marginTop: -15, // Negative margin to overlap with the blue background
     flexGrow: 1, // Allows the ScrollView to expand
     paddingTop: 10,
+    paddingBottom: 40,
   },
   headerTop: {
     height: 100,
@@ -307,6 +290,17 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  showMoreButton: {},
+  showMoreText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  endOfListText: {
+    textAlign: "center",
+    color: "#888",
+    fontSize: 16,
+    marginVertical: 10,
   },
 });
 

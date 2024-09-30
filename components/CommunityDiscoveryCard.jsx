@@ -1,6 +1,7 @@
 import React from "react";
 
 import { View, Text, Image, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -10,7 +11,20 @@ const CommunityDiscoverCard = ({ community }) => {
   const tintBackground = useThemeColor({}, "tintBackground");
 
   return (
-    <TouchableOpacity activeOpacity={0.8}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        router.push({
+          pathname: `/communities/${community.id}`,
+          params: {
+            communityId: community.id,
+            communityName: community.name,
+            memberCount: community.memberCount,
+            avatars: community.avatars,
+          },
+        });
+      }}
+    >
       <View className="flex-row items-center p-4 bg-gray-100 rounded-lg mb-4">
         <Image
           source={{ uri: community.profileImage }}

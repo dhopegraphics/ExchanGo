@@ -54,6 +54,10 @@ const MainLayout = () => {
               name="message/messageCenter"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="communities/[index]"
+              options={{ headerShown: false }}
+            />
           </Stack>
         </GestureHandlerRootView>
       </ToastProvider>
