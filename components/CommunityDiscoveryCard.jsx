@@ -20,7 +20,8 @@ const CommunityDiscoverCard = ({ community }) => {
             communityId: community.id,
             communityName: community.name,
             memberCount: community.memberCount,
-            avatars: community.avatars,
+            avatars: JSON.stringify(community.avatars), // Stringify the avatars array
+            bio: community.bio,
           },
         });
       }}

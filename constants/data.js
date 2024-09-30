@@ -227,7 +227,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
-    bio: "Let's talk about UX Design and everything related to it and share your thoughts on this to share and gain knowledge ",
+    bio: "Unleash your creativity and explore the world of visual communication with fellow graphic design enthusiasts.",
   },
   {
     id: 2,
@@ -240,6 +240,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Connect with developers, share coding tips, and stay up-to-date with the latest web technologies and best practices.",
   },
   {
     id: 3,
@@ -252,6 +253,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Discover the latest trends in digital marketing, share strategies, and network with marketing professionals from around the world.",
   },
   {
     id: 4,
@@ -264,6 +266,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Collaborate with fellow musicians, share your tracks, and learn about the latest music production techniques and equipment.",
   },
   {
     id: 5,
@@ -276,6 +279,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "From screenwriting to post-production, join fellow filmmakers to discuss all aspects of the cinematic arts and showcase your work.",
   },
   {
     id: 6,
@@ -288,6 +292,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Bring your characters to life! Share animation techniques, discuss industry trends, and connect with fellow animators.",
   },
   {
     id: 7,
@@ -300,6 +305,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Embark on a linguistic journey! Practice with native speakers, share learning resources, and celebrate cultural diversity.",
   },
   {
     id: 8,
@@ -312,6 +318,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Explore innovative designs, discuss sustainable building practices, and network with architects and enthusiasts worldwide.",
   },
   {
     id: 9,
@@ -324,6 +331,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Showcase your artwork, get inspired by fellow illustrators, and discuss various illustration techniques and styles.",
   },
   {
     id: 10,
@@ -336,6 +344,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Achieve your fitness goals together! Share workout tips, nutrition advice, and motivate each other to stay healthy and active.",
   },
   {
     id: 11,
@@ -348,6 +357,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Explore culinary delights from around the world! Share recipes, cooking techniques, and food photography with fellow foodies.",
   },
   {
     id: 12,
@@ -360,6 +370,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Embark on virtual journeys, share travel stories, and get insider tips for your next adventure from fellow globetrotters.",
   },
   {
     id: 13,
@@ -372,6 +383,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Capture the world through your lens! Share your best shots, discuss photography techniques, and get inspired by stunning visuals.",
   },
   {
     id: 14,
@@ -384,6 +396,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Create beautiful and intuitive interfaces! Discuss design trends, share resources, and get feedback on your UI projects.",
   },
   {
     id: 15,
@@ -396,6 +409,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Enhance user experiences through thoughtful design. Share UX research, discuss methodologies, and solve design challenges together.",
   },
   {
     id: 16,
@@ -408,6 +422,7 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Dive into the world of data! Discuss machine learning, share analysis techniques, and explore the latest trends in data science.",
   },
   {
     id: 17,
@@ -420,5 +435,8 @@ export const communityDiscoverData = [
       { uri: "https://i.pravatar.cc/32?img=2" },
       { uri: "https://i.pravatar.cc/32?img=3" },
     ],
+    bio: "Explore the revolutionary world of blockchain technology, discuss cryptocurrencies, and network with industry experts.",
   },
 ];
+
+// ... rest of the existing code ...
