@@ -1,0 +1,16 @@
+export const userSkills = [
+  { skillName: "JavaScript", users: ["user123"] },
+  { skillName: "React", users: ["user123"] },
+  { skillName: "Node.js", users: ["user123"] },
+  { skillName: "Python", users: ["user456", "user202"] },
+  { skillName: "Data Analysis", users: ["user456"] },
+  { skillName: "Machine Learning", users: ["user456"] },
+  { skillName: "Java", users: ["user789"] },
+  { skillName: "Spring Boot", users: ["user789"] },
+  { skillName: "SQL", users: ["user789"] },
+  { skillName: "UX Design", users: ["user101"] },
+  { skillName: "Figma", users: ["user101"] },
+  { skillName: "Adobe XD", users: ["user101"] },
+  { skillName: "C++", users: ["user202"] },
+  { skillName: "Data Structures", users: ["user202"] },
+];

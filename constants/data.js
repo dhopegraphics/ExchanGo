@@ -215,6 +215,104 @@ export const connections = [
   // Add more connection data here
 ];
 
+export const users = [
+  {
+    id: "user123",
+    name: "Abin",
+    profileImage: imageDataURL[1],
+    email: "abin@example.com",
+  },
+  {
+    id: "user456",
+    name: "Sarah Lee",
+    profileImage: imageDataURL[2],
+    email: "sarah@example.com",
+  },
+  {
+    id: "user789",
+    name: "Mike Chen",
+    profileImage: imageDataURL[4],
+    email: "mike@example.com",
+  },
+  {
+    id: "user101",
+    name: "Jane Smith",
+    profileImage: imageDataURL[6],
+    email: "jane@example.com",
+  },
+  {
+    id: "user202",
+    name: "Alex Johnson",
+    profileImage: imageDataURL[8],
+    email: "alex@example.com",
+  },
+];
+
+export const postData = [
+  {
+    id: "post1",
+    userId: "user123",
+    userName: "Abin",
+    userProfileImage: imageDataURL[1],
+    postImage: imageDataURL[3],
+    postText:
+      "Web literacy must become a fundamental part of our global education system. Without it, opportunity is squandered. With it, we can propel billions farther, faster.",
+    postDate: "30/03/2024",
+    postTime: "12:30 AM",
+    likes: 42,
+    comments: [
+      {
+        id: "comment1",
+        userId: "user101",
+        userName: "Jane Smith",
+        text: "Couldn't agree more! We need to push for more accessible web education.",
+        timestamp: "2024-03-30T00:35:00Z",
+      },
+      {
+        id: "comment2",
+        userId: "user202",
+        userName: "Alex Johnson",
+        text: "Great point! Any suggestions on where to start learning?",
+        timestamp: "2024-03-30T01:15:00Z",
+      },
+    ],
+  },
+  {
+    id: "post2",
+    userId: "user456",
+    userName: "Sarah Lee",
+    userProfileImage: imageDataURL[2],
+    postImage: null,
+    postText:
+      "Just finished my first React Native app! It's been a challenging but rewarding journey. #ReactNative #MobileDev",
+    postDate: "29/03/2024",
+    postTime: "3:45 PM",
+    likes: 28,
+    comments: [],
+  },
+  {
+    id: "post3",
+    userId: "user789",
+    userName: "Mike Chen",
+    userProfileImage: imageDataURL[4],
+    postImage: imageDataURL[5],
+    postText:
+      "Check out this cool UI design I just finished! Feedback welcome. #UIDesign #Figma",
+    postDate: "28/03/2024",
+    postTime: "11:20 AM",
+    likes: 56,
+    comments: [
+      {
+        id: "comment3",
+        userId: "user123",
+        userName: "Abin",
+        text: "Love the color scheme! What was your inspiration?",
+        timestamp: "2024-03-28T11:45:00Z",
+      },
+    ],
+  },
+];
+
 export const communityDiscoverData = [
   {
     id: 1,

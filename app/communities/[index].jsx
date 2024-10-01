@@ -9,6 +9,8 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import AvatarPreviews from "../../components/avatarPreviews";
 import { imageDataURL } from "../../constants/ImageData";
 import CommunityPostCard from "../../components/posted";
+import { postData } from "../../constants/data";
+
 const CommunityPage = () => {
   const insets = useSafeAreaInsets();
   const { communityId, communityName, memberCount, avatars, bio } =
@@ -19,9 +21,12 @@ const CommunityPage = () => {
   const parsedAvatars = JSON.parse(avatars);
 
   return (
-    <ScrollView className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+    <ScrollView
+      className="flex-1 bg-white"
+      style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+    >
       <StatusBar style="auto" />
-      <View className="p-4">
+      <View className="p-4 mb-20">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-bold">{communityName}</Text>
@@ -43,7 +48,9 @@ const CommunityPage = () => {
 
         {/* Community Description */}
         <Text className="text-gray-700 mb-6">{bio}</Text>
-        <CommunityPostCard />
+        {postData.map((post) => (
+          <CommunityPostCard key={post.id} post={post} />
+        ))}
       </View>
     </ScrollView>
   );
