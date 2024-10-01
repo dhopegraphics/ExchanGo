@@ -1,9 +1,11 @@
 import { users } from "./users";
+import { imageDataURL } from "../constants/ImageData";
 
 export const communityDetails = [
   {
     id: 1,
     name: "Graphic Design Community",
+    profileImage: imageDataURL[0],
     bio: "Unleash your creativity and explore the world of visual communication with fellow graphic design enthusiasts.",
     createdAt: "2024-03-30T03:35:00Z",
     updatedAt: "2024-03-30T03:35:00Z",
@@ -12,6 +14,7 @@ export const communityDetails = [
   {
     id: 2,
     name: "Web Development Community",
+    profileImage: imageDataURL[1],
     bio: "Connect with developers, share coding tips, and stay up-to-date with the latest web technologies and best practices.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -20,6 +23,7 @@ export const communityDetails = [
   {
     id: 3,
     name: "Digital Marketing Community",
+    profileImage: imageDataURL[5],
     bio: "Discover the latest trends in digital marketing, share strategies, and network with marketing professionals from around the world.",
     createdAt: "2024-08-14T00:00:00Z",
     updatedAt: "2024-08-14T00:00:00Z",
@@ -28,6 +32,7 @@ export const communityDetails = [
   {
     id: 4,
     name: "Music Production Community",
+    profileImage: imageDataURL[9],
     bio: "Collaborate with fellow musicians, share your tracks, and learn about the latest music production techniques and equipment.",
     createdAt: "2024-03-14T00:00:00Z",
     updatedAt: "2024-03-14T00:00:00Z",
@@ -36,6 +41,7 @@ export const communityDetails = [
   {
     id: 5,
     name: "Film Making Community",
+    profileImage: imageDataURL[7],
     bio: "From screenwriting to post-production, join fellow filmmakers to discuss all aspects of the cinematic arts and showcase your work.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -44,6 +50,7 @@ export const communityDetails = [
   {
     id: 6,
     name: "Animation Community",
+    profileImage: imageDataURL[10],
     bio: "Bring your characters to life! Share animation techniques, discuss industry trends, and connect with fellow animators.",
     createdAt: "2024-07-14T00:00:00Z",
     updatedAt: "2024-07-14T00:00:00Z",
@@ -52,6 +59,7 @@ export const communityDetails = [
   {
     id: 7,
     name: "Language Learning Community",
+    profileImage: imageDataURL[12],
     bio: "Embark on a linguistic journey! Practice with native speakers, share learning resources, and celebrate cultural diversity.",
     createdAt: "2024-05-18T00:00:00Z",
     updatedAt: "2024-05-18T00:00:00Z",
@@ -60,6 +68,7 @@ export const communityDetails = [
   {
     id: 8,
     name: "Architecture Community",
+    profileImage: imageDataURL[13],
     bio: "Explore innovative designs, discuss sustainable building practices, and network with architects and enthusiasts worldwide.",
     createdAt: "2024-05-18T00:00:00Z",
     updatedAt: "2024-05-18T00:00:00Z",
@@ -68,6 +77,7 @@ export const communityDetails = [
   {
     id: 9,
     name: "Illustration Community",
+    profileImage: imageDataURL[14],
     bio: "Showcase your artwork, get inspired by fellow illustrators, and discuss various illustration techniques and styles.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -76,6 +86,7 @@ export const communityDetails = [
   {
     id: 10,
     name: "Fitness Community",
+    profileImage: imageDataURL[15],
     bio: "Achieve your fitness goals together! Share workout tips, nutrition advice, and motivate each other to stay healthy and active.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -84,6 +95,7 @@ export const communityDetails = [
   {
     id: 11,
     name: "Cooking Community",
+    profileImage: imageDataURL[16],
     bio: "Explore culinary delights from around the world! Share recipes, cooking techniques, and food photography with fellow foodies.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -92,6 +104,7 @@ export const communityDetails = [
   {
     id: 12,
     name: "Travel Community",
+    profileImage: imageDataURL[17],
     bio: "Embark on virtual journeys, share travel stories, and get insider tips for your next adventure from fellow globetrotters.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -108,6 +121,7 @@ export const communityDetails = [
   {
     id: 14,
     name: "UI Design Community",
+    profileImage: imageDataURL[18],
     bio: "Create beautiful and intuitive interfaces! Discuss design trends, share resources, and get feedback on your UI projects.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
@@ -116,25 +130,28 @@ export const communityDetails = [
   {
     id: 15,
     name: "UX Design Community",
+    profileImage: imageDataURL[4],
     bio: "Enhance user experiences through thoughtful design. Share UX research, discuss methodologies, and solve design challenges together.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
-    createdBy: users[5].id,
+    createdBy: users[12].id,
   },
   {
     id: 16,
     name: "Data Science Community",
+    profileImage: imageDataURL[19],
     bio: "Dive into the world of data! Discuss machine learning, share analysis techniques, and explore the latest trends in data science.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
-    createdBy: users[5].id,
+    createdBy: users[8].id,
   },
   {
     id: 17,
     name: "Blockchain Community",
+    profileImage: imageDataURL[20],
     bio: "Explore the revolutionary world of blockchain technology, discuss cryptocurrencies, and network with industry experts.",
     createdAt: "2024-02-14T00:00:00Z",
     updatedAt: "2024-02-14T00:00:00Z",
-    createdBy: users[5].id,
+    createdBy: users[6].id,
   },
 ];

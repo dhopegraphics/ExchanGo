@@ -24,8 +24,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
-import { communityDiscoverData } from "@/constants/data";
+import { communityDetails } from "../../../data/communitiesDetail";
+import { joinedCommunities } from "../../../data/joinedCommunities";
+import { users } from "@/data/users";
 
 const IMG_HEIGHT = 300;
 
@@ -38,8 +39,8 @@ const ContactListScreen = () => {
   const [visibleItems, setVisibleItems] = useState(5);
 
   const handleShowMore = () => {
-    if (visibleItems + 5 >= communityDiscoverData.length) {
-      setVisibleItems(communityDiscoverData.length);
+    if (visibleItems + 5 >= communityDetails.length) {
+      setVisibleItems(communityDetails.length);
     } else {
       setVisibleItems(visibleItems + 5);
     }
@@ -184,7 +185,11 @@ const ContactListScreen = () => {
             >
               Recently Visited
             </Text>
-            <CommunityDiscoverCard community={communityDiscoverData[5]} />
+            <CommunityDiscoverCard
+              community={communityDetails[5]}
+              users={users}
+              joinedCommunities={joinedCommunities}
+            />
           </Animated.View>
           <View
             style={{
@@ -200,15 +205,19 @@ const ContactListScreen = () => {
               Discover More
             </Text>
             <FlatList
-              data={communityDiscoverData.slice(0, visibleItems)}
+              data={communityDetails.slice(0, visibleItems)}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
-                <CommunityDiscoverCard community={item} />
+                <CommunityDiscoverCard
+                  community={item}
+                  users={users}
+                  joinedCommunities={joinedCommunities}
+                />
               )}
               contentContainerStyle={{ padding: 16 }}
               scrollEnabled={false}
             />
-            {visibleItems < communityDiscoverData.length ? (
+            {visibleItems < communityDetails.length ? (
               <TouchableOpacity onPress={handleShowMore} className="ml-4">
                 <View className="mb-4 mr-4">
                   <Text

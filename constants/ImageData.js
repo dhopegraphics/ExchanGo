@@ -24,4 +24,9 @@ export const imageDataURL = [
   "https://img.freepik.com/premium-photo/picture-brain-that-has-fire-inside-it_939681-3209.jpg",
   "https://img.freepik.com/premium-photo/picture-brain-with-mountain-background_972290-8965.jpg",
   "https://img.freepik.com/premium-photo/picture-brain-that-has-fire-inside-it_939681-3209.jpg",
+  "https://onlinejpgtools.com/images/examples-onlinejpgtools/sunflower.jpg",
+  "https://onlinejpgtools.com/images/examples-onlinejpgtools/leaves-with-droplets.jpg",
+  "https://onlinejpgtools.com/images/examples-onlinejpgtools/green-leaves-with-rain.jpg",
+  "https://onlinejpgtools.com/images/examples-onlinejpgtools/mountains-near-water-better-quality.jpg",
+  "https://images.pexels.com/photos/547119/pexels-photo-547119.jpeg?cs=srgb&dl=pexels-dreamypixel-547119.jpg&fm=jpg",
 ];

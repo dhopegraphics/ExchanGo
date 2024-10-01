@@ -55,7 +55,11 @@ const MainLayout = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="communities/[index]"
+              name="community/[id]"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="community/Rules"
               options={{ headerShown: false }}
             />
           </Stack>

@@ -1,26 +1,42 @@
 import React from "react";
-
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
-
 import { useThemeColor } from "@/hooks/useThemeColor";
 
-const CommunityDiscoverCard = ({ community }) => {
-  const textColor = useThemeColor({}, "text");
-
+const CommunityDiscoverCard = ({
+  community,
+  users,
+  joinedCommunities = [],
+}) => {
   const tintBackground = useThemeColor({}, "tintBackground");
+  // Get the members of the community using joinedCommunities and users data
+  // Find the community in the joinedCommunities array
+  const joinedCommunity = joinedCommunities.find(
+    (join) => join.communityId === community.id
+  );
+
+  // Get the members using the `userIds` array
+  const communityMembers = joinedCommunity
+    ? joinedCommunity.userIds.map((userId) =>
+        users.find((user) => user.id === userId)
+      )
+    : [];
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => {
         router.push({
-          pathname: `/communities/${community.id}`,
+          pathname: `/community/${community.id}`,
           params: {
             communityId: community.id,
             communityName: community.name,
-            memberCount: community.memberCount,
-            avatars: JSON.stringify(community.avatars), // Stringify the avatars array
+            memberCount: communityMembers.length,
+            avatars: JSON.stringify(
+              communityMembers.map((member) => ({
+                uri: member?.profileImage,
+              }))
+            ),
             bio: community.bio,
           },
         });
@@ -37,15 +53,15 @@ const CommunityDiscoverCard = ({ community }) => {
           </Text>
           <View className="flex-row items-center mb-2">
             <Text className="text-xs font-JakartaSemiBold text-gray-500">
-              {community.memberCount}
+              {communityMembers.length}
             </Text>
             <Text className="text-xs font-JakartaMedium ml-1">Members</Text>
           </View>
           <View className="flex-row mr-2">
-            {community.avatars.map((avatar, index) => (
+            {communityMembers.slice(0, 6).map((member, index) => (
               <Image
                 key={index}
-                source={{ uri: avatar.uri }}
+                source={{ uri: member?.profileImage }}
                 className={`w-6 h-6 rounded-full ${index > 0 ? "-ml-3" : ""}`}
                 style={{ borderWidth: 1, borderColor: tintBackground }}
                 resizeMode="contain"
