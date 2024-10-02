@@ -1,22 +1,28 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useCallback, useRef } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import AvatarPreviews from "../../components/avatarPreviews";
-import { imageDataURL } from "../../constants/ImageData";
 import CommunityPostCard from "../../components/posted";
 import { postData } from "../../data/postMade";
 import { commentsData } from "../../data/postComments";
 import { users } from "../../data/users";
 import { likesData } from "../../data/PostLikes";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
+import { useJoin } from "../../Context/CommunityJoinContext";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import Animated, { Easing } from "react-native-reanimated";
 
 const CommunityPage = () => {
   const insets = useSafeAreaInsets();
-  const { communityId, communityName, memberCount, avatars, bio, joined } =
+  const filterSheetBottomSheetRef = useRef(null);
+  const handleUnjoinedModalPress = useCallback(() => {
+    filterSheetBottomSheetRef.current?.present();
+  }, []);
+  const { communityId, communityName, memberCount, avatars, bio } =
     useLocalSearchParams();
   const tintBackground = useThemeColor({}, "tintBackground");
 
@@ -28,21 +34,11 @@ const CommunityPage = () => {
     (post) => post.communityId === parseInt(communityId, 10)
   );
 
-  const [isJoined, setIsJoined] = useState(false); // State to track join status
-
-  useFocusEffect(
-    useCallback(() => {
-      const params = router.getState().routes[router.getState().index].params;
-      if (params && params.joined === "true") {
-        setIsJoined(true);
-      }
-    }, [])
-  );
+  const { isJoined, setIsJoined } = useJoin();
 
   const handlePress = () => {
-    if (isJoined) {
-      // Handle leaving the community
-      setIsJoined(false);
+    if (isJoined(communityId)) {
+      filterSheetBottomSheetRef.current?.present();
     } else {
       // Navigate to Rules page
       router.push({
@@ -85,10 +81,10 @@ const CommunityPage = () => {
             <TouchableOpacity
               onPress={handlePress}
               activeOpacity={0.8}
-              className={`px-6 py-2 rounded-full ${isJoined ? "bg-gray-500" : "bg-black"}`}
+              className={`px-6 py-2 rounded-full ${isJoined(communityId) ? "bg-gray-500" : "bg-black"}`}
             >
               <Text className="text-white font-semibold">
-                {isJoined ? "Joined" : "Join"}
+                ${isJoined(communityId) ? "Joined" : "Join"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -112,6 +108,49 @@ const CommunityPage = () => {
           )}
         </View>
       </ScrollView>
+      <BottomSheetModal
+        ref={filterSheetBottomSheetRef}
+        index={0}
+        snapPoints={["40%"]}
+        animationConfigs={{
+          duration: 800,
+          easing: Easing.elastic(1),
+        }}
+        backgroundStyle={{
+          backgroundColor: "#f1f5f9",
+        }}
+        enablePanDownToClose={true}
+      >
+        <View className="flex-1 p-6">
+          <Text className="text-xl font-JakartaBold text-center mb-4">
+            Are you sure you want to leave {communityName}?
+          </Text>
+          <Text className="text-sm text-gray-600 text-center mb-6">
+            To rejoin, you'll need an invitation. You'll no longer receive
+            notifications from this community. Keep in mind that you can always
+            rejoin later.
+          </Text>
+          <TouchableOpacity
+            className="bg-red-500 rounded-full py-3 mb-3"
+            onPress={() => {
+              leaveCommunity(communityId);
+              filterSheetBottomSheetRef.current?.close();
+            }}
+          >
+            <Text className="text-white font-JakartaBold text-center">
+              Leave
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-gray-200 rounded-full py-3"
+            onPress={() => filterSheetBottomSheetRef.current?.close()}
+          >
+            <Text className="text-gray-800 font-JakartaBold text-center">
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetModal>
     </View>
   );
 };

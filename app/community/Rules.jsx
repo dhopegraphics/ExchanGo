@@ -4,22 +4,17 @@ import Feather from "@expo/vector-icons/Feather";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
+import { useJoin } from "@/Context/CommunityJoinContext";
 
 const Rules = () => {
   const insets = useSafeAreaInsets();
-  const {
-    communityId,
-    communityName,
-    setIsJoined: setIsJoinedString,
-  } = useLocalSearchParams();
+  const { communityId, communityName } = useLocalSearchParams();
+  const { joinCommunity } = useJoin();
 
   const handleAgreeAndJoin = () => {
-    // Navigate back to the community page with a flag indicating the user has joined
-    router.back({
-      params: { joined: true },
-    });
+    joinCommunity(communityId);
+    router.back();
   };
-
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
