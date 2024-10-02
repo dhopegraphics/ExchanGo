@@ -32,6 +32,10 @@ import CommunityCard from "@/components/CommunityCard";
 import { trendingCommunity } from "../../../constants/data";
 import DiscoverCard from "../../../components/DiscoveryCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { communityDetails } from "../../../data/communitiesDetail";
+import { users } from "../../../data/users";
+import { joinedCommunities } from "../../../data/joinedCommunities";
+import { getRandomCommunities } from "../../../utils/databasefunctions";
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
@@ -160,9 +164,15 @@ const HomeScreen = () => {
             </Collapsible>
             <Collapsible title="For You">
               <FlatList
-                data={forYouCommunity}
+                data={getRandomCommunities(communityDetails)} // Use the random selection function
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <CommunityCard community={item} />}
+                renderItem={({ item }) => (
+                  <CommunityCard
+                    community={item}
+                    users={users}
+                    joinedCommunities={joinedCommunities}
+                  />
+                )}
                 contentContainerStyle={{ padding: 16 }}
                 scrollEnabled={false}
               />

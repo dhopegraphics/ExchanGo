@@ -42,3 +42,10 @@ export const getPostUser = (userId) => {
 export const getLikesForPost = (postId) => {
   return likesData.filter((like) => like.postId === postId);
 };
+
+export const getRandomCommunities = (data) => {
+  const today = new Date().toDateString(); // Get today's date
+  const randomSeed = today.split(" ").join(""); // Create a seed from the date
+  const shuffledData = data.sort(() => 0.5 - Math.random()); // Shuffle the data
+  return shuffledData.slice(0, 2); // Return the first 2 communities
+};
