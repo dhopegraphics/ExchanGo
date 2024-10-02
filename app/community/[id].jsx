@@ -84,7 +84,7 @@ const CommunityPage = () => {
               className={`px-6 py-2 rounded-full ${isJoined(communityId) ? "bg-gray-500" : "bg-black"}`}
             >
               <Text className="text-white font-semibold">
-                ${isJoined(communityId) ? "Joined" : "Join"}
+                {isJoined(communityId) ? "Joined" : "Join"}
               </Text>
             </TouchableOpacity>
           </View>
