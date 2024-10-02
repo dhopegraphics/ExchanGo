@@ -127,7 +127,15 @@ const HomeScreen = () => {
 
             {/* Trending Card */}
 
-            <CommunityCard community={trendingCommunity} />
+            <CommunityCard
+              community={
+                communityDetails[
+                  Math.floor(Math.random() * communityDetails.length)
+                ]
+              } // Select a random community
+              users={users}
+              joinedCommunities={joinedCommunities}
+            />
           </View>
 
           {/* Explore Categories */}

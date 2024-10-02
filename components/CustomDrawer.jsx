@@ -110,24 +110,31 @@ export const CustomDrawerContent = (props) => {
           <Ionicons
             name="people-outline"
             size={size}
-            color={pathname == "/communities" ? activeItemTextColor : textColor}
+            color={
+              pathname == "/(main)/(tabs)/Communities"
+                ? activeItemTextColor
+                : textColor
+            }
           />
         )}
         label={"Community"}
         labelStyle={[
           styles.navItemLabel,
           {
-            color: pathname == "/communities" ? activeItemTextColor : textColor,
+            color:
+              pathname == "/(main)/(tabs)/Communities"
+                ? activeItemTextColor
+                : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/communities"
+            pathname == "/(main)/(tabs)/Communities"
               ? activeItemBackgroundColor
               : backgroundColor,
         }}
         onPress={() => {
-          router.push("/communities");
+          router.push("/(main)/(tabs)/Communities");
         }}
       />
       <DrawerItem
@@ -206,6 +213,7 @@ export const CustomDrawerContent = (props) => {
           }}
           onPress={() => {}}
         />
+        <View></View>
       </View>
     </DrawerContentScrollView>
   );

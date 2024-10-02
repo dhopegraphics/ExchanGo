@@ -66,7 +66,7 @@ const SwapCenter = () => {
         <View style={{ flex: 1, padding: 10 }}>
           <FlatList
             data={connections}
-            renderItem={({ item }) => <ConnectionCard item={item} />}
+            renderItem={({ item }) => <ConnectionCard user={item} />}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}

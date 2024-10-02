@@ -59,7 +59,7 @@ const CommunityPostCard = ({ post, comments, users, likes }) => {
         <View key={postComments.id} className="mt-2">
           <Text className="font-semibold mb-1">Comments</Text>
           {postComments.slice(0, 2).map((comment) => (
-            <View key={comment.commentId} className="mb-1">
+            <View key={comment.id} className="mb-1">
               {/* Ensure this matches your comment structure */}
               <Text className="text-xs">
                 <Text className="font-semibold">

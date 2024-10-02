@@ -14,7 +14,9 @@ import {
   renderChatItem,
   renderRequestItem,
 } from "@/components/MessagingContainer";
-import { chatData, requestData } from "@/constants/data";
+import { chatData } from "../../data/chat";
+import { requestData } from "../../data/request";
+import { users } from "../../data/users";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
@@ -32,6 +34,7 @@ export default function messagesHub() {
     router.push({
       pathname: `/message/${item.id}`,
       params: {
+        id: item.id,
         name: item.name,
         imageUrl: item.imageUrl,
         lastMessage: item.message,
@@ -61,6 +64,7 @@ export default function messagesHub() {
         chatItem: item,
         nameColor: textColor,
         ChatItemPress: () => handleChatItemPress(item),
+        users,
       });
     } else {
       return renderRequestItem({
@@ -69,6 +73,7 @@ export default function messagesHub() {
         acceptRequest: () => handleAcceptRequest(item),
         declineRequest: () => handleDeclineRequest(item),
         onRequestContactPressed: () => handleRequestContactPressed(item),
+        users,
       });
     }
   };

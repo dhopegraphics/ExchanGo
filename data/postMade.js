@@ -6,7 +6,7 @@ export const postData = [
     id: 1,
     communityId: 1,
     userId: users[0].id,
-    postImage: imageDataURL[3],
+    postImage: imageDataURL[9],
     postText:
       "Web literacy must become a fundamental part of our global education system. Without it, opportunity is squandered. With it, we can propel billions farther, faster.",
     createdAt: "2024-03-30T00:30:00",

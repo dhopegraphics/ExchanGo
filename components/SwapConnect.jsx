@@ -2,33 +2,48 @@ import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AirbnbRating } from "@rneui/themed";
+import { router } from "expo-router";
 
-export const ConnectionCard = ({ item }) => {
+export const ConnectionCard = ({ user }) => {
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
-      <Image source={{ uri: item.avatar }} style={styles.avatar} />
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() => {
+        router.push({
+          pathname: `/account/${user.id}`,
+          params: {
+            userId: user.id,
+            userName: user.name,
+            bio: user.bio,
+            rating: user.rating,
+          },
+        });
+      }}
+    >
+      <Image source={{ uri: user.avatar }} style={styles.avatar} />
       <View style={styles.cardContent}>
-        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.name}>{user.name}</Text>
         <View style={styles.skillContainer}>
-          <Text style={styles.skill}>{item.primarySkill}</Text>
+          <Text style={styles.skill}>{user.primarySkill}</Text>
           <Ionicons name="arrow-forward" size={16} color="#666" />
-          <Text style={styles.skill}>{item.secondarySkill}</Text>
+          <Text style={styles.skill}>{user.secondarySkill}</Text>
         </View>
         <View className="items-start">
           <AirbnbRating
             count={5}
-            defaultRating={item.rating}
+            defaultRating={user.rating}
             size={16}
             showRating={false}
             isDisabled={true}
           />
         </View>
-        <Text style={styles.location}>{item.location}</Text>
+        <Text style={styles.location}>{user.location}</Text>
       </View>
       <TouchableOpacity style={styles.favoriteButton}>
         <Ionicons name="heart-outline" size={24} color="#666" />
       </TouchableOpacity>
-      {item.featured && (
+      {user.featured && (
         <View style={styles.featuredBadge}>
           <Text style={styles.featuredText}>Featured</Text>
         </View>
