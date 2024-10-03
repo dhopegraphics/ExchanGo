@@ -14,7 +14,7 @@ export const renderChatItem = ({
   ChatItemPress,
   users,
 }) => {
-  const user = users.find((user) => user.id === chatItem.userId); // Fetch the user data based on userId
+  const user = users.find((user) => user.id === chatItem.senderId); // Fetch the user data based on userId
 
   return (
     <View className="justify-center items-center">
@@ -53,7 +53,7 @@ export const renderRequestItem = ({
   onRequestContactPressed,
   users,
 }) => {
-  const user = users.find((user) => user.id === requestItem.userId); // Fetch the user data based on userId
+  const user = users.find((user) => user.id === requestItem.senderId); // Fetch the user data based on userId
 
   return (
     <View className="justify-center items-center">
@@ -93,7 +93,6 @@ export const renderRequestItem = ({
             </TouchableOpacity>
           </View>
           <Text className="text-xs mt-4 font-JakartaSemiBold text-orange-400">
-            {new Date(requestItem.time).toLocaleDateString()}{" "}
             {new Date(requestItem.time).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

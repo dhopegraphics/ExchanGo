@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   TextInput,
   Image,
   FlatList,
@@ -14,38 +13,68 @@ import {
   renderChatItem,
   renderRequestItem,
 } from "@/components/MessagingContainer";
-import { chatData } from "../../data/chat";
+import { receivedMessages } from "../../data/chat"; // Ensure this imports the correct data
 import { requestData } from "../../data/request";
 import { users } from "../../data/users";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { currentUser } from "../../data/users";
 
 export default function messagesHub() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const [activeTab, setActiveTab] = useState("Chats");
   const insets = useSafeAreaInsets();
+  const currentUserId = currentUser.id; // Use the actual user ID
+  const [showKeyboard, setShowKeyboard] = useState(true); // State to control keyboard visibility
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
   const handleChatItemPress = (item) => {
+    // Find the user based on senderId or receiverId
+
+    const user = users.find(
+      (user) =>
+        user.id ===
+        (item.senderId === currentUserId ? item.receiverId : item.senderId)
+    );
+
     router.push({
-      pathname: `/message/${item.id}`,
+      pathname: `/message/${item.id}`, // Assuming item.id is the chat ID
       params: {
         id: item.id,
-        name: item.name,
-        imageUrl: item.imageUrl,
+        name: user.name, // Get the name from the user object
+        imageUrl: user.profileImage, // Get the profile image from the user object
         lastMessage: item.message,
         time: item.time,
+        receiverId:
+          item.senderId === currentUserId ? item.receiverId : item.senderId, // Pass the correct receiverId
       },
     });
   };
 
   const handleRequestContactPressed = (item) => {
-    // Handle request contact pressed
-    console.log("Request contact pressed:", item);
+    setShowKeyboard(false);
+    const user = users.find(
+      (user) =>
+        user.id ===
+        (item.senderId === currentUserId ? item.receiverId : item.senderId)
+    );
+
+    router.push({
+      pathname: `/message/${item.id}`, // Assuming item.id is the chat ID
+      params: {
+        id: item.id,
+        name: user.name, // Get the name from the user object
+        imageUrl: user.profileImage, // Get the profile image from the user object
+        lastMessage: item.message,
+        time: item.time,
+        receiverId:
+          item.senderId === currentUserId ? item.receiverId : item.senderId, // Pass the correct receiverId
+      },
+    });
   };
 
   const handleAcceptRequest = (item) => {
@@ -58,6 +87,31 @@ export default function messagesHub() {
     console.log("Decline request:", item);
   };
 
+  // Group messages by user and get the latest message
+  const getLatestMessages = () => {
+    const messageMap = {};
+
+    // Combine received and sent messages
+    const allMessages = [...receivedMessages];
+
+    allMessages.forEach((msg) => {
+      const userId =
+        msg.senderId === currentUserId ? msg.receiverId : msg.senderId;
+
+      // If the user is not in the map or the message is newer, update the map
+      if (
+        !messageMap[userId] ||
+        new Date(msg.time) > new Date(messageMap[userId].time)
+      ) {
+        messageMap[userId] = msg;
+      }
+    });
+
+    return Object.values(messageMap); // Return the latest messages
+  };
+
+  const latestMessages = getLatestMessages();
+
   const renderItem = ({ item }) => {
     if (activeTab === "Chats") {
       return renderChatItem({
@@ -65,6 +119,7 @@ export default function messagesHub() {
         nameColor: textColor,
         ChatItemPress: () => handleChatItemPress(item),
         users,
+        currentUserId,
       });
     } else {
       return renderRequestItem({
@@ -74,6 +129,7 @@ export default function messagesHub() {
         declineRequest: () => handleDeclineRequest(item),
         onRequestContactPressed: () => handleRequestContactPressed(item),
         users,
+        currentUserId,
       });
     }
   };
@@ -135,7 +191,7 @@ export default function messagesHub() {
         </View>
       </View>
       <FlatList
-        data={activeTab === "Chats" ? chatData : requestData}
+        data={activeTab === "Chats" ? latestMessages : requestData} // Use latest messages
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingHorizontal: 16 }}

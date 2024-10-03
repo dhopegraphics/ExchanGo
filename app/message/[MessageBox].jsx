@@ -17,14 +17,33 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { router, useLocalSearchParams } from "expo-router";
 import { BlurView } from "expo-blur";
 import { MessageOptions, Message } from "../../components/optionsOnMessage";
+import { receivedMessages, sentMessages } from "../../data/chat"; // {{ edit_1 }}
+import { currentUser } from "../../data/users";
 
 const MessageBox = () => {
   const insets = useSafeAreaInsets();
-  const [messages, setMessages] = useState([]);
-  const [selectedMessage, setSelectedMessage] = useState(null);
+  const { name, imageUrl, receiverId, keyboardInput } = useLocalSearchParams();
+  const currentUserId = currentUser.id; // Use currentUser.id instead of "me"
   const backgroundColor = useThemeColor({}, "background");
-  const { name, imageUrl } = useLocalSearchParams();
+  const [messages, setMessages] = useState([]); // {{ edit_1 }}
 
+  // Combine received and sent messages for the current user
+  useEffect(() => {
+    const allMessages = [...receivedMessages, ...sentMessages];
+    const filteredMessages = allMessages.filter(
+      (msg) =>
+        (msg.receiverId === currentUserId && msg.senderId === receiverId) ||
+        (msg.senderId === currentUserId && msg.receiverId === receiverId)
+    );
+
+    // Sort messages by time
+    const sortedMessages = filteredMessages.sort(
+      (a, b) => new Date(a.time) - new Date(b.time)
+    );
+    setMessages(sortedMessages);
+  }, [currentUserId, receiverId]); // Add receiverId to dependencies
+
+  const [selectedMessage, setSelectedMessage] = useState(null);
   const flatListRef = React.useRef(null);
 
   const handleLongPress = useCallback((message) => {
@@ -41,6 +60,7 @@ const MessageBox = () => {
     { label: "Copy", onPress: () => {} },
     { label: "Delete", onPress: () => {} },
   ];
+
   // Scroll to bottom when new messages are added
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
@@ -51,30 +71,47 @@ const MessageBox = () => {
   const renderMessage = useCallback(
     ({ item }) => (
       <Message
-        content={item.content}
-        isUser={item.isUser}
-        timestamp={item.timestamp}
+        content={item.message}
+        isUser={item.senderId === currentUserId}
+        timestamp={new Date(item.time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
         onLongPress={() => handleLongPress(item)}
         isSelected={selectedMessage && selectedMessage.id === item.id}
+        style={{
+          alignSelf:
+            item.senderId === currentUserId ? "flex-end" : "flex-start",
+        }}
       />
     ),
     [handleLongPress, selectedMessage]
   );
 
-  const keyExtractor = useCallback((item) => item.id.toString(), []);
-
-  const handleSendMessage = useCallback((content) => {
-    const newMessage = {
-      id: Date.now(),
-      content,
-      isUser: true,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  const keyExtractor = useCallback((item) => {
+    // Create a unique key using senderId, receiverId, and time
+    return `${item.senderId}-${item.receiverId}-${item.time}`;
   }, []);
+
+  const handleSendMessage = useCallback(
+    (content) => {
+      const newMessage = {
+        id: Date.now().toString(),
+        senderId: currentUserId,
+        receiverId: receiverId, // Set the correct receiverId
+        message: content,
+        time: new Date().toISOString(),
+      };
+      // Add the new message and sort the messages again
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages, newMessage];
+        return updatedMessages.sort(
+          (a, b) => new Date(a.time) - new Date(b.time)
+        );
+      });
+    },
+    [currentUserId, receiverId] // Add receiverId to dependencies
+  );
 
   return (
     <KeyboardAvoidingView
@@ -99,7 +136,10 @@ const MessageBox = () => {
           />
         </View>
       </TouchableWithoutFeedback>
-      <MessageInput onShouldSend={handleSendMessage} />
+      <MessageInput
+        onShouldSend={handleSendMessage}
+        keyboardInput={keyboardInput}
+      />
       {selectedMessage && (
         <Modal transparent animationType="fade">
           <BlurView intensity={20} style={StyleSheet.absoluteFill}>
@@ -107,9 +147,14 @@ const MessageBox = () => {
               <View className="flex-1 justify-center items-center">
                 <View className="w-full px-4">
                   <Message
-                    content={selectedMessage.content}
-                    isUser={selectedMessage.isUser}
-                    timestamp={selectedMessage.timestamp}
+                    content={selectedMessage.message}
+                    isUser={selectedMessage.senderId === currentUserId}
+                    timestamp={new Date(
+                      selectedMessage.time
+                    ).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                     isSelected={true}
                   />
                 </View>

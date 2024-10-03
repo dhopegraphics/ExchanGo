@@ -57,7 +57,7 @@ export const Message = memo(({ content, isUser, timestamp, onLongPress }) => {
   return (
     <TouchableWithoutFeedback onLongPress={handleLongPress}>
       <Animated.View
-        className={`max-w-[80%]  p-3 ${bubbleStyle}`}
+        className={`max-w-[80%] mb-4 p-3 ${bubbleStyle}`}
         style={{ transform: [{ scale: scaleAnim }] }}
       >
         <Text className={`${textStyle} font-JakartaBold`}>{content}</Text>
