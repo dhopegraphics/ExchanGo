@@ -1,4 +1,5 @@
 import { users } from "./users";
+import { currentUser } from "./users";
 
 export const userSkills = [
   {
@@ -9,7 +10,7 @@ export const userSkills = [
   {
     userSkillId: 2,
     skillName: "React",
-    users: [users[0].id],
+    users: [users[0].id, currentUser.id],
   },
 
   {
@@ -55,12 +56,12 @@ export const userSkills = [
   {
     userSkillId: 11,
     skillName: "Figma",
-    users: [users[3].id],
+    users: [users[3].id, currentUser.id],
   },
   {
     userSkillId: 12,
     skillName: "Adobe XD",
-    users: [users[3].id],
+    users: [users[3].id, currentUser.id],
   },
   {
     userSkillId: 13,

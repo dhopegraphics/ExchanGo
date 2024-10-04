@@ -3,8 +3,33 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AirbnbRating } from "@rneui/themed";
 import { router } from "expo-router";
+import { getUserSkills } from "../utils/databasefunctions";
 
-export const ConnectionCard = ({ user }) => {
+export const ConnectionCard = ({
+  user,
+  connectedUsers = [],
+  ratings,
+  userSkill,
+}) => {
+  const connectedUser =
+    connectedUsers.find((connected) => connected.userId === user.id) || {}; // Fallback to an empty object if not found
+
+  // Calculate the average rating for the user
+  const userRatings = ratings.find((rating) => rating.ratedUserId === user.id);
+  const averageRating = userRatings
+    ? userRatings.ratedBy.reduce((acc, rated) => acc + rated.rating, 0) /
+      userRatings.ratedBy.length
+    : 0; // Default to 0 if no ratings
+
+  const skills = getUserSkills(user.id, userSkill); // Call the function to get skills
+  // Calculate counts
+  const connectedCount = connectedUser.connectedFollowers
+    ? connectedUser.connectedFollowers.length
+    : 0;
+  const swappedCount = connectedUser.swappedWith
+    ? connectedUser.swappedWith.length
+    : 0;
+
   return (
     <TouchableOpacity
       style={styles.card}
@@ -16,23 +41,40 @@ export const ConnectionCard = ({ user }) => {
             userId: user.id,
             userName: user.name,
             bio: user.bio,
-            rating: user.rating,
+            rating: averageRating, // Use the calculated average rating
+            profileImage: user.profileImage, // Added profileImage
+            connectedFollowers: connectedCount, // Pass the count of connected followers
+            swappedWith: swappedCount, // Pass the count of swapped users
+            skills, // Pass the skills to the next screen if needed
           },
         });
       }}
     >
-      <Image source={{ uri: user.avatar }} style={styles.avatar} />
+      <Image source={{ uri: user.profileImage }} style={styles.avatar} />
       <View style={styles.cardContent}>
         <Text style={styles.name}>{user.name}</Text>
         <View style={styles.skillContainer}>
-          <Text style={styles.skill}>{user.primarySkill}</Text>
-          <Ionicons name="arrow-forward" size={16} color="#666" />
-          <Text style={styles.skill}>{user.secondarySkill}</Text>
+          {skills.length > 0 && (
+            <>
+              <Text style={styles.skill}>{skills[0]}</Text>
+
+              {skills.length > 1 && (
+                <>
+                  <Ionicons name="arrow-forward" size={16} color="#666" />
+                  {skills.slice(1, -1).map((skill) => (
+                    <Text key={skill} style={styles.skill}>
+                      {skill}
+                    </Text>
+                  ))}
+                </>
+              )}
+            </>
+          )}
         </View>
         <View className="items-start">
           <AirbnbRating
             count={5}
-            defaultRating={user.rating}
+            defaultRating={averageRating}
             size={16}
             showRating={false}
             isDisabled={true}

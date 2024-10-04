@@ -3,24 +3,13 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { imageDataURL } from "../../constants/ImageData";
-import { useLocalSearchParams } from "expo-router";
+import { currentUser } from "../../data/users";
 import { getUserSkills } from "../../utils/databasefunctions";
 import { userSkills } from "../../data/userSkills";
 
-const ProfileScreen = () => {
+const mainUserProfile = () => {
+  const skills = getUserSkills(currentUser.id, userSkills); // Call the function to get skills
   const insets = useSafeAreaInsets();
-  const {
-    userId,
-    userName,
-    bio,
-    rating,
-    connectedFollowers,
-    swappedWith,
-    profileImage,
-  } = useLocalSearchParams();
-
-  const skills = getUserSkills(userId, userSkills); // Call the function to get skills
-
   return (
     <View
       style={{
@@ -47,13 +36,13 @@ const ProfileScreen = () => {
         </View>
 
         {/* Profile Picture and Info */}
-        <View style={{ alignItems: "center", paddingVertical: 24 }}>
+        <View style={{ alignItems: "flex-start", paddingVertical: 24 }}>
           <Image
-            source={{ uri: profileImage }}
+            source={{ uri: imageDataURL[1] }}
             style={{ width: 100, height: 100, borderRadius: 50 }}
           />
           <Text style={{ fontSize: 24, fontWeight: "bold", marginTop: 12 }}>
-            {userName}
+            {currentUser.name}
           </Text>
           <View className="flex-row justify-evenly ">
             {skills.length > 0 && (
@@ -87,15 +76,11 @@ const ProfileScreen = () => {
           }}
         >
           <View style={{ alignItems: "center" }}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              {connectedFollowers}
-            </Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>30</Text>
             <Text style={{ fontSize: 14, color: "#888" }}>Connected</Text>
           </View>
           <View style={{ alignItems: "center" }}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              {swappedWith}
-            </Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>10</Text>
             <Text style={{ fontSize: 14, color: "#888" }}>Swapped</Text>
           </View>
         </View>
@@ -136,7 +121,12 @@ const ProfileScreen = () => {
           <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
             About
           </Text>
-          <Text style={{ fontSize: 14, color: "#444" }}>{bio}</Text>
+          <Text style={{ fontSize: 14, color: "#444" }}>
+            Sithara is passionate about UI design and has been working as a UI
+            designer for the past 5 years. However, Alexa is eager to expand
+            skills and delve into the world of coding to enhance career
+            prospects and creative projects.
+          </Text>
         </View>
 
         {/* Tools Section */}
@@ -198,4 +188,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default mainUserProfile;

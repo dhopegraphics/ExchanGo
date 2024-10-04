@@ -45,6 +45,10 @@ const MainLayout = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="account/mainPersonalProfile"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name="ProfileSetup/fieldOfInterest"
         options={{ headerShown: false }}
       />

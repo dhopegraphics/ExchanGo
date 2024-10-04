@@ -111,30 +111,30 @@ export const CustomDrawerContent = (props) => {
             name="people-outline"
             size={size}
             color={
-              pathname == "/(main)/(tabs)/Communities"
+              pathname == "/account/mainPersonalProfile"
                 ? activeItemTextColor
                 : textColor
             }
           />
         )}
-        label={"Community"}
+        label={"Profile"}
         labelStyle={[
           styles.navItemLabel,
           {
             color:
-              pathname == "/(main)/(tabs)/Communities"
+              pathname == "/account/mainPersonalProfile"
                 ? activeItemTextColor
                 : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/(main)/(tabs)/Communities"
+            pathname == "/account/mainPersonalProfile"
               ? activeItemBackgroundColor
               : backgroundColor,
         }}
         onPress={() => {
-          router.push("/(main)/(tabs)/Communities");
+          router.push("/account/mainPersonalProfile");
         }}
       />
       <DrawerItem

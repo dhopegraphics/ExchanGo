@@ -6,6 +6,7 @@ export const currentUser = {
   profileImage: imageDataURL[1],
   email: "isaac.mensah@company.com",
   bio: "I am a software developer",
+  featured: false,
 };
 
 export const users = [
@@ -15,6 +16,7 @@ export const users = [
     profileImage: imageDataURL[1],
     email: "abin@example.com",
     bio: "I am a software developer",
+    featured: false,
   },
   {
     id: "user456",
@@ -22,6 +24,7 @@ export const users = [
     profileImage: imageDataURL[2],
     email: "sarah@example.com",
     bio: "I am a graphic designer",
+    featured: true,
   },
   {
     id: "user789",
@@ -29,6 +32,7 @@ export const users = [
     profileImage: imageDataURL[4],
     email: "mike@example.com",
     bio: "I am a web developer",
+    featured: false,
   },
   {
     id: "user101",
@@ -36,6 +40,7 @@ export const users = [
     profileImage: imageDataURL[6],
     email: "jane@example.com",
     bio: "I am a digital marketer",
+    featured: true,
   },
   {
     id: "user202",
@@ -43,6 +48,7 @@ export const users = [
     profileImage: imageDataURL[8],
     email: "alex@example.com",
     bio: "I am a music producer",
+    featured: false,
   },
   {
     id: "user303",
@@ -50,6 +56,7 @@ export const users = [
     profileImage: imageDataURL[10],
     email: "emily@example.com",
     bio: "I am a film maker",
+    featured: true,
   },
   {
     id: "user404",
@@ -57,6 +64,7 @@ export const users = [
     profileImage: imageDataURL[12],
     email: "david@example.com",
     bio: "I am an animator",
+    featured: false,
   },
   {
     id: "user505",
@@ -64,6 +72,7 @@ export const users = [
     profileImage: imageDataURL[14],
     email: "sophia@example.com",
     bio: "I am a photographer",
+    featured: true,
   },
   {
     id: "user606",

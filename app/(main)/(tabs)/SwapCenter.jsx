@@ -12,11 +12,14 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ConnectionCard } from "@/components/SwapConnect";
-import { connections } from "@/constants/data";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import Animated, { Easing } from "react-native-reanimated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "../../../components/FilterBottomitems";
+import { users } from "../../../data/users";
+import { connectedUsers } from "../../../data/userConnection";
+import { UserRating } from "../../../data/userRating";
+import { userSkills } from "../../../data/userSkills";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -63,10 +66,24 @@ const SwapCenter = () => {
             placeholderTextColor="#666"
           />
         </View>
-        <View style={{ flex: 1, padding: 10 }}>
+        <View
+          style={{
+            flex: 1,
+            padding: 15,
+            paddingBottom: insets.bottom,
+            paddingVertical: 15,
+          }}
+        >
           <FlatList
-            data={connections}
-            renderItem={({ item }) => <ConnectionCard user={item} />}
+            data={users}
+            renderItem={({ item }) => (
+              <ConnectionCard
+                user={item} // Find the user object based on userId
+                connectedUsers={connectedUsers} // Pass the entire connectedUsers array
+                ratings={UserRating}
+                userSkill={userSkills}
+              />
+            )}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContainer}
@@ -129,7 +146,7 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   listContainer: {
-    paddingBottom: 16,
+    paddingBottom: 100,
   },
 });
 
