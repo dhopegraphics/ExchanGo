@@ -37,6 +37,13 @@ const ContactListScreen = () => {
   const textColor = useThemeColor({}, "text");
   const [search, setSearch] = React.useState("");
   const [visibleItems, setVisibleItems] = useState(5);
+  const [lastVisitedCommunity, setLastVisitedCommunity] = useState(null); // Add this line
+
+  // Update this function to set the last visited community
+  const handleCommunityPress = (community) => {
+    setLastVisitedCommunity(community); // Update the last visited community
+    // ... other logic for navigating to the community details
+  };
 
   const handleShowMore = () => {
     if (visibleItems + 5 >= communityDetails.length) {
@@ -185,11 +192,17 @@ const ContactListScreen = () => {
             >
               Recently Visited
             </Text>
-            <CommunityDiscoverCard
-              community={communityDetails[5]}
-              users={users}
-              joinedCommunities={joinedCommunities}
-            />
+            {lastVisitedCommunity ? ( // Check if there is a last visited community
+              <CommunityDiscoverCard
+                community={lastVisitedCommunity} // Pass the last visited community
+                users={users}
+                joinedCommunities={joinedCommunities}
+              />
+            ) : (
+              <Text style={{ color: textColor }}>
+                No recently visited communities.
+              </Text> // Optional message if none
+            )}
           </Animated.View>
           <View
             style={{
@@ -212,6 +225,7 @@ const ContactListScreen = () => {
                   community={item}
                   users={users}
                   joinedCommunities={joinedCommunities}
+                  onPress={handleCommunityPress(item)}
                 />
               )}
               contentContainerStyle={{ padding: 16 }}

@@ -3,7 +3,7 @@ import { imageDataURL } from "../constants/ImageData";
 export const currentUser = {
   id: "dhopeIsaac",
   name: "Isaac Mensah",
-  profileImage: imageDataURL[1],
+  profileImage: imageDataURL[2],
   email: "isaac.mensah@company.com",
   bio: "I am a software developer",
   featured: false,

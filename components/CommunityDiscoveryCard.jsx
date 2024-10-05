@@ -7,6 +7,7 @@ const CommunityDiscoverCard = ({
   community,
   users,
   joinedCommunities = [],
+  onPress,
 }) => {
   const tintBackground = useThemeColor({}, "tintBackground");
   // Get the members of the community using joinedCommunities and users data
@@ -26,6 +27,7 @@ const CommunityDiscoverCard = ({
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => {
+        onPress ? onPress(community) : null; // Call onPress if provided
         router.push({
           pathname: `/community/${community.id}`,
           params: {
