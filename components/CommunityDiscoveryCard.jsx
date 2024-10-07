@@ -23,27 +23,26 @@ const CommunityDiscoverCard = ({
       )
     : [];
 
+  const handlePress = () => {
+    if (onPress) {
+      onPress(community); // Call onPress if provided
+    }
+    router.push({
+      pathname: `/community/${community.id}`,
+      params: {
+        communityId: community.id,
+        communityName: community.name,
+        memberCount: communityMembers.length,
+        avatars: JSON.stringify(
+          communityMembers.map((member) => ({ uri: member?.profileImage }))
+        ),
+        bio: community.bio,
+      },
+    });
+  };
+
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
-      onPress={() => {
-        onPress ? onPress(community) : null; // Call onPress if provided
-        router.push({
-          pathname: `/community/${community.id}`,
-          params: {
-            communityId: community.id,
-            communityName: community.name,
-            memberCount: communityMembers.length,
-            avatars: JSON.stringify(
-              communityMembers.map((member) => ({
-                uri: member?.profileImage,
-              }))
-            ),
-            bio: community.bio,
-          },
-        });
-      }}
-    >
+    <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
       <View className="flex-row items-center p-4 bg-gray-100 rounded-lg mb-4">
         <Image
           source={{ uri: community.profileImage }}

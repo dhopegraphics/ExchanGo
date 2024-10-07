@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { JoinProvider } from "@/Context/CommunityJoinContext";
 SplashScreen.preventAutoHideAsync();
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { LastVisitedCommunityProvider } from "../Context/LastVisitedCommunityContext";
 
 const MainLayout = () => {
   const [loaded, error] = useFonts({
@@ -70,13 +71,15 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <ToastProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <JoinProvider>
-              <MainLayout />
-            </JoinProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
+        <LastVisitedCommunityProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <JoinProvider>
+                <MainLayout />
+              </JoinProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </LastVisitedCommunityProvider>
       </ToastProvider>
     </ThemeProvider>
   );

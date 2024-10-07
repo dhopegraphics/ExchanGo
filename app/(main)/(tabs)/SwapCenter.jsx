@@ -20,6 +20,7 @@ import { users } from "../../../data/users";
 import { connectedUsers } from "../../../data/userConnection";
 import { UserRating } from "../../../data/userRating";
 import { userSkills } from "../../../data/userSkills";
+import { currentUser } from "../../../data/users";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -29,6 +30,7 @@ const SwapCenter = () => {
   const handlePresentFilterModalPress = useCallback(() => {
     filterSheetBottomSheetRef.current?.present();
   }, []);
+  const filteredUsers = users.filter((user) => user.id !== currentUser.id);
 
   return (
     <>
@@ -75,7 +77,7 @@ const SwapCenter = () => {
           }}
         >
           <FlatList
-            data={users}
+            data={filteredUsers}
             renderItem={({ item }) => (
               <ConnectionCard
                 user={item} // Find the user object based on userId

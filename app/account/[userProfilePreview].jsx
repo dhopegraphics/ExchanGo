@@ -6,6 +6,7 @@ import { imageDataURL } from "../../constants/ImageData";
 import { useLocalSearchParams } from "expo-router";
 import { getUserSkills } from "../../utils/databasefunctions";
 import { userSkills } from "../../data/userSkills";
+import { getUserTools } from "../../data/ToolsUsed";
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
@@ -20,6 +21,7 @@ const ProfileScreen = () => {
   } = useLocalSearchParams();
 
   const skills = getUserSkills(userId, userSkills); // Call the function to get skills
+  const tools = getUserTools(userId); // Call the function to get tools
 
   return (
     <View
@@ -151,22 +153,20 @@ const ProfileScreen = () => {
               marginVertical: 8,
             }}
           >
-            {["Sketch", "Figma", "Adobe Ps", "Adobe Ai", "Adobe Xd"].map(
-              (tool, index) => (
-                <View
-                  key={index}
-                  style={{
-                    backgroundColor: "#F3F4F6",
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 8,
-                    margin: 4,
-                  }}
-                >
-                  <Text style={{ fontSize: 14 }}>{tool}</Text>
-                </View>
-              )
-            )}
+            {tools.map((tool, index) => (
+              <View
+                key={index}
+                style={{
+                  backgroundColor: "#F3F4F6",
+                  paddingHorizontal: 5,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  margin: 4,
+                }}
+              >
+                <Text style={{ fontSize: 14 }}>{tool.toolName}</Text>
+              </View>
+            ))}
           </View>
         </View>
 

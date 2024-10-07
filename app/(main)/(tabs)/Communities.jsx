@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { router, Stack } from "expo-router";
 import {
   View,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Animated, {
   interpolate,
@@ -27,23 +28,56 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { communityDetails } from "../../../data/communitiesDetail";
 import { joinedCommunities } from "../../../data/joinedCommunities";
 import { users } from "@/data/users";
+import { LastVisitedCommunityContext } from "../../../Context/LastVisitedCommunityContext";
 
 const IMG_HEIGHT = 300;
 
-const ContactListScreen = () => {
+const CommunityCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
   const TabTopBackgroundColor = useThemeColor({}, "tabBarBackground");
   const insets = useSafeAreaInsets();
   const textColor = useThemeColor({}, "text");
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = useState("");
   const [visibleItems, setVisibleItems] = useState(5);
-  const [lastVisitedCommunity, setLastVisitedCommunity] = useState(null); // Add this line
+  const { lastVisitedCommunity, setLastVisitedCommunity } = useContext(
+    LastVisitedCommunityContext
+  ); // Access context
+  const [loading, setLoading] = useState(false); // State to manage loading
+  const [timer, setTimer] = useState(null); // State to manage the timer
+  const [displayCommunity, setDisplayCommunity] =
+    useState(lastVisitedCommunity); // State to manage displayed community
+  // Function to filter communities based on search input
+  const filteredCommunities = communityDetails.filter(
+    (community) => community.name.toLowerCase().includes(search.toLowerCase()) // Adjust the property to match your community object
+  );
 
-  // Update this function to set the last visited community
   const handleCommunityPress = (community) => {
-    setLastVisitedCommunity(community); // Update the last visited community
-    // ... other logic for navigating to the community details
+    // Delay before setting loading to true
+    setTimer(
+      setTimeout(() => {
+        setLoading(true); // Set loading to true after the delay
+        // Keep the last visited community displayed for a while
+        setTimeout(() => {
+          setLastVisitedCommunity(community); // Set the last visited community after the delay
+          setLoading(false); // Stop loading after setting the community
+        }, 2000); // Keep the last visited community displayed for 2 seconds
+      }, 1000)
+    ); // Delay before setting loading to true (1 second)
   };
+
+  // Cleanup timer on unmount or when community is changed
+  useEffect(() => {
+    return () => {
+      if (timer) {
+        clearTimeout(timer); // Clear the timer if the component unmounts
+      }
+    };
+  }, [timer]);
+
+  // Update the displayed community when lastVisitedCommunity changes
+  useEffect(() => {
+    setDisplayCommunity(lastVisitedCommunity);
+  }, [lastVisitedCommunity]);
 
   const handleShowMore = () => {
     if (visibleItems + 5 >= communityDetails.length) {
@@ -192,9 +226,11 @@ const ContactListScreen = () => {
             >
               Recently Visited
             </Text>
-            {lastVisitedCommunity ? ( // Check if there is a last visited community
+            {loading ? ( // Show loading state while waiting
+              <ActivityIndicator />
+            ) : lastVisitedCommunity ? ( // Check if there is a last visited community
               <CommunityDiscoverCard
-                community={lastVisitedCommunity} // Pass the last visited community
+                community={displayCommunity} // Pass the last visited community
                 users={users}
                 joinedCommunities={joinedCommunities}
               />
@@ -218,20 +254,20 @@ const ContactListScreen = () => {
               Discover More
             </Text>
             <FlatList
-              data={communityDetails.slice(0, visibleItems)}
+              data={filteredCommunities.slice(0, visibleItems)}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <CommunityDiscoverCard
                   community={item}
                   users={users}
                   joinedCommunities={joinedCommunities}
-                  onPress={handleCommunityPress(item)}
+                  onPress={handleCommunityPress} // Pass the function reference
                 />
               )}
               contentContainerStyle={{ padding: 16 }}
               scrollEnabled={false}
             />
-            {visibleItems < communityDetails.length ? (
+            {visibleItems < filteredCommunities.length ? (
               <TouchableOpacity onPress={handleShowMore} className="ml-4">
                 <View className="mb-4 mr-4">
                   <Text
@@ -327,4 +363,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ContactListScreen;
+export default CommunityCenter;
