@@ -23,11 +23,7 @@ import AnimatedHeaderScrollView from "@/components/AnimatedViewCollapse";
 import { SearchBarHeader } from "@/components/searchBarHeader";
 import { imageDataURL } from "../../../constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
-import {
-  discoverData,
-  exploreCategories,
-  forYouCommunity,
-} from "../../../constants/data";
+import { discoverData, exploreCategories } from "../../../constants/data";
 import CommunityCard from "@/components/CommunityCard";
 import { trendingCommunity } from "../../../constants/data";
 import DiscoverCard from "../../../components/DiscoveryCard";
@@ -139,7 +135,10 @@ const HomeScreen = () => {
           </View>
 
           {/* Explore Categories */}
-          <Collapsible title="Explore Categories">
+          <Collapsible
+            title="Explore Categories"
+            seeAllPress={() => router.push("/expandAll/categoriesExpand")}
+          >
             <View className="flex-row flex-wrap flex-grow space-x-2 ">
               {exploreCategories.map((category, index) => (
                 <TouchableOpacity key={index}>

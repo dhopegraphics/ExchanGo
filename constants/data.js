@@ -7,42 +7,6 @@ export const categories = [
   // Add more categories as needed
 ];
 
-export const featuredListings = [
-  {
-    id: 1,
-    name: "John Doe",
-    skill: "Gourmet Chef",
-    rating: 4.8,
-    image: "https://example.com/chef.jpg",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    skill: "Portrait Photography",
-    rating: 4.9,
-    image: "https://example.com/photographer.jpg",
-  },
-  // Add more featured listings
-];
-
-export const skillListings = [
-  {
-    id: 1,
-    name: "Alice",
-    skill: "Yoga Instructor",
-    location: "New York",
-    availability: "Weekends",
-  },
-  {
-    id: 2,
-    name: "Bob",
-    skill: "Guitar Teacher",
-    location: "Los Angeles",
-    availability: "Evenings",
-  },
-  // Add more skill listings
-];
-
 export const interests = [
   "Illustration",
   "Animation",
@@ -83,10 +47,10 @@ export const discoverData = [
 ];
 
 export const exploreCategories = [
-  { name: "Animation", icon: "film" },
-  { name: "Language", icon: "language" },
-  { name: "Architecture", icon: "building" },
-  { name: "Photography", icon: "camera" },
-  { name: "Illustration", icon: "paint-brush" },
-  { name: "Music", icon: "music" },
+  { id: 1, name: "Animation", icon: "film" },
+  { id: 2, name: "Language", icon: "language" },
+  { id: 3, name: "Architecture", icon: "building" },
+  { id: 4, name: "Photography", icon: "camera" },
+  { id: 5, name: "Illustration", icon: "paint-brush" },
+  { id: 6, name: "Music", icon: "music" },
 ];
