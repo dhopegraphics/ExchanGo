@@ -7,8 +7,8 @@ export const communityDetails = [
     name: "Graphic Design Community",
     profileImage: imageDataURL[0],
     bio: "Unleash your creativity and explore the world of visual communication with fellow graphic design enthusiasts.",
-    createdAt: "2024-03-30T03:35:00Z",
-    updatedAt: "2024-03-30T03:35:00Z",
+    createdAt: "2025-03-30T03:35:00Z",
+    updatedAt: "2025-03-30T03:35:00Z",
     createdBy: users[0].id,
   },
   {
