@@ -6,10 +6,12 @@
       "@/*": [
         "./*",
         "../*",
-         "../../*"
+        "../../*"
       ]
-    } ,
-    "types": ["@types/d3-path"]
+    },
+    "types": [
+      "@types/d3-path"
+    ]
   },
   "include": [
     "**/*.ts",
@@ -17,16 +19,19 @@
     "**/*.js",
     "**/*.jsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "app/_layout.jsx", "app/index.jsx" , "app/*" , 
-"Context/ThemeContext.tsx", 
-"app/(Root)/(tabs)/home", 
-"app/(Root)/Settings/securityRoom" , 
-"app/Chat/*",
-"lib/*",
-"Context/*",
-"hooks/*",
-"constants/*",
-"components/*"
-]
+    "expo-env.d.ts",
+    "app/_layout.jsx",
+    "app/index.jsx",
+    "app/*",
+    "Context/ThemeContext.tsx",
+    "app/(Root)/(tabs)/home",
+    "app/(Root)/Settings/securityRoom",
+    "app/Chat/*",
+    "lib/*",
+    "Context/*",
+    "hooks/*",
+    "constants/*",
+    "components/*",
+    "nativewind-env.d.ts"
+  ]
 }

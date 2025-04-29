@@ -6,6 +6,7 @@ import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
+  useDerivedValue 
 } from "react-native-reanimated";
 import { getPathXCenter } from "../../utils/Path";
 import TabItem from "./TabItem";
