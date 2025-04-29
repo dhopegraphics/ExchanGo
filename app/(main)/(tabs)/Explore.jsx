@@ -25,7 +25,6 @@ import { imageDataURL } from "../../../constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
 import { discoverData, exploreCategories } from "../../../constants/data";
 import CommunityCard from "@/components/CommunityCard";
-import { trendingCommunity } from "../../../constants/data";
 import DiscoverCard from "../../../components/DiscoveryCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { communityDetails } from "../../../data/communitiesDetail";
