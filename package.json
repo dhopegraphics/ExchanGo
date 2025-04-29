@@ -73,5 +73,17 @@
     "tailwindcss": "^3.3.2",
     "typescript": "~5.3.3"
   },
+ "expo": {
+  "doctor": {
+    "reactNativeDirectoryCheck": {
+      "exclude": [
+        "d3-shape",
+        "openai",
+        "react-native-elements",
+        "react-native-vector-icons"
+      ]
+    }
+  }
+},
   "private": true
 }
