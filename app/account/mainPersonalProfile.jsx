@@ -13,7 +13,7 @@ import { currentUser } from "@/data/users";
 import { getUserSkills } from "@/utils/databasefunctions";
 import { userSkills } from "@/data/userSkills";
 import { connectedUsers } from "@/data/userConnection";
-import { Video } from "expo-av";
+
 import { getUserTools } from "@/data/ToolsUsed";
 import { UserWorksUpload } from "@/data/userWorks";
 
@@ -296,7 +296,7 @@ const MainUserProfile = () => {
             alignItems: "center",
           }}
         >
-          <Video
+          {/* <Video
             source={{ uri: selectedVideo }}
             rate={1.0}
             volume={1.0}
@@ -304,7 +304,7 @@ const MainUserProfile = () => {
             resizeMode="contain"
             shouldPlay
             style={{ width: "90%", height: 300 }}
-          />
+          /> */}
           <TouchableOpacity
             onPress={() => setModalVisible(false)}
             style={{ marginTop: 20 }}

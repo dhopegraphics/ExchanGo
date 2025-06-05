@@ -25,11 +25,3 @@ export function HelloWave({ children }: { children: ReactNode }) {
 
   return <Animated.View style={animatedStyle}>{children}</Animated.View>;
 }
-
-const styles = StyleSheet.create({
-  text: {
-    fontSize: 28,
-    lineHeight: 32,
-    marginTop: -6,
-  },
-});

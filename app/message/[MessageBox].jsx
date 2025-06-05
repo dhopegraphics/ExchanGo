@@ -9,15 +9,15 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-import MessageInput from "../../components/MessageInput";
-import ProfileHeader from "../../components/ProfileHeader";
+import MessageInput from "@/components/MessageInput";
+import ProfileHeader from "@/components/ProfileHeader";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router, useLocalSearchParams } from "expo-router";
 import { BlurView } from "expo-blur";
-import { MessageOptions, Message } from "../../components/optionsOnMessage";
-import { receivedMessages, sentMessages } from "../../data/chat"; // {{ edit_1 }}
-import { currentUser } from "../../data/users";
+import { MessageOptions, Message } from "@/components/optionsOnMessage";
+import { receivedMessages, sentMessages } from "@/data/chat"; // {{ edit_1 }}
+import { currentUser } from "@/data/users";
 
 const MessageBox = () => {
   const insets = useSafeAreaInsets();
