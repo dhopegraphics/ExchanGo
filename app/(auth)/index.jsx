@@ -1,4 +1,3 @@
-import React from "react";
 import {
   View,
   Text,
@@ -6,15 +5,12 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-  ScrollView,
   Animated,
-  TouchableWithoutFeedback,
 } from "react-native";
 import Swiper from "react-native-swiper";
 import { useRouter } from "expo-router";
 import { useState, useRef, useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/FontAwesome";
+
 import Svg, { Circle } from "react-native-svg";
 import Feather from "@expo/vector-icons/Feather";
 import { StatusBar } from "expo-status-bar";

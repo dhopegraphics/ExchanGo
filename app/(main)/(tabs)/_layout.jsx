@@ -1,6 +1,5 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import CustomBottomTab from "../../../components/BottomTabs/CustomBottomTab";
+import { CustomBottomTab } from "@/components/BottomTabs/CustomBottomTab";
 import { StatusBar } from "expo-status-bar";
 
 export default function TabLayout() {

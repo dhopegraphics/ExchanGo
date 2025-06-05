@@ -1,8 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useThemeColor } from "@/hooks/useThemeColor";
 
 const AuthLayout = () => {
   return (

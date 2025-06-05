@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  Switch,
-} from "react-native";
+import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router } from "expo-router";
@@ -16,7 +9,7 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
-import Animated, { Easing } from "react-native-reanimated";
+import { Easing } from "react-native-reanimated";
 import NotificationsBottomSheet from "../../components/NotificationsSheet";
 
 const Notifications = () => {

@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { router, Stack } from "expo-router";
+import React, { useState, useEffect, useContext } from "react";
+import { Stack } from "expo-router";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  ScrollView,
-  Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
@@ -20,11 +18,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { SearchBar } from "react-native-elements";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { SCREEN_WIDTH } from "@/constants/Screen";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { communityDetails } from "../../../data/communitiesDetail";
 import { joinedCommunities } from "../../../data/joinedCommunities";
 import { users } from "@/data/users";
@@ -34,7 +30,6 @@ const IMG_HEIGHT = 300;
 
 const CommunityCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
-  const TabTopBackgroundColor = useThemeColor({}, "tabBarBackground");
   const insets = useSafeAreaInsets();
   const textColor = useThemeColor({}, "text");
   const [search, setSearch] = useState("");
