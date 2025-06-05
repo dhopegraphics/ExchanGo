@@ -1,13 +1,12 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { LastVisitedCommunityProvider } from "../Context/LastVisitedCommunityContext";
 
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import { ToastProvider } from "@/Context/ToastContext";
 
 import { JoinProvider } from "@/Context/CommunityJoinContext";
-SplashScreen.preventAutoHideAsync();
 
 const MainLayout = () => {
   return (
