@@ -3,16 +3,12 @@ import React, { useCallback, useRef } from "react";
 import {
   View,
   Text,
-  Image,
   ScrollView,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Keyboard,
   Platform,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import AvatarPreviews from "../../components/avatarPreviews";
@@ -21,10 +17,10 @@ import { postData } from "../../data/postMade";
 import { commentsData } from "../../data/postComments";
 import { users } from "../../data/users";
 import { likesData } from "../../data/PostLikes";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useJoin } from "../../Context/CommunityJoinContext";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import Animated, { Easing } from "react-native-reanimated";
+import { Easing } from "react-native-reanimated";
 import MessageInput from "../../components/MessageInput";
 
 const CommunityPage = () => {
@@ -35,7 +31,6 @@ const CommunityPage = () => {
   }, []);
   const { communityId, communityName, memberCount, avatars, bio } =
     useLocalSearchParams();
-  const tintBackground = useThemeColor({}, "tintBackground");
   const backgroundColor = useThemeColor({}, "background");
 
   // Parse the avatars string back into an array
@@ -96,7 +91,9 @@ const CommunityPage = () => {
               <TouchableOpacity
                 onPress={handlePress}
                 activeOpacity={0.8}
-                className={`px-6 py-2 rounded-full ${isJoined(communityId) ? "bg-gray-500" : "bg-black"}`}
+                className={`px-6 py-2 rounded-full ${
+                  isJoined(communityId) ? "bg-gray-500" : "bg-black"
+                }`}
               >
                 <Text className="text-white font-semibold">
                   {isJoined(communityId) ? "Joined" : "Join"}
@@ -141,9 +138,9 @@ const CommunityPage = () => {
               Are you sure you want to leave {communityName}?
             </Text>
             <Text className="text-sm text-gray-600 text-center mb-6">
-              To rejoin, you'll need an invitation. You'll no longer receive
-              notifications from this community. Keep in mind that you can
-              always rejoin later.
+              To rejoin, you&apos;ll need an invitation. You&apos;ll no longer
+              receive notifications from this community. Keep in mind that you
+              can always rejoin later.
             </Text>
             <TouchableOpacity
               className="bg-red-500 rounded-full py-3 mb-3"

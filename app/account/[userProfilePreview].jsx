@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { imageDataURL } from "../../constants/ImageData";
+import { imageDataURL } from "@/constants/ImageData";
 import { useLocalSearchParams } from "expo-router";
-import { getUserSkills } from "../../utils/databasefunctions";
-import { userSkills } from "../../data/userSkills";
-import { getUserTools } from "../../data/ToolsUsed";
+import { getUserSkills } from "@/utils/databasefunctions";
+import { userSkills } from "@/data/userSkills";
+import { getUserTools } from "@/data/ToolsUsed";
 
 const ProfileScreen = () => {
   const insets = useSafeAreaInsets();
@@ -14,7 +14,6 @@ const ProfileScreen = () => {
     userId,
     userName,
     bio,
-    rating,
     connectedFollowers,
     swappedWith,
     profileImage,

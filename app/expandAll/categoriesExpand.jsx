@@ -6,13 +6,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import { useLocalSearchParams } from "expo-router";
 import { exploreCategories } from "../../constants/data";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SearchBar } from "react-native-elements";
 
-const categoriesExpand = () => {
+const CategoriesExpand = () => {
   const insets = useSafeAreaInsets();
   const [search, setSearch] = useState("");
   const renderItem = ({ item }) => (
@@ -54,7 +53,7 @@ const categoriesExpand = () => {
   );
 };
 
-export default categoriesExpand;
+export default CategoriesExpand;
 
 const styles = StyleSheet.create({
   searchBarContainer: {

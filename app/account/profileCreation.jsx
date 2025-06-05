@@ -11,7 +11,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -62,7 +61,8 @@ export default function ProfileCreation() {
               Create Profile
             </Text>
             <Text style={{ color: textColor }} className="text-gray-600 mb-6">
-              Set up your profile and introduce yourself, let's connect together
+              Set up your profile and introduce yourself, let&apos;s connect
+              together
             </Text>
 
             <View className="items-center mb-6 flex-row justify-start">

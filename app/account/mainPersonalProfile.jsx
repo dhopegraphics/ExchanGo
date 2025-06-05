@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,19 +7,17 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { imageDataURL } from "../../constants/ImageData";
-import { currentUser } from "../../data/users";
-import { getUserSkills } from "../../utils/databasefunctions";
-import { userSkills } from "../../data/userSkills";
-import { connectedUsers } from "../../data/userConnection";
-import { Video } from "expo-av"; // Import the Video component from expo-av
-import { useVideoPlayer, VideoView } from "expo-video";
-import { tools, getUserTools } from "../../data/ToolsUsed";
-import { UserWorksUpload } from "../../data/userWorks";
+import { currentUser } from "@/data/users";
+import { getUserSkills } from "@/utils/databasefunctions";
+import { userSkills } from "@/data/userSkills";
+import { connectedUsers } from "@/data/userConnection";
+import { Video } from "expo-av";
+import { getUserTools } from "@/data/ToolsUsed";
+import { UserWorksUpload } from "@/data/userWorks";
 
-const mainUserProfile = () => {
+const MainUserProfile = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const skills = getUserSkills(currentUser.id, userSkills); // Call the function to get skills
@@ -319,4 +317,4 @@ const mainUserProfile = () => {
   );
 };
 
-export default mainUserProfile;
+export default MainUserProfile;
