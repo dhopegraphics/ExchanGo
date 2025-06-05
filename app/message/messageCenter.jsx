@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  Image,
   FlatList,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,20 +12,20 @@ import {
   renderChatItem,
   renderRequestItem,
 } from "@/components/MessagingContainer";
-import { receivedMessages } from "../../data/chat"; // Ensure this imports the correct data
-import { requestData } from "../../data/request";
-import { users } from "../../data/users";
+import { receivedMessages } from "@/data/chat"; // Ensure this imports the correct data
+import { requestData } from "@/data/request";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { currentUser } from "../../data/users";
+import { currentUser, users } from "@/data/users";
 
-export default function messagesHub() {
+const MessagesHub = () => {
+  const [activeTab, setActiveTab] = useState("Chats");
+  const [showKeyboard, setShowKeyboard] = useState(true); // State to control keyboard visibility
+  const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
-  const [activeTab, setActiveTab] = useState("Chats");
-  const insets = useSafeAreaInsets();
+
   const currentUserId = currentUser.id; // Use the actual user ID
-  const [showKeyboard, setShowKeyboard] = useState(true); // State to control keyboard visibility
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -198,4 +197,6 @@ export default function messagesHub() {
       />
     </View>
   );
-}
+};
+
+export default MessagesHub;

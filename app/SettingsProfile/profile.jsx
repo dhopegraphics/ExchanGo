@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   TouchableOpacity,
   ScrollView,
   RefreshControl,
+  useColorScheme,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";

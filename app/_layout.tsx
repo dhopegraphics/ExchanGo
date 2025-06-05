@@ -1,15 +1,13 @@
-import React from "react";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { LastVisitedCommunityProvider } from "../Context/LastVisitedCommunityContext";
 import { useFonts } from "expo-font";
-import { View, StyleSheet } from "react-native";
-import { SplashScreen, Stack, Slot, useRouter, useSegments } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import { ToastProvider } from "@/Context/ToastContext";
 import { useEffect } from "react";
 import { JoinProvider } from "@/Context/CommunityJoinContext";
 SplashScreen.preventAutoHideAsync();
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { LastVisitedCommunityProvider } from "../Context/LastVisitedCommunityContext";
 
 const MainLayout = () => {
   const [loaded, error] = useFonts({
