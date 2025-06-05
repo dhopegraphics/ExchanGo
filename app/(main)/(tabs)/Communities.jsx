@@ -21,10 +21,10 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
-import { communityDetails } from "../../../data/communitiesDetail";
-import { joinedCommunities } from "../../../data/joinedCommunities";
+import { communityDetails } from "@/data/communitiesDetail";
+import { joinedCommunities } from "@/data/joinedCommunities";
 import { users } from "@/data/users";
-import { LastVisitedCommunityContext } from "../../../Context/LastVisitedCommunityContext";
+import { LastVisitedCommunityContext } from "@/Context/LastVisitedCommunityContext";
 
 const IMG_HEIGHT = 300;
 

@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
-  Image,
   TextInput,
 } from "react-native";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
@@ -13,14 +12,13 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ConnectionCard } from "@/components/SwapConnect";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import Animated, { Easing } from "react-native-reanimated";
+import { Easing } from "react-native-reanimated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import FilterScreen from "../../../components/FilterBottomitems";
-import { users } from "../../../data/users";
-import { connectedUsers } from "../../../data/userConnection";
-import { UserRating } from "../../../data/userRating";
-import { userSkills } from "../../../data/userSkills";
-import { currentUser } from "../../../data/users";
+import FilterScreen from "@/components/FilterBottomitems";
+import { users, currentUser } from "@/data/users";
+import { connectedUsers } from "@/data/userConnection";
+import { UserRating } from "@/data/userRating";
+import { userSkills } from "@/data/userSkills";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");

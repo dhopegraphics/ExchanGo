@@ -1,45 +1,40 @@
 import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { useToast } from "@/Context/ToastContext";
 import {
   View,
   Text,
   Image,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
-  TextInput,
   FlatList,
 } from "react-native";
 import Animated from "react-native-reanimated";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { SCREEN_WIDTH } from "@/constants/Screen";
-import { HelloWave } from "../../../components/HelloWave";
-import { Collapsible } from "../../../components/Collapsible";
+import { HelloWave } from "@/components/HelloWave";
+import { Collapsible } from "@/components/Collapsible";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useScrollAnimation } from "@/components/CollapsibleScrollAnimated";
 import AnimatedHeaderScrollView from "@/components/AnimatedViewCollapse";
 import { SearchBarHeader } from "@/components/searchBarHeader";
-import { imageDataURL } from "../../../constants/ImageData";
+import { imageDataURL } from "@/constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
-import { discoverData, exploreCategories } from "../../../constants/data";
+import { discoverData, exploreCategories } from "@/constants/data";
 import CommunityCard from "@/components/CommunityCard";
-import DiscoverCard from "../../../components/DiscoveryCard";
+import DiscoverCard from "@/components/DiscoveryCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { communityDetails } from "../../../data/communitiesDetail";
-import { users } from "../../../data/users";
-import { joinedCommunities } from "../../../data/joinedCommunities";
-import { getRandomCommunities } from "../../../utils/databasefunctions";
+import { communityDetails } from "@/data/communitiesDetail";
+import { users } from "@/data/users";
+import { joinedCommunities } from "@/data/joinedCommunities";
+import { getRandomCommunities } from "@/utils/databasefunctions";
 const IMG_HEIGHT = 300;
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const backgroundColor = useThemeColor({}, "background");
-  const cardBackground = useThemeColor({}, "cardBackground");
   const textColor = useThemeColor({}, "text");
-  const tintText = useThemeColor({}, "tintText");
-  const tintBackground = useThemeColor({}, "tintBackground");
   const { showToast } = useToast();
   const {
     scrollRef,
