@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
 import { SCREEN_WIDTH } from "@/constants/Screen";
 import { useScrollAnimation } from "./CollapsibleScrollAnimated";

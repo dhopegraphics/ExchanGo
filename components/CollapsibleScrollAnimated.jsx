@@ -6,7 +6,6 @@ import {
   useSharedValue,
   interpolateColor,
 } from "react-native-reanimated";
-import { useState } from "react";
 
 const IMG_HEIGHT = 300;
 

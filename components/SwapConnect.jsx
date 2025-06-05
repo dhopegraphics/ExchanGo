@@ -1,4 +1,3 @@
-import React, { useRef } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AirbnbRating } from "@rneui/themed";

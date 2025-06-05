@@ -8,8 +8,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { ReactNode } from "react";
 
-import { ThemedText } from "./ThemedText";
-
 export function HelloWave({ children }: { children: ReactNode }) {
   const rotationAnimation = useSharedValue(0);
 

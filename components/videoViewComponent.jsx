@@ -1,6 +1,6 @@
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useEffect, useRef, useState } from "react";
-import { PixelRatio, StyleSheet, View, Button } from "react-native";
+import { StyleSheet, View, Button } from "react-native";
 
 export default function VideoScreen({ videoSource }) {
   const ref = useRef(null);

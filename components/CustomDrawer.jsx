@@ -1,17 +1,7 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import React, { useEffect } from "react";
-import { Drawer } from "expo-router/drawer";
-import {
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerView,
-} from "@react-navigation/drawer";
-import {
-  Feather,
-  AntDesign,
-  MaterialIcons,
-  Ionicons,
-} from "@expo/vector-icons";
+import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { router, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { imageDataURL } from "../constants/ImageData";
@@ -55,19 +45,19 @@ export const CustomDrawerContent = (props) => {
           <Feather
             name="home"
             size={size}
-            color={pathname == "/Explore" ? activeItemTextColor : textColor}
+            color={pathname === "/Explore" ? activeItemTextColor : textColor}
           />
         )}
         label={"Explore"}
         labelStyle={[
           styles.navItemLabel,
           {
-            color: pathname == "/Explore" ? activeItemTextColor : textColor,
+            color: pathname === "/Explore" ? activeItemTextColor : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/Explore"
+            pathname === "/Explore"
               ? activeItemBackgroundColor
               : backgroundColor,
           marginLeft: 15,
@@ -82,7 +72,7 @@ export const CustomDrawerContent = (props) => {
             name="notifications-outline"
             size={size}
             color={
-              pathname == "/notifications" ? activeItemTextColor : textColor
+              pathname === "/notifications" ? activeItemTextColor : textColor
             }
           />
         )}
@@ -91,12 +81,12 @@ export const CustomDrawerContent = (props) => {
           styles.navItemLabel,
           {
             color:
-              pathname == "/notifications" ? activeItemTextColor : textColor,
+              pathname === "/notifications" ? activeItemTextColor : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/notifications"
+            pathname === "/notifications"
               ? activeItemBackgroundColor
               : backgroundColor,
         }}
@@ -111,7 +101,7 @@ export const CustomDrawerContent = (props) => {
             name="people-outline"
             size={size}
             color={
-              pathname == "/account/mainPersonalProfile"
+              pathname === "/account/mainPersonalProfile"
                 ? activeItemTextColor
                 : textColor
             }
@@ -122,14 +112,14 @@ export const CustomDrawerContent = (props) => {
           styles.navItemLabel,
           {
             color:
-              pathname == "/account/mainPersonalProfile"
+              pathname === "/account/mainPersonalProfile"
                 ? activeItemTextColor
                 : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/account/mainPersonalProfile"
+            pathname === "/account/mainPersonalProfile"
               ? activeItemBackgroundColor
               : backgroundColor,
         }}
@@ -142,19 +132,19 @@ export const CustomDrawerContent = (props) => {
           <Ionicons
             name="bookmark-outline"
             size={size}
-            color={pathname == "/bookmarks" ? activeItemTextColor : textColor}
+            color={pathname === "/bookmarks" ? activeItemTextColor : textColor}
           />
         )}
         label={"Bookmark"}
         labelStyle={[
           styles.navItemLabel,
           {
-            color: pathname == "/bookmarks" ? activeItemTextColor : textColor,
+            color: pathname === "/bookmarks" ? activeItemTextColor : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/bookmarks"
+            pathname === "/bookmarks"
               ? activeItemBackgroundColor
               : backgroundColor,
         }}
@@ -168,19 +158,19 @@ export const CustomDrawerContent = (props) => {
           <Ionicons
             name="settings-outline"
             size={size}
-            color={pathname == "/settings" ? activeItemTextColor : textColor}
+            color={pathname === "/settings" ? activeItemTextColor : textColor}
           />
         )}
         label={"settings"}
         labelStyle={[
           styles.navItemLabel,
           {
-            color: pathname == "/settings" ? activeItemTextColor : textColor,
+            color: pathname === "/settings" ? activeItemTextColor : textColor,
           },
         ]}
         style={{
           backgroundColor:
-            pathname == "/settings"
+            pathname === "/settings"
               ? activeItemBackgroundColor
               : backgroundColor,
         }}
@@ -194,19 +184,19 @@ export const CustomDrawerContent = (props) => {
             <Ionicons
               name="log-out"
               size={size}
-              color={pathname == "/logout" ? activeItemTextColor : textColor}
+              color={pathname === "/logout" ? activeItemTextColor : textColor}
             />
           )}
           label={"Logout"}
           labelStyle={[
             styles.navItemLabel,
             {
-              color: pathname == "/logout" ? activeItemTextColor : textColor,
+              color: pathname === "/logout" ? activeItemTextColor : textColor,
             },
           ]}
           style={{
             backgroundColor:
-              pathname == "/logout"
+              pathname === "/logout"
                 ? activeItemBackgroundColor
                 : backgroundColor,
             marginLeft: 15,

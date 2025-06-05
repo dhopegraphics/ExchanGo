@@ -1,6 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
-import { View, StyleSheet, Alert } from "react-native";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { View, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -9,9 +8,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { useRef, useState, useEffect } from "react";
-import { BlurView } from "expo-blur";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useRef, useState } from "react";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { COLORS } from "../constants";

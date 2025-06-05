@@ -1,7 +1,6 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableHighlight } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, Text, TouchableHighlight } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 
 export const SettingItem = ({ icon, label, color, onPress }) => (

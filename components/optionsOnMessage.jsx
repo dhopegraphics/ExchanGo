@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as Haptics from "expo-haptics";
-import { BlurView } from "expo-blur";
 
 export const MessageOptions = ({ isVisible, onClose, options }) => {
   if (!isVisible) return null;
@@ -29,6 +28,7 @@ export const MessageOptions = ({ isVisible, onClose, options }) => {
 
 // Memoized Message component for optimal rendering
 export const Message = memo(({ content, isUser, timestamp, onLongPress }) => {
+  Message.displayName = "Message";
   const [scaleAnim] = useState(new Animated.Value(1));
 
   const bubbleStyle = isUser
