@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
   useDerivedValue,
 } from "react-native-reanimated";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { getPathXCenterByIndex } from "../../utils/Path";
 import usePath from "../../hooks/usePath";
 import { SCREEN_WIDTH } from "../../constants/Screen";
