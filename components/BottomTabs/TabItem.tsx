@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, Pressable } from "react-native";
 import React, { FC, useEffect } from "react";
 import Animated, {
   useAnimatedProps,
@@ -9,9 +9,9 @@ import Animated, {
   useDerivedValue,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
-import { getPathXCenterByIndex } from "../../utils/Path";
-import usePath from "../../hooks/usePath";
-import { SCREEN_WIDTH } from "../../constants/Screen";
+import { getPathXCenterByIndex } from "@/utils/Path";
+import usePath from "@/hooks/usePath";
+import { SCREEN_WIDTH } from "@/constants/Screen";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type TabProps = {

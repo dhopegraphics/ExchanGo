@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React, { FC } from "react";
 import Animated, {
   useAnimatedStyle,
