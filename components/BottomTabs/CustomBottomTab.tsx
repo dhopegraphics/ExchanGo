@@ -26,9 +26,12 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const { curvedPaths, containerPath, tHeight } = usePath();
   const circleXCoordinate = useSharedValue(0);
   const progress = useSharedValue(1);
-  const handleMoveCircle = useCallback((currentPath: string) => {
-    circleXCoordinate.value = getPathXCenter(currentPath);
-  }, []);
+  const handleMoveCircle = useCallback(
+    (currentPath: string) => {
+      circleXCoordinate.value = getPathXCenter(currentPath);
+    },
+    [circleXCoordinate]
+  );
 
   const selectIcon = (routeName: string) => {
     switch (routeName) {

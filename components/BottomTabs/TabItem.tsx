@@ -80,7 +80,7 @@ const TabItem: FC<TabProps> = ({
 
   useEffect(() => {
     animatedActiveIndex.value = activeIndex;
-  }, [activeIndex]);
+  }, [activeIndex, animatedActiveIndex]);
 
   const AnimatedIconProps = useAnimatedProps(() => ({
     color: iconColor.value,
