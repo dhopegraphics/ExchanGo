@@ -36,8 +36,18 @@ const TabItem: FC<TabProps> = ({
   const { curvedPaths } = usePath();
   const tabButtonColor = useThemeColor({}, "tabIconColor");
   const animatedActiveIndex = useSharedValue(activeIndex);
-  const iconPosition = getPathXCenterByIndex(curvedPaths, index);
-  const labelPosition = getPathXCenterByIndex(curvedPaths, index);
+
+  const iconPosition = React.useMemo(() => {
+    return curvedPaths && curvedPaths.length > 0
+      ? getPathXCenterByIndex(curvedPaths, index)
+      : (SCREEN_WIDTH / 4) * (index + 0.5); // Reasonable default
+  }, [curvedPaths, index]);
+
+  const labelPosition = React.useMemo(() => {
+    return curvedPaths && curvedPaths.length > 0
+      ? getPathXCenterByIndex(curvedPaths, index)
+      : (SCREEN_WIDTH / 4) * (index + 0.5); // Reasonable default
+  }, [curvedPaths, index]);
 
   const tabStyle = useAnimatedStyle(() => {
     const translateY = animatedActiveIndex.value - 1 === index ? -35 : 20;
