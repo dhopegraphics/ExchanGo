@@ -2,15 +2,12 @@ import React, { FC } from "react";
 import {
   Pressable,
   StyleSheet,
-  Text,
-  View,
   StyleProp,
   ViewStyle,
   PressableProps,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+
+import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 export type IconLibrary = {
   [key: string]: () => React.ComponentType<any>;
 };
