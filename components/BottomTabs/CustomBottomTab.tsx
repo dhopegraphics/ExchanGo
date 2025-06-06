@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import React, { FC } from "react";
+import React, { FC, useCallback } from "react";
 import Svg, { Path } from "react-native-svg";
 import Animated, {
   runOnJS,
@@ -26,9 +26,9 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
   const { curvedPaths, containerPath, tHeight } = usePath();
   const circleXCoordinate = useSharedValue(0);
   const progress = useSharedValue(1);
-  const handleMoveCircle = (currentPath: string) => {
+  const handleMoveCircle = useCallback((currentPath: string) => {
     circleXCoordinate.value = getPathXCenter(currentPath);
-  };
+  }, []);
 
   const selectIcon = (routeName: string) => {
     switch (routeName) {
@@ -51,6 +51,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
       Array.from({ length: curvedPaths.length }, (_, index) => index + 1),
       curvedPaths
     );
+    // This is called on the UI thread, which is correct
     runOnJS(handleMoveCircle)(currentPath);
     return {
       d: `
