@@ -14,7 +14,6 @@ export default function DrawerLayout() {
       }}
     >
       <Drawer.Screen name="notifications" options={{ headerShown: false }} />
-      <Drawer.Screen name="settings/index" options={{ headerShown: false }} />
     </Drawer>
   );
 }
