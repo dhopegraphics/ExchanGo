@@ -6,7 +6,10 @@ import Animated, {
   useAnimatedProps,
   useSharedValue,
   withTiming,
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
 } from "react-native-reanimated";
+
 import { getPathXCenter } from "@/utils/Path";
 import TabItem from "./TabItem";
 import AnimatedCircle from "./AnimatedCircle";
@@ -17,6 +20,10 @@ import { interpolatePath } from "react-native-redash";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 export const CustomBottomTab: FC<BottomTabBarProps> = ({
   state,
