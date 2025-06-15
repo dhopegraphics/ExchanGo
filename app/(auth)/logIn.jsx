@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,76 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+const InputField = React.memo(
+  ({
+    label,
+    placeholder,
+    value,
+    onChangeText,
+    error,
+    secureTextEntry,
+    keyboardType = "default",
+    autoCapitalize = "none",
+    // Theme props
+    textColor,
+    cardBackground,
+    tintText,
+    tintColor, // Added for focus border if you re-introduce it
+    // For password visibility
+    isPasswordInput = false,
+    isPasswordVisible,
+    togglePasswordVisibility,
+  }) => {
+    InputField.displayName = "InputField"; // For debugging purposes
+    // console.log(`InputField ${label} re-rendered`); // For debugging
+    return (
+      <View className="mb-4">
+        <Text
+          style={{ color: textColor }}
+          className="text-sm font-semibold mb-2"
+        >
+          {label}
+        </Text>
+        <View className="relative">
+          <TextInput
+            style={{
+              backgroundColor: cardBackground,
+              borderColor: error ? "#EF4444" : "#E5E7EB", // Simplified border for now
+              color: textColor,
+            }}
+            className={`border rounded-xl px-4 py-4 pr-12 text-base ${
+              error ? "border-red-500" : "border-gray-300" // Default border
+            }`}
+            placeholder={placeholder}
+            placeholderTextColor={tintText}
+            value={value}
+            onChangeText={onChangeText} // Critical: This needs a stable function
+            secureTextEntry={secureTextEntry}
+            keyboardType={keyboardType}
+            autoCapitalize={autoCapitalize}
+            autoCorrect={false}
+          />
+          {isPasswordInput && (
+            <TouchableOpacity
+              className="absolute right-4 top-4"
+              onPress={togglePasswordVisibility}
+            >
+              <Ionicons
+                name={isPasswordVisible ? "eye" : "eye-off"}
+                size={20}
+                color={tintText}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        {error && (
+          <Text className="text-red-500 text-xs mt-1 ml-1">{error}</Text>
+        )}
+      </View>
+    );
+  }
+);
+
 const LogInScreen = () => {
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, "background");
@@ -33,15 +103,11 @@ const LogInScreen = () => {
     email: "",
     password: "",
   });
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
-  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-
   const scale = useSharedValue(1);
-  const emailScale = useSharedValue(1);
-  const passwordScale = useSharedValue(1);
 
   const validateForm = () => {
     const newErrors = {};
@@ -85,11 +151,26 @@ const LogInScreen = () => {
   };
 
   const updateFormData = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prevFormData) => ({ ...prevFormData, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: null }));
+      // Optional: clear error on change
+      setErrors((prevErrors) => ({ ...prevErrors, [field]: null }));
     }
   };
+
+  const handleEmailChange = useCallback(
+    (text) => {
+      updateFormData("email", text);
+    },
+    [errors]
+  ); // updateFormData is stable, errors might be a dependency if updateFormData uses it directly
+
+  const handlePasswordChange = useCallback(
+    (text) => {
+      updateFormData("password", text);
+    },
+    [errors]
+  );
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -99,65 +180,6 @@ const LogInScreen = () => {
     transform: [{ scale: scale.value }],
   }));
 
-  const emailAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: emailScale.value }],
-  }));
-
-  const passwordAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: passwordScale.value }],
-  }));
-
-  const InputField = ({
-    label,
-    placeholder,
-    value,
-    onChangeText,
-    error,
-    secureTextEntry,
-    keyboardType = "default",
-    autoCapitalize = "none",
-    onFocus,
-    onBlur,
-    animatedStyle,
-  }) => (
-    <View className="mb-4">
-      <Text style={{ color: textColor }} className="text-sm font-semibold mb-2">
-        {label}
-      </Text>
-      <View className="relative">
-        <TextInput
-          style={{
-            backgroundColor: cardBackground,
-            borderColor: error ? "#EF4444" : "#E5E7EB",
-            color: textColor,
-          }}
-          className={`border-2 rounded-xl px-4 py-4 pr-12 text-base ${
-            error ? "border-red-500" : "border-gray-200"
-          }`}
-          placeholder={placeholder}
-          placeholderTextColor={tintText}
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
-          autoCorrect={false}
-        />
-        {secureTextEntry !== undefined && (
-          <TouchableOpacity
-            className="absolute right-4 top-4"
-            onPress={togglePasswordVisibility}
-          >
-            <Ionicons
-              name={isPasswordVisible ? "eye" : "eye-off"}
-              size={20}
-              color={tintText}
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-      {error && <Text className="text-red-500 text-xs mt-1 ml-1">{error}</Text>}
-    </View>
-  );
   const SocialButton = ({ icon, label, onPress, bgColor = cardBackground }) => (
     <TouchableOpacity
       style={{ backgroundColor: bgColor }}
@@ -209,18 +231,29 @@ const LogInScreen = () => {
               label="Email Address"
               placeholder="Enter your email"
               value={formData.email}
-              onChangeText={(text) => updateFormData("email", text)}
+              onChangeText={handleEmailChange} // Use memoized handler
               error={errors.email}
               keyboardType="email-address"
+              textColor={textColor}
+              cardBackground={cardBackground}
+              tintText={tintText}
+              tintColor={tintColor}
             />
 
             <InputField
               label="Password"
               placeholder="Enter your password"
               value={formData.password}
-              onChangeText={(text) => updateFormData("password", text)}
+              onChangeText={handlePasswordChange} // Use memoized handler
               error={errors.password}
               secureTextEntry={!isPasswordVisible}
+              textColor={textColor}
+              cardBackground={cardBackground}
+              tintText={tintText}
+              tintColor={tintColor}
+              isPasswordInput={true}
+              isPasswordVisible={isPasswordVisible}
+              togglePasswordVisibility={togglePasswordVisibility}
             />
           </View>
 

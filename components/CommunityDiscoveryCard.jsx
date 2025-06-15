@@ -21,11 +21,14 @@ const CommunityDiscoverCard = ({
   const cardBackground = useThemeColor({}, "cardBackground");
   const tintColor = useThemeColor({}, "tint");
   const tintBackground = useThemeColor({}, "tintBackground");
+
+  // Define scale BEFORE using it in useAnimatedStyle
+  const scale = useSharedValue(1);
+
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
-  const scale = useSharedValue(1);
-
+  // ...existing code...
   // Early return if community is null/undefined
   if (!community) {
     return null; // or return a skeleton/placeholder component
