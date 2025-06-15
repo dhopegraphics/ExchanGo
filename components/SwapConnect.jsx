@@ -22,6 +22,8 @@ export const ConnectionCard = ({
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
   const cardBackground = useThemeColor({}, "cardBackground");
+  const highlightFilter = useThemeColor({}, "cardBackground");
+
   const tintColor = useThemeColor({}, "tint");
 
   const scale = useSharedValue(1);
@@ -203,7 +205,7 @@ export const ConnectionCard = ({
         <View className="flex-row mt-4 space-x-3">
           <TouchableOpacity
             className="flex-1 py-3 rounded-xl flex-row items-center justify-center"
-            style={{ backgroundColor: tintColor }}
+            style={{ backgroundColor: highlightFilter }}
           >
             <Ionicons name="chatbubble-outline" size={16} color="white" />
             <Text className="text-white font-medium ml-2">Message</Text>

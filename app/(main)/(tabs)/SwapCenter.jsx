@@ -31,6 +31,7 @@ const SwapCenter = () => {
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
   const cardBackground = useThemeColor({}, "cardBackground");
+  const highlightFilter = useThemeColor({}, "tabBarBackground");
   const tintColor = useThemeColor({}, "tint");
   const insets = useSafeAreaInsets();
 
@@ -100,7 +101,9 @@ const SwapCenter = () => {
               }`}
               style={{
                 backgroundColor:
-                  selectedFilter === category.id ? tintColor : cardBackground,
+                  selectedFilter === category.id
+                    ? highlightFilter
+                    : cardBackground,
                 borderWidth: 1,
                 borderColor:
                   selectedFilter === category.id ? tintColor : "#E5E7EB",
@@ -177,7 +180,7 @@ const SwapCenter = () => {
 
   return (
     <>
-      <View style={{ flex: 1, backgroundColor }}>
+      <View style={{ flex: 1, backgroundColor, paddingTop: insets.top }}>
         {/* Header */}
         <Animated.View
           style={[
