@@ -69,7 +69,9 @@ export default function FieldOfInterest() {
         Select your area of interest you like to teach and learn, you can also
         choose any one as you prefer
       </Text>
-
+      {error ? (
+        <Text className="text-red-500 text-center mb-4">{error}</Text>
+      ) : null}
       <View className="flex-row mb-6 space-x-6">
         <TouchableOpacity
           className={`flex-1 py-3 rounded-md ${
