@@ -1,181 +1,225 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AirbnbRating } from "@rneui/themed";
 import { router } from "expo-router";
 import { getUserSkills } from "../utils/databasefunctions";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 export const ConnectionCard = ({
   user,
   connectedUsers = [],
   ratings,
   userSkill,
+  index = 0,
 }) => {
-  const connectedUser =
-    connectedUsers.find((connected) => connected.userId === user.id) || {}; // Fallback to an empty object if not found
+  const textColor = useThemeColor({}, "text");
+  const tintText = useThemeColor({}, "tintText");
+  const cardBackground = useThemeColor({}, "cardBackground");
+  const tintColor = useThemeColor({}, "tint");
 
-  // Calculate the average rating for the user
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(0);
+
+  const connectedUser =
+    connectedUsers.find((connected) => connected.userId === user.id) || {};
+
   const userRatings = ratings.find((rating) => rating.ratedUserId === user.id);
   const averageRating = userRatings
     ? userRatings.ratedBy.reduce((acc, rated) => acc + rated.rating, 0) /
       userRatings.ratedBy.length
-    : 0; // Default to 0 if no ratings
+    : 0;
 
-  const skills = getUserSkills(user.id, userSkill); // Call the function to get skills
-  // Calculate counts
-  const connectedCount = connectedUser.connectedFollowers
-    ? connectedUser.connectedFollowers.length
-    : 0;
-  const swappedCount = connectedUser.swappedWith
-    ? connectedUser.swappedWith.length
-    : 0;
+  const skills = getUserSkills(user.id, userSkill);
+  const connectedCount = connectedUser.connectedFollowers?.length || 0;
+  const swappedCount = connectedUser.swappedWith?.length || 0;
+
+  React.useEffect(() => {
+    opacity.value = withTiming(1, { duration: 300 + index * 100 });
+  }, []);
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.98);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1);
+  };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
+
+  const SkillBadge = ({ skill }) => (
+    <View
+      className="px-2 py-1 rounded-lg mr-2 mb-1"
+      style={{ backgroundColor: tintColor + "20" }}
+    >
+      <Text style={{ color: tintColor }} className="text-xs font-medium">
+        {skill}
+      </Text>
+    </View>
+  );
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      activeOpacity={0.8}
-      onPress={() => {
-        router.push({
-          pathname: `/account/${user.id}`,
-          params: {
-            userId: user.id,
-            userName: user.name,
-            bio: user.bio,
-            rating: averageRating, // Use the calculated average rating
-            profileImage: user.profileImage, // Added profileImage
-            connectedFollowers: connectedCount, // Pass the count of connected followers
-            swappedWith: swappedCount, // Pass the count of swapped users
-            skills, // Pass the skills to the next screen if needed
-          },
-        });
-      }}
-    >
-      <Image source={{ uri: user.profileImage }} style={styles.avatar} />
-      <View style={styles.cardContent}>
-        <Text style={styles.name}>{user.name}</Text>
-        <View style={styles.skillContainer}>
-          {skills.length > 0 && (
-            <>
-              <Text style={styles.skill}>{skills[0]}</Text>
+    <Animated.View style={animatedStyle}>
+      <TouchableOpacity
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={() => {
+          router.push({
+            pathname: `/account/${user.id}`,
+            params: {
+              userId: user.id,
+              userName: user.name,
+              bio: user.bio,
+              rating: averageRating,
+              profileImage: user.profileImage,
+              connectedFollowers: connectedCount,
+              swappedWith: swappedCount,
+              skills: JSON.stringify(skills),
+            },
+          });
+        }}
+        className="rounded-2xl p-4 mb-3"
+        style={{
+          backgroundColor: cardBackground,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 4,
+        }}
+        activeOpacity={0.95}
+      >
+        {/* Featured Badge */}
+        {user.featured && (
+          <View className="absolute top-0 right-0 z-10">
+            <View
+              className="px-3 py-1 rounded-bl-xl rounded-tr-2xl"
+              style={{ backgroundColor: "#FFD700" }}
+            >
+              <Text className="text-xs font-bold text-black">Featured</Text>
+            </View>
+          </View>
+        )}
 
-              {skills.length > 1 && (
-                <>
-                  <Ionicons name="arrow-forward" size={16} color="#666" />
-                  {skills.slice(1, -1).map((skill) => (
-                    <Text key={skill} style={styles.skill}>
-                      {skill}
-                    </Text>
-                  ))}
-                </>
+        <View className="flex-row">
+          {/* Profile Image with Status */}
+          <View className="relative mr-4">
+            <Image
+              source={{ uri: user.profileImage }}
+              className="w-20 h-20 rounded-2xl"
+            />
+            {/* Online Status Indicator */}
+            <View
+              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white"
+              style={{ backgroundColor: "#4CAF50" }}
+            />
+          </View>
+
+          {/* Content */}
+          <View className="flex-1">
+            {/* Header */}
+            <View className="flex-row items-center justify-between mb-2">
+              <Text style={{ color: textColor }} className="text-lg font-bold">
+                {user.name}
+              </Text>
+              <TouchableOpacity className="p-1">
+                <Ionicons name="heart-outline" size={20} color={tintText} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Rating */}
+            <View className="flex-row items-center mb-2">
+              <AirbnbRating
+                count={5}
+                defaultRating={averageRating}
+                size={14}
+                showRating={false}
+                isDisabled={true}
+              />
+              <Text style={{ color: tintText }} className="ml-2 text-sm">
+                ({averageRating.toFixed(1)})
+              </Text>
+            </View>
+
+            {/* Skills */}
+            <View className="flex-row flex-wrap mb-2">
+              {skills.slice(0, 3).map((skill, index) => (
+                <SkillBadge key={index} skill={skill} />
+              ))}
+              {skills.length > 3 && (
+                <View
+                  className="px-2 py-1 rounded-lg"
+                  style={{ backgroundColor: tintText + "20" }}
+                >
+                  <Text style={{ color: tintText }} className="text-xs">
+                    +{skills.length - 3} more
+                  </Text>
+                </View>
               )}
-            </>
-          )}
+            </View>
+
+            {/* Location & Stats */}
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <Ionicons name="location-outline" size={14} color={tintText} />
+                <Text style={{ color: tintText }} className="ml-1 text-sm">
+                  {user.location}
+                </Text>
+              </View>
+
+              <View className="flex-row items-center space-x-3">
+                <View className="flex-row items-center">
+                  <Ionicons name="people-outline" size={14} color={tintText} />
+                  <Text style={{ color: tintText }} className="ml-1 text-xs">
+                    {connectedCount}
+                  </Text>
+                </View>
+                <View className="flex-row items-center">
+                  <Ionicons
+                    name="swap-horizontal-outline"
+                    size={14}
+                    color={tintText}
+                  />
+                  <Text style={{ color: tintText }} className="ml-1 text-xs">
+                    {swappedCount}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
-        <View className="items-start">
-          <AirbnbRating
-            count={5}
-            defaultRating={averageRating}
-            size={16}
-            showRating={false}
-            isDisabled={true}
-          />
+
+        {/* Action Buttons */}
+        <View className="flex-row mt-4 space-x-3">
+          <TouchableOpacity
+            className="flex-1 py-3 rounded-xl flex-row items-center justify-center"
+            style={{ backgroundColor: tintColor }}
+          >
+            <Ionicons name="chatbubble-outline" size={16} color="white" />
+            <Text className="text-white font-medium ml-2">Message</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-1 py-3 rounded-xl flex-row items-center justify-center border"
+            style={{ borderColor: tintColor }}
+          >
+            <Ionicons name="person-add-outline" size={16} color={tintColor} />
+            <Text style={{ color: tintColor }} className="font-medium ml-2">
+              Connect
+            </Text>
+          </TouchableOpacity>
         </View>
-        <Text style={styles.location}>{user.location}</Text>
-      </View>
-      <TouchableOpacity style={styles.favoriteButton}>
-        <Ionicons name="heart-outline" size={24} color="#666" />
       </TouchableOpacity>
-      {user.featured && (
-        <View style={styles.featuredBadge}>
-          <Text style={styles.featuredText}>Featured</Text>
-        </View>
-      )}
-    </TouchableOpacity>
+    </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
-    padding: 3,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-    padding: 3,
-  },
-  listContainer: {
-    paddingBottom: 16,
-  },
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#f1f5f9",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-    marginRight: 12,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  skillContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  skill: {
-    fontSize: 14,
-    color: "#666",
-    marginRight: 4,
-  },
-  location: {
-    fontSize: 12,
-    color: "#999",
-  },
-  favoriteButton: {
-    padding: 4,
-  },
-  featuredBadge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    backgroundColor: "#FFD700",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderTopRightRadius: 12,
-    borderBottomLeftRadius: 12,
-  },
-  featuredText: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#000",
-  },
-});
