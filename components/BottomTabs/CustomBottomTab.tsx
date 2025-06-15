@@ -44,7 +44,7 @@ export const CustomBottomTab: FC<BottomTabBarProps> = ({
       case "Settings":
         return "settings";
       default:
-        return "settings";
+        return "home";
     }
   };
 

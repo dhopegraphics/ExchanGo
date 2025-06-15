@@ -1,6 +1,7 @@
 import OnboardingScreen from "./(auth)/index";
 import "../global.css";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return <OnboardingScreen />;
+  return <Redirect href="/(main)/(tabs)/Explore" />;
 }
