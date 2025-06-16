@@ -1,6 +1,6 @@
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { useToast } from "@/Context/ToastContext";
 import {
   View,
@@ -9,16 +9,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  TextInput,
+  RefreshControl,
 } from "react-native";
-import Animated from "react-native-reanimated";
-import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
-import { SCREEN_WIDTH } from "@/constants/Screen";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolate,
+  Extrapolate,
+} from "react-native-reanimated";
+import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { HelloWave } from "@/components/HelloWave";
-import { Collapsible } from "@/components/Collapsible";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useScrollAnimation } from "@/components/CollapsibleScrollAnimated";
-import AnimatedHeaderScrollView from "@/components/AnimatedViewCollapse";
-import { SearchBarHeader } from "@/components/searchBarHeader";
 import { imageDataURL } from "@/constants/ImageData";
 import { useNavigation } from "@react-navigation/native";
 import { discoverData, exploreCategories } from "@/constants/data";
@@ -29,168 +32,468 @@ import { communityDetails } from "@/data/communitiesDetail";
 import { users } from "@/data/users";
 import { joinedCommunities } from "@/data/joinedCommunities";
 import { getRandomCommunities } from "@/utils/databasefunctions";
-const IMG_HEIGHT = 300;
+import { BlurView } from "expo-blur";
 
-const HomeScreen = () => {
+const HERO_HEIGHT = 280;
+
+const ExploreScreen = () => {
   const navigation = useNavigation();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
-  const { showToast } = useToast();
-  const {
-    scrollRef,
-    scrollHandler,
-    imageAnimatedStyle,
-    headerAnimatedStyle,
-    filterButtonStyle,
-  } = useScrollAnimation();
+  const tintText = useThemeColor({}, "tintText");
+  const cardBackground = useThemeColor({}, "cardBackground");
+  const tintColor = useThemeColor({}, "tint");
   const insets = useSafeAreaInsets();
+  const { showToast } = useToast();
 
-  return (
-    <View
-      style={[
-        styles.container,
-        { backgroundColor: backgroundColor, paddingBottom: insets.bottom },
-      ]}
-    >
-      <Stack.Screen
-        options={{
-          headerTransparent: true,
-          headerTitle: () => <SearchBarHeader />,
-          headerLeft: () => (
-            <TouchableOpacity onPress={navigation.openDrawer} className="ml-4">
-              <Ionicons name="menu" size={24} color={textColor} />
-            </TouchableOpacity>
-          ),
-          headerBackground: () => (
-            <Animated.View
-              style={[
-                styles.header,
-                headerAnimatedStyle,
-                { backgroundColor: backgroundColor },
-              ]}
-            />
-          ),
-          headerRight: () => (
-            <HelloWave>
-              <TouchableOpacity
-                className="mr-4"
-                onPress={() => router.navigate("/message/messageCenter")}
-              >
-                <Ionicons
-                  name="chatbubbles-sharp"
-                  size={24}
-                  color={textColor}
-                />
-              </TouchableOpacity>
-            </HelloWave>
-          ),
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const scrollY = useSharedValue(0);
+  const searchScale = useSharedValue(1);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 2000);
+  }, []);
+
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+    searchScale.value = withSpring(1.02);
+  };
+
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+    searchScale.value = withSpring(1);
+  };
+
+  // Enhanced Categories with new design
+  const categories = [
+    { id: "all", name: "All", icon: "grid", color: "#FF6B6B" },
+    { id: "trending", name: "Trending", icon: "trending-up", color: "#4ECDC4" },
+    { id: "featured", name: "Featured", icon: "star", color: "#45B7D1" },
+    { id: "nearby", name: "Nearby", icon: "map-pin", color: "#96CEB4" },
+    { id: "new", name: "New", icon: "zap", color: "#FFEAA7" },
+    { id: "popular", name: "Popular", icon: "heart", color: "#FD79A8" },
+  ];
+
+  // Animated styles
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollY.value,
+      [0, HERO_HEIGHT * 0.5],
+      [0, 1],
+      Extrapolate.CLAMP
+    );
+    const translateY = interpolate(
+      scrollY.value,
+      [0, HERO_HEIGHT],
+      [0, -20],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      opacity,
+      transform: [{ translateY }],
+    };
+  });
+
+  const heroAnimatedStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      scrollY.value,
+      [0, HERO_HEIGHT],
+      [1, 1.1],
+      Extrapolate.CLAMP
+    );
+    const opacity = interpolate(
+      scrollY.value,
+      [0, HERO_HEIGHT * 0.7],
+      [1, 0],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      transform: [{ scale }],
+      opacity,
+    };
+  });
+
+  const searchAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: searchScale.value }],
+  }));
+
+  // Components
+  const EnhancedSearchBar = () => (
+    <Animated.View style={[searchAnimatedStyle]} className="px-4 mb-4">
+      <View
+        className="flex-row items-center px-4 py-3 rounded-2xl"
+        style={{
+          backgroundColor: cardBackground,
+          borderWidth: isSearchFocused ? 2 : 1,
+          borderColor: isSearchFocused ? tintColor : "#E5E7EB",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 3,
         }}
-      />
-      <StatusBar style="auto" />
-
-      <AnimatedHeaderScrollView
-        scrollRef={scrollRef}
-        scrollHandler={scrollHandler}
-        underContentChild={
-          <Animated.View style={[styles.image, imageAnimatedStyle]}>
-            <Image
-              source={{
-                uri: imageDataURL[7],
-              }}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </Animated.View>
-        }
       >
-        <View className="flex-1 pb-16 mb-16 ">
-          {/* Trending Section */}
-          <View className="px-4 pt-4">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-lg font-bold" style={{ color: textColor }}>
-                Trending
-              </Text>
-              <TouchableOpacity>
-                <Text className="text-sm text-blue-500">See All</Text>
-              </TouchableOpacity>
-            </View>
+        <Ionicons
+          name="search"
+          size={20}
+          color={isSearchFocused ? tintColor : tintText}
+        />
+        <TextInput
+          className="flex-1 ml-3 text-base"
+          style={{ color: textColor }}
+          placeholder="Discover communities, people, skills..."
+          placeholderTextColor={tintText}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onFocus={handleSearchFocus}
+          onBlur={handleSearchBlur}
+        />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchQuery("")}>
+            <Ionicons name="close-circle" size={20} color={tintText} />
+          </TouchableOpacity>
+        )}
+        <View
+          className="w-px h-6 mx-3"
+          style={{ backgroundColor: "#E5E7EB" }}
+        />
+        <TouchableOpacity>
+          <MaterialIcons name="tune" size={20} color={tintColor} />
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
+  );
 
-            {/* Trending Card */}
+  const CategoryChips = () => (
+    <View className="mb-6">
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={categories}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            onPress={() => setSelectedCategory(item.id)}
+            className={`mr-3 px-4 py-2 rounded-full flex-row items-center ${
+              selectedCategory === item.id ? "shadow-lg" : ""
+            }`}
+            style={{
+              backgroundColor:
+                selectedCategory === item.id ? item.color : cardBackground,
+              shadowColor: selectedCategory === item.id ? item.color : "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: selectedCategory === item.id ? 0.3 : 0.1,
+              shadowRadius: 8,
+              elevation: selectedCategory === item.id ? 8 : 2,
+            }}
+          >
+            <Ionicons
+              name={item.icon}
+              size={16}
+              color={selectedCategory === item.id ? "white" : tintText}
+            />
+            <Text
+              className={`ml-2 font-semibold ${
+                selectedCategory === item.id ? "text-white" : ""
+              }`}
+              style={{
+                color: selectedCategory === item.id ? "white" : textColor,
+              }}
+            >
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
 
+  const QuickActions = () => (
+    <View className="px-4 mb-6">
+      <View className="flex-row space-x-3">
+        <TouchableOpacity
+          className="flex-1 p-4 rounded-2xl flex-row items-center"
+          style={{ backgroundColor: "#FF6B6B20" }}
+          onPress={() => router.push("/(main)/(tabs)/SwapCenter")}
+        >
+          <View
+            className="w-10 h-10 rounded-full items-center justify-center mr-3"
+            style={{ backgroundColor: "#FF6B6B" }}
+          >
+            <Ionicons name="swap-horizontal" size={20} color="white" />
+          </View>
+          <View className="flex-1">
+            <Text style={{ color: textColor }} className="font-bold text-sm">
+              Quick Swap
+            </Text>
+            <Text style={{ color: tintText }} className="text-xs">
+              Find swappers nearby
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-1 p-4 rounded-2xl flex-row items-center"
+          style={{ backgroundColor: "#4ECDC420" }}
+          onPress={() => router.push("/(main)/(tabs)/Communities")}
+        >
+          <View
+            className="w-10 h-10 rounded-full items-center justify-center mr-3"
+            style={{ backgroundColor: "#4ECDC4" }}
+          >
+            <Ionicons name="people" size={20} color="white" />
+          </View>
+          <View className="flex-1">
+            <Text style={{ color: textColor }} className="font-bold text-sm">
+              Join Groups
+            </Text>
+            <Text style={{ color: tintText }} className="text-xs">
+              Connect with communities
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const SectionHeader = ({ title, subtitle, onSeeAll }) => (
+    <View className="flex-row justify-between items-center px-4 mb-4">
+      <View>
+        <Text style={{ color: textColor }} className="text-xl font-bold">
+          {title}
+        </Text>
+        {subtitle && (
+          <Text style={{ color: tintText }} className="text-sm">
+            {subtitle}
+          </Text>
+        )}
+      </View>
+      {onSeeAll && (
+        <TouchableOpacity onPress={onSeeAll}>
+          <Text style={{ color: tintColor }} className="font-semibold">
+            See All
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  const TrendingSection = () => (
+    <View className="mb-8">
+      <SectionHeader
+        title="Trending Now"
+        subtitle="Hot communities and swaps"
+        onSeeAll={() => router.push("/expandAll/trendingExpand")}
+      />
+      <View className="px-4">
+        <CommunityCard
+          community={
+            communityDetails[
+              Math.floor(Math.random() * communityDetails.length)
+            ]
+          }
+          users={users}
+          joinedCommunities={joinedCommunities}
+        />
+      </View>
+    </View>
+  );
+
+  const CategoriesSection = () => (
+    <View className="mb-8">
+      <SectionHeader
+        title="Explore Categories"
+        subtitle="Find your perfect match"
+        onSeeAll={() => router.push("/expandAll/categoriesExpand")}
+      />
+      <View className="px-4">
+        <View className="flex-row flex-wrap">
+          {exploreCategories.slice(0, 6).map((category, index) => (
+            <TouchableOpacity
+              key={index}
+              className="w-1/2 p-2"
+              onPress={() => showToast(`Exploring ${category.name}`, "success")}
+            >
+              <View
+                className="p-4 rounded-2xl items-center"
+                style={{
+                  backgroundColor: cardBackground,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 3,
+                }}
+              >
+                <View
+                  className="w-12 h-12 rounded-full items-center justify-center mb-3"
+                  style={{ backgroundColor: tintColor + "20" }}
+                >
+                  <FontAwesome5
+                    name={category.icon}
+                    size={20}
+                    color={tintColor}
+                  />
+                </View>
+                <Text
+                  style={{ color: textColor }}
+                  className="font-semibold text-center text-sm"
+                >
+                  {category.name}
+                </Text>
+                <Text
+                  style={{ color: tintText }}
+                  className="text-xs text-center mt-1"
+                >
+                  {Math.floor(Math.random() * 500) + 50}+ items
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+
+  const DiscoverSection = () => (
+    <View className="mb-8">
+      <SectionHeader
+        title="Discover People"
+        subtitle="Connect with talented individuals"
+      />
+      <FlatList
+        horizontal
+        data={discoverData}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <DiscoverCard person={item} />}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+      />
+    </View>
+  );
+
+  const ForYouSection = () => (
+    <View className="mb-8">
+      <SectionHeader title="For You" subtitle="Personalized recommendations" />
+      <View className="px-4">
+        {getRandomCommunities(communityDetails, 3).map((item) => (
+          <View key={item.id} className="mb-4">
             <CommunityCard
-              community={
-                communityDetails[
-                  Math.floor(Math.random() * communityDetails.length)
-                ]
-              } // Select a random community
+              community={item}
               users={users}
               joinedCommunities={joinedCommunities}
             />
           </View>
+        ))}
+      </View>
+    </View>
+  );
 
-          {/* Explore Categories */}
-          <Collapsible
-            title="Explore Categories"
-            seeAllPress={() => router.push("/expandAll/categoriesExpand")}
-          >
-            <View className="flex-row flex-wrap flex-grow space-x-2 ">
-              {exploreCategories.map((category, index) => (
-                <TouchableOpacity key={index}>
-                  <View className="flex-row items-center  justify-center mb-4 border-2 border-gray-400 bg-gray-100 rounded-lg p-[6px] px-[10px] py-[8px] ">
-                    <FontAwesome5
-                      name={category.icon}
-                      size={18}
-                      color="#4B5563"
-                    />
-                    <Text className=" font-JakartaMedium ml-2 text-xs text-gray-700">
-                      {category.name}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </Collapsible>
-
-          {/* Discover Section */}
-          <View>
-            <Collapsible title="Discover">
-              <FlatList
-                data={discoverData}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => <DiscoverCard person={item} />}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ padding: 10 }}
-              />
-            </Collapsible>
-            <Collapsible title="For You">
-              <FlatList
-                data={getRandomCommunities(communityDetails)} // Use the random selection function
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <CommunityCard
-                    community={item}
-                    users={users}
-                    joinedCommunities={joinedCommunities}
-                  />
-                )}
-                contentContainerStyle={{ padding: 16 }}
-                scrollEnabled={false}
-              />
-            </Collapsible>
-          </View>
+  return (
+    <View style={[styles.container, { backgroundColor }]}>
+      {/* Fixed Header */}
+      <Animated.View
+        style={[
+          styles.fixedHeader,
+          {
+            backgroundColor,
+            paddingTop: insets.top,
+            borderBottomWidth: 1,
+            borderBottomColor: "#E5E7EB",
+          },
+          headerAnimatedStyle,
+        ]}
+      >
+        <View className="flex-row items-center justify-between px-4 py-3">
+          <TouchableOpacity onPress={navigation.openDrawer}>
+            <Ionicons name="menu" size={24} color={textColor} />
+          </TouchableOpacity>
+          <Text style={{ color: textColor }} className="text-lg font-bold">
+            ExchanGo
+          </Text>
+          <HelloWave>
+            <TouchableOpacity
+              onPress={() => router.navigate("/message/messageCenter")}
+            >
+              <Ionicons name="chatbubbles-sharp" size={24} color={textColor} />
+            </TouchableOpacity>
+          </HelloWave>
         </View>
-      </AnimatedHeaderScrollView>
-      <Animated.View style={[filterButtonStyle]}>
-        <TouchableOpacity
-          className="absolute bottom-40 right-6 bg-blue-500 rounded-full p-4 shadow-lg"
-          onPress={() => {
-            /* Implement filter modal */
-          }}
-        >
-          <Ionicons name="filter" size={24} color="white" />
-        </TouchableOpacity>
       </Animated.View>
+
+      <Animated.ScrollView
+        onScroll={(event) => {
+          scrollY.value = event.nativeEvent.contentOffset.y;
+        }}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {/* Hero Section */}
+        <Animated.View style={[styles.heroContainer, heroAnimatedStyle]}>
+          <Image
+            source={{ uri: imageDataURL[7] }}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+          <BlurView intensity={20} tint="dark" style={styles.heroOverlay}>
+            <View className="px-6 pt-12">
+              <Text className="text-white text-3xl font-bold mb-2">
+                Discover & Exchange
+              </Text>
+              <Text className="text-white/80 text-base leading-6">
+                Connect with amazing people, swap skills, and build meaningful
+                communities
+              </Text>
+            </View>
+          </BlurView>
+        </Animated.View>
+
+        {/* Search Bar */}
+        <View style={{ marginTop: -40 }}>
+          <EnhancedSearchBar />
+        </View>
+
+        {/* Category Chips */}
+        <CategoryChips />
+
+        {/* Quick Actions */}
+        <QuickActions />
+
+        {/* Content Sections */}
+        <TrendingSection />
+        <CategoriesSection />
+        <DiscoverSection />
+        <ForYouSection />
+      </Animated.ScrollView>
+
+      {/* Floating Action Button */}
+      <TouchableOpacity
+        className="absolute bottom-24 right-6 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+        style={{
+          backgroundColor: tintColor,
+          shadowColor: tintColor,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 8,
+        }}
+        onPress={() => showToast("Filter options coming soon!", "info")}
+      >
+        <Ionicons name="options" size={24} color="white" />
+      </TouchableOpacity>
+
+      <StatusBar style="light" />
     </View>
   );
 };
@@ -199,54 +502,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerImage: {
+  fixedHeader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+  },
+  heroContainer: {
+    height: HERO_HEIGHT,
+    overflow: "hidden",
+  },
+  heroImage: {
     width: "100%",
-    height: 200,
+    height: "100%",
   },
-  contentContainer: {
-    padding: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 16,
-    color: "black",
-  },
-  description: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 16,
-    color: "black",
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  bottomSection: {
-    flex: 1,
-    borderTopLeftRadius: 40, // Rounded top-left corner
-    borderTopRightRadius: 40, // Rounded top-right corner
-    marginTop: -15, // Negative margin to overlap with the blue background
-    flexGrow: 1, // Allows the ScrollView to expand
-    paddingTop: 10,
-  },
-  header: {
-    backgroundColor: "white",
-    height: 100,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  image: {
-    width: SCREEN_WIDTH,
-    height: IMG_HEIGHT,
+  heroOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "flex-end",
   },
 });
 
-export default HomeScreen;
+export default ExploreScreen;
