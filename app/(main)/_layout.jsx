@@ -2,6 +2,15 @@ import React from "react";
 import { Drawer } from "expo-router/drawer";
 import { CustomDrawerContent } from "@/components/CustomDrawer";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 export default function DrawerLayout() {
   const backgroundColor = useThemeColor({}, "background");

@@ -486,14 +486,15 @@ const ExploreScreen = () => {
       <TouchableOpacity
         className="absolute bottom-24 right-6 w-14 h-14 rounded-full items-center justify-center shadow-lg"
         style={{
-          backgroundColor: tintColor,
+          backgroundColor: cardBackground,
           shadowColor: tintColor,
           shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
+          shadowOpacity: 0.1,
           shadowRadius: 8,
           elevation: 8,
+          opacity: 1,
         }}
-        onPress={() => showToast("Filter options coming soon!", "info")}
+        onPress={() => showToast("Filter options coming soon!", "info", 400)}
       >
         <Ionicons name="options" size={24} color="white" />
       </TouchableOpacity>
