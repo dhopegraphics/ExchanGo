@@ -28,7 +28,6 @@ import {
 import { HelloWave } from "@/components/HelloWave";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { imageDataURL } from "@/constants/ImageData";
-import { useNavigation } from "@react-navigation/native";
 import { discoverData, exploreCategories } from "@/constants/data";
 import CommunityCard from "@/components/CommunityCard";
 import DiscoverCard from "@/components/DiscoveryCard";
@@ -42,7 +41,6 @@ import { BlurView } from "expo-blur";
 const HERO_HEIGHT = 280;
 
 const ExploreScreen = () => {
-  const navigation = useNavigation();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
@@ -418,7 +416,7 @@ const ExploreScreen = () => {
         ]}
       >
         <View className="flex-row items-center justify-between px-4 py-3">
-          <TouchableOpacity onPress={navigation.openDrawer}>
+          <TouchableOpacity>
             <Ionicons name="menu" size={24} color={textColor} />
           </TouchableOpacity>
           <Text style={{ color: textColor }} className="text-lg font-bold">
