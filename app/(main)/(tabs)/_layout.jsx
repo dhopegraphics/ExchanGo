@@ -10,7 +10,7 @@ export default function TabLayout() {
         screenOptions={{ tabBarActiveTintColor: "blue" }}
         tabBar={(props) => <CustomBottomTab {...props} />}
       >
-        <Tabs.Screen name="Explore" />
+        <Tabs.Screen name="Explore" options={{ headerShown: false }} />
         <Tabs.Screen name="SwapCenter" options={{ headerShown: false }} />
         <Tabs.Screen name="Communities" />
         <Tabs.Screen name="Settings" options={{ headerShown: false }} />
