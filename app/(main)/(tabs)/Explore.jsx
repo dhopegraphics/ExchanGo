@@ -17,9 +17,14 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   interpolate,
-  Extrapolate,
+  Extrapolation,
 } from "react-native-reanimated";
-import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  FontAwesome5,
+  MaterialIcons,
+  Feather,
+} from "@expo/vector-icons";
 import { HelloWave } from "@/components/HelloWave";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { imageDataURL } from "@/constants/ImageData";
@@ -85,13 +90,13 @@ const ExploreScreen = () => {
       scrollY.value,
       [0, HERO_HEIGHT * 0.5],
       [0, 1],
-      Extrapolate.CLAMP
+      Extrapolation.CLAMP
     );
     const translateY = interpolate(
       scrollY.value,
       [0, HERO_HEIGHT],
       [0, -20],
-      Extrapolate.CLAMP
+      Extrapolation.CLAMP
     );
 
     return {
@@ -105,13 +110,13 @@ const ExploreScreen = () => {
       scrollY.value,
       [0, HERO_HEIGHT],
       [1, 1.1],
-      Extrapolate.CLAMP
+      Extrapolation.CLAMP
     );
     const opacity = interpolate(
       scrollY.value,
       [0, HERO_HEIGHT * 0.7],
       [1, 0],
-      Extrapolate.CLAMP
+      Extrapolation.CLAMP
     );
 
     return {
@@ -195,7 +200,7 @@ const ExploreScreen = () => {
               elevation: selectedCategory === item.id ? 8 : 2,
             }}
           >
-            <Ionicons
+            <Feather
               name={item.icon}
               size={16}
               color={selectedCategory === item.id ? "white" : tintText}
@@ -217,10 +222,10 @@ const ExploreScreen = () => {
   );
 
   const QuickActions = () => (
-    <View className="px-4 mb-6">
-      <View className="flex-row space-x-3">
+    <View className="px-4  mb-6">
+      <View className="flex-row gap-4 space-x-3">
         <TouchableOpacity
-          className="flex-1 p-4 rounded-2xl flex-row items-center"
+          className="flex-1 p-3 rounded-2xl flex-row items-center"
           style={{ backgroundColor: "#FF6B6B20" }}
           onPress={() => router.push("/(main)/(tabs)/SwapCenter")}
         >
