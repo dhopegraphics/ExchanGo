@@ -153,31 +153,6 @@ export const CustomDrawerContent = (props) => {
         }}
       />
 
-      <DrawerItem
-        icon={({ color, size }) => (
-          <Ionicons
-            name="settings-outline"
-            size={size}
-            color={pathname === "/settings" ? activeItemTextColor : textColor}
-          />
-        )}
-        label={"settings"}
-        labelStyle={[
-          styles.navItemLabel,
-          {
-            color: pathname === "/settings" ? activeItemTextColor : textColor,
-          },
-        ]}
-        style={{
-          backgroundColor:
-            pathname === "/settings"
-              ? activeItemBackgroundColor
-              : backgroundColor,
-        }}
-        onPress={() => {
-          router.push("/settings");
-        }}
-      />
       <View style={{ marginTop: 300 }}>
         <DrawerItem
           icon={({ color, size }) => (
