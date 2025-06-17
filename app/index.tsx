@@ -1,4 +1,3 @@
-import OnboardingScreen from "./(auth)/index";
 import "../global.css";
 import { Redirect } from "expo-router";
 

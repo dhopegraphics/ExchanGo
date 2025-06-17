@@ -40,6 +40,7 @@ interface Props {
 }
 
 const Toast = forwardRef<IToast, Props>(({ duration = 400, onHide }, ref) => {
+  Toast.displayName = "Toast Component";
   const [textLength, setTextLength] = useState(0);
   const [toastHeight, setToastHeight] = useState(0);
   const [config, setConfig] = useState<ConfigProps>({
