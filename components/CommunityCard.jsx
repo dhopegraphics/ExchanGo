@@ -7,7 +7,6 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 
@@ -236,7 +235,7 @@ const CommunityCard = ({ community, users, joinedCommunities = [] }) => {
           {/* Action Buttons */}
           <View style={styles.actionContainer}>
             <TouchableOpacity
-              style={[styles.joinButton, { backgroundColor: tintColor }]}
+              style={[styles.joinButton, { backgroundColor: cardBackground }]}
               onPress={(e) => {
                 e.stopPropagation();
                 // Handle join action
