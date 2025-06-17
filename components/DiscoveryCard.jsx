@@ -7,12 +7,11 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
 
 const DiscoverCard = ({ person }) => {
   const backgroundColor = useThemeColor({}, "background");
+  const connectButtonColor = useThemeColor({}, "tabBarBackground");
   const cardBackground = useThemeColor({}, "cardBackground");
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
@@ -205,7 +204,7 @@ const DiscoverCard = ({ person }) => {
               style={[
                 styles.connectButton,
                 {
-                  backgroundColor: isConnected ? "#4CAF50" : tintColor,
+                  backgroundColor: isConnected ? "#4CAF50" : connectButtonColor,
                 },
               ]}
             >
