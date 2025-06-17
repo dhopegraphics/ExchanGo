@@ -25,8 +25,7 @@ export default function TabLayout() {
             elevation: 0,
             shadowOpacity: 0,
             height: Platform.OS === "ios" ? 85 : 65,
-            paddingBottom: Platform.OS === "ios" ? 25 : 8,
-            paddingTop: 8,
+            paddingBottom: Platform.OS === "ios" ? 35 : 8,
             paddingHorizontal: 16,
           },
           tabBarItemStyle: {

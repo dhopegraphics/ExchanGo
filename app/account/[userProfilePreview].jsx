@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { imageDataURL } from "@/constants/ImageData";
 import { router, useLocalSearchParams } from "expo-router";
-import { getUserSkills } from "@/utils/databasefunctions";
+// import { getUserSkills } from "@/utils/databasefunctions";
 import { userSkills } from "@/data/userSkills";
 import { getUserTools } from "@/data/ToolsUsed";
 
@@ -20,7 +20,7 @@ const ProfileScreen = () => {
     profileImage,
   } = useLocalSearchParams();
 
-  const skills = getUserSkills(userId, userSkills); // Call the function to get skills
+  // const skills = getUserSkills(userId, userSkills);
   const tools = getUserTools(userId); // Call the function to get tools
 
   return (
@@ -57,26 +57,6 @@ const ProfileScreen = () => {
           <Text style={{ fontSize: 24, fontWeight: "bold", marginTop: 12 }}>
             {userName}
           </Text>
-          <View className="flex-row justify-evenly ">
-            {skills.length > 0 && (
-              <>
-                <Text>{skills[0]}</Text>
-                {skills.length > 1 && (
-                  <>
-                    <Text
-                      className="mr-3 ml-3"
-                      style={{ fontSize: 14, color: "#888" }}
-                    >
-                      |
-                    </Text>
-                    {skills.slice(1, -1).map((skill) => (
-                      <Text key={skill}>{skill}</Text>
-                    ))}
-                  </>
-                )}
-              </>
-            )}
-          </View>
         </View>
 
         {/* Connections and Swaps */}
