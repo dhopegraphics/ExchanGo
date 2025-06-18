@@ -36,40 +36,35 @@ const CommunityCenter = () => {
   const [visibleItems, setVisibleItems] = useState(5);
   const { lastVisitedCommunity, setLastVisitedCommunity } = useContext(
     LastVisitedCommunityContext
-  ); // Access context
+  );
   const [loading, setLoading] = useState(false); // State to manage loading
   const [timer, setTimer] = useState(null); // State to manage the timer
   const [displayCommunity, setDisplayCommunity] =
     useState(lastVisitedCommunity); // State to manage displayed community
-  // Function to filter communities based on search input
   const filteredCommunities = communityDetails.filter(
     (community) => community.name.toLowerCase().includes(search.toLowerCase()) // Adjust the property to match your community object
   );
 
   const handleCommunityPress = (community) => {
-    // Delay before setting loading to true
     setTimer(
       setTimeout(() => {
-        setLoading(true); // Set loading to true after the delay
-        // Keep the last visited community displayed for a while
+        setLoading(true);
         setTimeout(() => {
-          setLastVisitedCommunity(community); // Set the last visited community after the delay
-          setLoading(false); // Stop loading after setting the community
-        }, 2000); // Keep the last visited community displayed for 2 seconds
+          setLastVisitedCommunity(community);
+          setLoading(false);
+        }, 2000);
       }, 1000)
-    ); // Delay before setting loading to true (1 second)
+    );
   };
 
-  // Cleanup timer on unmount or when community is changed
   useEffect(() => {
     return () => {
       if (timer) {
-        clearTimeout(timer); // Clear the timer if the component unmounts
+        clearTimeout(timer);
       }
     };
   }, [timer]);
 
-  // Update the displayed community when lastVisitedCommunity changes
   useEffect(() => {
     setDisplayCommunity(lastVisitedCommunity);
   }, [lastVisitedCommunity]);

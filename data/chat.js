@@ -1,5 +1,5 @@
-import { users } from "./users";
-import { currentUser } from "./users";
+import { users, currentUser } from "./users";
+
 export const receivedMessages = [
   {
     id: "1",
