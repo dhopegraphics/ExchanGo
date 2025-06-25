@@ -13,9 +13,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true ,
+        "bundleIdentifier": "com.smarthivelabs.exchango",
+         "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+        "package": "com.smarthivelabs.exchango",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/exchanGoLogoNoBg.png",
         "backgroundColor": "#ffffff"
