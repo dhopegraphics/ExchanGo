@@ -47,7 +47,7 @@ const Onboarding = () => {
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [activeIndex]);
+  }, [activeIndex, progress]);
 
   const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -214,7 +214,7 @@ const Onboarding = () => {
             </TouchableOpacity>
           </View>
         </Swiper>
-        <View className="flex absolute bottom-16 right-10 items-center justify-center">
+        <View className="flex absolute bottom-24 right-10 items-center justify-center">
           <Svg height="64" width="64" viewBox="0 0 64 64">
             <AnimatedCircle
               cx="32"
