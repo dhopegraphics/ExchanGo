@@ -72,7 +72,7 @@ export default function FieldOfInterest() {
       {error ? (
         <Text className="text-red-500 text-center mb-4">{error}</Text>
       ) : null}
-      <View className="flex-row mb-6 space-x-6">
+      <View className="flex-row mb-6 gap-4 space-x-6">
         <TouchableOpacity
           className={`flex-1 py-3 rounded-md ${
             activeTab === "Teach" ? "bg-orange-400" : "bg-gray-200"

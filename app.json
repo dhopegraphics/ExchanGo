@@ -36,7 +36,13 @@
       "expo-video",
       "expo-font",
       "expo-web-browser",
-      "expo-sqlite"
+      "expo-sqlite" ,
+       [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you set Up Your Profile."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -10,7 +10,6 @@ import {
   Platform,
   TouchableWithoutFeedback,
   ScrollView,
-  StyleSheet,
   Alert,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -63,7 +62,7 @@ export default function ProfileCreation() {
 
     // Launch the image picker
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -184,7 +183,7 @@ export default function ProfileCreation() {
                     <Icon name="person" size={50} color={tintColor} />
                   </View>
                   <View
-                    className="absolute left-12 bottom-2 w-6 h-6 rounded-full justify-center items-center border-2 border-white"
+                    className="absolute  left-12 bottom-2 w-6 h-6 rounded-full justify-center items-center border-2 border-white"
                     style={{ backgroundColor: tintColor }}
                   >
                     <Icon name="add" size={18} color="black" />
@@ -337,17 +336,3 @@ export default function ProfileCreation() {
     </KeyboardAvoidingView>
   );
 }
-
-// Styles
-const styles = StyleSheet.create({
-  profilePictureButton: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-    position: "relative",
-  },
-});
