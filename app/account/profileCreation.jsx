@@ -28,9 +28,7 @@ export default function ProfileCreation() {
   const tintColor = useThemeColor({}, "tint");
   const cardBackground = useThemeColor({}, "cardBackground");
   const tintText = useThemeColor({}, "tintText");
-  // Clean up unused variables later
 
-  // State
   const [profilePicture, setProfilePicture] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -39,6 +37,7 @@ export default function ProfileCreation() {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -76,25 +75,23 @@ export default function ProfileCreation() {
   const handleGetLocation = async () => {
     try {
       setLocationLoading(true);
-      // Ask for permission
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission denied", "Location permission is required.");
         setLocationLoading(false);
+        setErrors((prev) => ({
+          ...prev,
+          location: "Location permission denied",
+        }));
         return;
       }
-
-      // Get current position
       let loc = await Location.getCurrentPositionAsync({});
-      // Reverse geocode to get address
       let addresses = await Location.reverseGeocodeAsync({
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
       });
-
       if (addresses && addresses.length > 0) {
         const place = addresses[0];
-        // Compose a readable address string
         const addressString = [
           place.name,
           place.street,
@@ -105,14 +102,49 @@ export default function ProfileCreation() {
           .filter(Boolean)
           .join(", ");
         setLocation(addressString);
+        setErrors((prev) => ({ ...prev, location: undefined }));
       } else {
         setLocation("Location found, but address unavailable");
+        setErrors((prev) => ({ ...prev, location: "Address unavailable" }));
       }
     } catch (error) {
       Alert.alert("Error", "Could not fetch location.");
       setLocation("Unable to get location");
+      setErrors((prev) => ({ ...prev, location: "Unable to get location" }));
     } finally {
       setLocationLoading(false);
+    }
+  };
+
+  // Validation logic
+  const validate = () => {
+    const newErrors = {};
+    if (!firstName.trim()) newErrors.firstName = "First name is required";
+    if (!lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!mobileNumber.trim()) {
+      newErrors.mobileNumber = "Mobile number is required";
+    } else if (!/^\+?\d{7,15}$/.test(mobileNumber.trim())) {
+      newErrors.mobileNumber = "Enter a valid mobile number";
+    }
+    if (!date || isNaN(date.getTime()))
+      newErrors.date = "Date of birth is required";
+    if (
+      !location ||
+      location.startsWith("Unable") ||
+      location.startsWith("Location found")
+    ) {
+      newErrors.location = "Location is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle continue
+  const handleContinue = () => {
+    if (validate()) {
+      router.replace("ProfileSetup/fieldOfInterest");
+    } else {
+      Alert.alert("Validation Error", "Please fix the errors in the form.");
     }
   };
 
@@ -140,7 +172,7 @@ export default function ProfileCreation() {
           <View className="px-5 py-4 flex-row items-center">
             <TouchableOpacity
               className="w-10 h-10 rounded-full justify-center items-center mr-2"
-              onPress={() => router.back()}
+              onPress={() => router.replace("/(auth)/signUp")}
             >
               <Icon name="arrow-back-ios" size={22} color={textColor} />
             </TouchableOpacity>
@@ -224,6 +256,11 @@ export default function ProfileCreation() {
                   placeholderTextColor={tintText}
                   onChangeText={setFirstName}
                 />
+                {errors.firstName && (
+                  <Text className="text-xs text-red-500 mt-1">
+                    {errors.firstName}
+                  </Text>
+                )}
               </View>
 
               <View className="mb-4">
@@ -240,6 +277,11 @@ export default function ProfileCreation() {
                   placeholderTextColor={tintText}
                   onChangeText={setLastName}
                 />
+                {errors.lastName && (
+                  <Text className="text-xs text-red-500 mt-1">
+                    {errors.lastName}
+                  </Text>
+                )}
               </View>
 
               <View className="mb-4">
@@ -257,6 +299,11 @@ export default function ProfileCreation() {
                   keyboardType="phone-pad"
                   onChangeText={setMobileNumber}
                 />
+                {errors.mobileNumber && (
+                  <Text className="text-xs text-red-500 mt-1">
+                    {errors.mobileNumber}
+                  </Text>
+                )}
               </View>
 
               <View className="mb-4">
@@ -287,6 +334,11 @@ export default function ProfileCreation() {
                     maximumDate={new Date()}
                   />
                 )}
+                {errors.date && (
+                  <Text className="text-xs text-red-500 mt-1">
+                    {errors.date}
+                  </Text>
+                )}
               </View>
 
               <View className="mb-4">
@@ -315,6 +367,11 @@ export default function ProfileCreation() {
                   </Text>
                   <Icon name="location-on" size={20} color={tintColor} />
                 </TouchableOpacity>
+                {errors.location && (
+                  <Text className="text-xs text-red-500 mt-1">
+                    {errors.location}
+                  </Text>
+                )}
               </View>
             </View>
 
@@ -323,7 +380,7 @@ export default function ProfileCreation() {
               className="h-14 rounded-2xl flex-row items-center justify-center mt-6"
               style={{ backgroundColor: tintColor }}
               activeOpacity={0.8}
-              onPress={() => router.replace("ProfileSetup/fieldOfInterest")}
+              onPress={handleContinue}
             >
               <Text className="text-black text-base font-semibold mr-2">
                 Continue

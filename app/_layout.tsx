@@ -1,7 +1,7 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { LastVisitedCommunityProvider } from "../Context/LastVisitedCommunityContext";
-
-import { Stack } from "expo-router";
+import "react-native-url-polyfill/auto";
+import { SplashScreen, Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import { ToastProvider } from "@/Context/ToastContext";
