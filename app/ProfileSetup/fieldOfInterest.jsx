@@ -49,7 +49,7 @@ export default function FieldOfInterest() {
       console.log("Final Selection:");
       console.log("Teach Interests:", teachInterests);
       console.log("Learn Interests:", learnInterests);
-      router.replace("/(main)/(tabs)/Explore");
+      router.replace("/(main)/Explore");
       // Add navigation logic here
     }
   };
@@ -84,7 +84,7 @@ export default function FieldOfInterest() {
               activeTab === "Teach" ? "text-white" : "text-gray-700"
             }`}
           >
-            Teach
+            Teach & Swap
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
