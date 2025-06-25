@@ -12,6 +12,7 @@ import {
   TextInput,
   RefreshControl,
 } from "react-native";
+import { SCREEN_WIDTH } from "@/constants/Screen";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -39,6 +40,7 @@ import { getRandomCommunities } from "@/utils/databasefunctions";
 import { BlurView } from "expo-blur";
 
 const HERO_HEIGHT = 280;
+const IMG_HEIGHT = 300;
 
 const ExploreScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -48,7 +50,6 @@ const ExploreScreen = () => {
   const tintColor = useThemeColor({}, "tint");
   const insets = useSafeAreaInsets();
   const { showToast } = useToast();
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -81,6 +82,27 @@ const ExploreScreen = () => {
     { id: "new", name: "New", icon: "zap", color: "#FFEAA7" },
     { id: "popular", name: "Popular", icon: "heart", color: "#FD79A8" },
   ];
+
+  const imageAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            scrollY.value,
+            [-IMG_HEIGHT, 0, IMG_HEIGHT],
+            [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+          ),
+        },
+        {
+          scale: interpolate(
+            scrollY.value,
+            [-IMG_HEIGHT, 0, IMG_HEIGHT],
+            [2, 1, 1]
+          ),
+        },
+      ],
+    };
+  });
 
   // Animated styles
   const headerAnimatedStyle = useAnimatedStyle(() => {
@@ -441,14 +463,16 @@ const ExploreScreen = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         contentContainerStyle={{ paddingBottom: 100 }}
+        style={{ backgroundColor: backgroundColor }}
       >
+        <Animated.Image
+          source={{ uri: imageDataURL[7] }}
+          style={[styles.image, imageAnimatedStyle]}
+          resizeMode="cover"
+        />
+
         {/* Hero Section */}
         <Animated.View style={[styles.heroContainer, heroAnimatedStyle]}>
-          <Image
-            source={{ uri: imageDataURL[7] }}
-            style={styles.heroImage}
-            resizeMode="cover"
-          />
           <BlurView intensity={20} tint="dark" style={styles.heroOverlay}>
             <View className="px-6 pt-12">
               <Text className="text-white text-3xl font-bold mb-2">
@@ -514,7 +538,6 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   heroContainer: {
-    height: HERO_HEIGHT,
     overflow: "hidden",
   },
   heroImage: {
@@ -528,6 +551,10 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     justifyContent: "flex-end",
+  },
+  image: {
+    width: SCREEN_WIDTH,
+    height: IMG_HEIGHT,
   },
 });
 
