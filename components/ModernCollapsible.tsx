@@ -18,7 +18,6 @@ export function ModernCollapsible({
 }: PropsWithChildren & { title: string; seeAllPress: () => void }) {
   const [isOpen, setIsOpen] = useState(true);
   const theme = useColorScheme() ?? "light";
-  const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
 
   return (

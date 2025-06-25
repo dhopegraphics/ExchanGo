@@ -5,7 +5,6 @@ import { useToast } from "@/Context/ToastContext";
 import {
   View,
   Text,
-  Image,
   TouchableOpacity,
   StyleSheet,
   FlatList,
