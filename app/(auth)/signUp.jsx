@@ -19,6 +19,63 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
+const InputField = ({
+  label,
+  placeholder,
+  value,
+  textColor,
+  cardBackground,
+  tintText,
+  onChangeText,
+  error,
+  secureTextEntry,
+  isPasswordVisible,
+  togglePasswordVisibility,
+  keyboardType = "default",
+  autoCapitalize = "none",
+}) => {
+  return (
+    <View className="mb-4">
+      <Text style={{ color: textColor }} className="text-sm font-semibold mb-2">
+        {label}
+      </Text>
+      <View className="relative">
+        <TextInput
+          style={{
+            backgroundColor: cardBackground,
+            borderColor: error ? "#EF4444" : "#E5E7EB",
+            color: textColor,
+          }}
+          className={`border rounded-xl px-4 py-4 pr-12 text-base ${
+            error ? "border-red-500" : "border-gray-200"
+          }`}
+          placeholder={placeholder}
+          placeholderTextColor={tintText}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
+          autoCorrect={false}
+        />
+        {togglePasswordVisibility && (
+          <TouchableOpacity
+            className="absolute right-4 top-4"
+            onPress={togglePasswordVisibility}
+          >
+            <Ionicons
+              name={isPasswordVisible ? "eye" : "eye-off"}
+              size={20}
+              color={tintText}
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+      {error && <Text className="text-red-500 text-xs mt-1 ml-1">{error}</Text>}
+    </View>
+  );
+};
+
 const SignUpScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -99,58 +156,6 @@ const SignUpScreen = () => {
     transform: [{ scale: scale.value }],
   }));
 
-  const InputField = ({
-    label,
-    placeholder,
-    value,
-    onChangeText,
-    error,
-    secureTextEntry,
-    isPasswordVisible,
-    togglePasswordVisibility,
-    keyboardType = "default",
-    autoCapitalize = "none",
-  }) => (
-    <View className="mb-4">
-      <Text style={{ color: textColor }} className="text-sm font-semibold mb-2">
-        {label}
-      </Text>
-      <View className="relative">
-        <TextInput
-          style={{
-            backgroundColor: cardBackground,
-            borderColor: error ? "#EF4444" : "#E5E7EB",
-            color: textColor,
-          }}
-          className={`border rounded-xl px-4 py-4 pr-12 text-base ${
-            error ? "border-red-500" : "border-gray-200"
-          }`}
-          placeholder={placeholder}
-          placeholderTextColor={tintText}
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
-          autoCapitalize={autoCapitalize}
-          autoCorrect={false}
-        />
-        {togglePasswordVisibility && (
-          <TouchableOpacity
-            className="absolute right-4 top-4"
-            onPress={togglePasswordVisibility}
-          >
-            <Ionicons
-              name={isPasswordVisible ? "eye" : "eye-off"}
-              size={20}
-              color={tintText}
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-      {error && <Text className="text-red-500 text-xs mt-1 ml-1">{error}</Text>}
-    </View>
-  );
-
   const SocialButton = ({ icon, label, onPress, style = {} }) => (
     <TouchableOpacity
       style={[{ backgroundColor: cardBackground }, style]}
@@ -203,6 +208,9 @@ const SignUpScreen = () => {
               onChangeText={(text) => updateFormData("fullName", text)}
               error={errors.fullName}
               autoCapitalize="words"
+              textColor={textColor}
+              cardBackground={cardBackground}
+              tintText={tintText}
             />
 
             <InputField
@@ -212,6 +220,9 @@ const SignUpScreen = () => {
               onChangeText={(text) => updateFormData("email", text)}
               error={errors.email}
               keyboardType="email-address"
+              textColor={textColor}
+              cardBackground={cardBackground}
+              tintText={tintText}
             />
 
             <InputField
@@ -225,6 +236,9 @@ const SignUpScreen = () => {
               togglePasswordVisibility={() =>
                 setIsPasswordVisible(!isPasswordVisible)
               }
+              textColor={textColor}
+              cardBackground={cardBackground}
+              tintText={tintText}
             />
 
             <InputField
@@ -238,6 +252,9 @@ const SignUpScreen = () => {
               togglePasswordVisibility={() =>
                 setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
               }
+              textColor={textColor}
+              cardBackground={cardBackground}
+              tintText={tintText}
             />
           </View>
 

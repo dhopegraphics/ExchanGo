@@ -10,21 +10,37 @@ import {
   Platform,
   TouchableWithoutFeedback,
   ScrollView,
+  StyleSheet,
+  Alert,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import * as ImagePicker from "expo-image-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
+import * as Location from "expo-location";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
+  const tintColor = useThemeColor({}, "tint");
+  const cardBackground = useThemeColor({}, "cardBackground");
+  const tintText = useThemeColor({}, "tintText");
+  // Clean up unused variables later
+
+  // State
   const [profilePicture, setProfilePicture] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [location, setLocation] = useState("");
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(Platform.OS === "ios");
@@ -35,123 +51,231 @@ export default function ProfileCreation() {
     setShowDatePicker(true);
   };
 
+  // Handle profile picture selection
+  const handleImagePicker = async () => {
+    // Request permission to access the media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
+    // Launch the image picker
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  const handleGetLocation = async () => {
+    try {
+      setLocationLoading(true);
+      // Ask for permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "Location permission is required.");
+        setLocationLoading(false);
+        return;
+      }
+
+      // Get current position
+      let loc = await Location.getCurrentPositionAsync({});
+      // Reverse geocode to get address
+      let addresses = await Location.reverseGeocodeAsync({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      });
+
+      if (addresses && addresses.length > 0) {
+        const place = addresses[0];
+        // Compose a readable address string
+        const addressString = [
+          place.name,
+          place.street,
+          place.city,
+          place.region,
+          place.country,
+        ]
+          .filter(Boolean)
+          .join(", ");
+        setLocation(addressString);
+      } else {
+        setLocation("Location found, but address unavailable");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Could not fetch location.");
+      setLocation("Unable to get location");
+    } finally {
+      setLocationLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{
         flex: 1,
         backgroundColor: backgroundColor,
       }}
-      // Behavior: Adjust the content when the keyboard appears (only on iOS)
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 100}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
-          style={{ backgroundColor: backgroundColor, flex: 1 }}
+          style={{ backgroundColor, flex: 1 }}
           contentContainerStyle={{
             paddingTop: insets.top,
+            paddingBottom: 40,
           }}
+          showsVerticalScrollIndicator={false}
         >
           <StatusBar style="auto" />
-          <View className="px-4 py-6">
-            <Text
-              style={{ color: textColor }}
-              className="text-2xl font-bold mb-2"
-            >
-              Create Profile
-            </Text>
-            <Text style={{ color: textColor }} className="text-gray-600 mb-6">
-              Set up your profile and introduce yourself, let&apos;s connect
-              together
-            </Text>
 
-            <View className="items-center mb-6 flex-row justify-start">
-              <TouchableOpacity
-                className="w-32 h-32 rounded-2xl bg-gray-200 justify-center items-center"
-                activeOpacity={0.8}
-                onPress={() => {
-                  /* Handle image picker */
-                }}
-              >
-                {profilePicture ? (
-                  <Image
-                    source={{ uri: profilePicture }}
-                    className="w-full h-full rounded-2xl"
-                  />
-                ) : (
-                  <Icon name="add-a-photo" size={40} color="black" />
-                )}
-              </TouchableOpacity>
+          {/* Header */}
+          <View className="px-5 py-4 flex-row items-center">
+            <TouchableOpacity
+              className="w-10 h-10 rounded-full justify-center items-center mr-2"
+              onPress={() => router.back()}
+            >
+              <Icon name="arrow-back-ios" size={22} color={textColor} />
+            </TouchableOpacity>
+            <View className="flex-1">
               <Text
+                className="text-2xl font-bold mb-1"
                 style={{ color: textColor }}
-                className="mt-2 ml-4 font-JakartaBold text-lg text-gray-600"
               >
-                Profile Picture
+                Create Profile
+              </Text>
+              <Text className="text-base" style={{ color: tintText }}>
+                Set up your profile to connect with others
               </Text>
             </View>
+          </View>
 
-            <View className="space-y-4">
-              <View>
+          {/* Profile Picture Selection */}
+          <View className="items-center justify-center my-5">
+            <TouchableOpacity
+              className="w-20 h-20 rounded-full overflow-hidden justify-center items-center mb-3 relative"
+              activeOpacity={0.8}
+              onPress={handleImagePicker}
+            >
+              {profilePicture ? (
+                <>
+                  <Image
+                    source={{ uri: profilePicture }}
+                    className="w-full h-full rounded-full"
+                  />
+                  <View className="absolute right-0 bottom-0 bg-[#0a7ea4] w-8 h-8 rounded-full justify-center items-center border-2 border-white">
+                    <Icon name="edit" size={18} color="#fff" />
+                  </View>
+                </>
+              ) : (
+                <>
+                  <View
+                    className="w-full h-full rounded-full justify-center items-center"
+                    style={{ backgroundColor: tintColor + "20" }}
+                  >
+                    <Icon name="person" size={50} color={tintColor} />
+                  </View>
+                  <View
+                    className="absolute left-12 bottom-2 w-6 h-6 rounded-full justify-center items-center border-2 border-white"
+                    style={{ backgroundColor: tintColor }}
+                  >
+                    <Icon name="add" size={18} color="black" />
+                  </View>
+                </>
+              )}
+            </TouchableOpacity>
+            <Text
+              className="text-base font-medium"
+              style={{ color: textColor }}
+            >
+              Upload Profile Picture
+            </Text>
+          </View>
+
+          {/* Form Fields */}
+          <View className="px-5">
+            {/* Personal Information Section */}
+            <View className="mb-6">
+              <Text
+                className="text-lg font-semibold mb-4"
+                style={{ color: textColor }}
+              >
+                Personal Information
+              </Text>
+
+              <View className="mb-4">
                 <Text
-                  style={{ color: textColor }}
-                  className="text-gray-700 mb-1"
+                  className="text-sm mb-2 font-medium"
+                  style={{ color: tintText }}
                 >
                   First Name
                 </Text>
                 <TextInput
-                  className="border border-gray-300 rounded-md p-2"
-                  placeholder="First Name"
-                  placeholderTextColor={textColor}
-                  style={{ color: textColor }}
+                  className="h-12 border rounded-xl px-4 text-base"
+                  style={{ color: textColor, borderColor: tintText + "40" }}
+                  placeholder="Enter your first name"
+                  placeholderTextColor={tintText}
+                  onChangeText={setFirstName}
                 />
               </View>
 
-              <View>
+              <View className="mb-4">
                 <Text
-                  style={{ color: textColor }}
-                  className="text-gray-700 mb-1"
+                  className="text-sm mb-2 font-medium"
+                  style={{ color: tintText }}
                 >
                   Last Name
                 </Text>
                 <TextInput
-                  className="border border-gray-300 rounded-md p-2"
-                  placeholder="Last Name"
-                  placeholderTextColor={textColor}
-                  style={{ color: textColor }}
+                  className="h-12 border rounded-xl px-4 text-base"
+                  style={{ color: textColor, borderColor: tintText + "40" }}
+                  placeholder="Enter your last name"
+                  placeholderTextColor={tintText}
+                  onChangeText={setLastName}
                 />
               </View>
 
-              <View>
+              <View className="mb-4">
                 <Text
-                  style={{ color: textColor }}
-                  className="text-gray-700 mb-1"
+                  className="text-sm mb-2 font-medium"
+                  style={{ color: tintText }}
                 >
                   Mobile Number
                 </Text>
                 <TextInput
-                  className="border border-gray-300 rounded-md p-2"
-                  placeholder="Mobile Number"
+                  className="h-12 border rounded-xl px-4 text-base"
+                  style={{ color: textColor, borderColor: tintText + "40" }}
+                  placeholder="Enter your mobile number"
+                  placeholderTextColor={tintText}
                   keyboardType="phone-pad"
-                  placeholderTextColor={textColor}
-                  style={{ color: textColor }}
+                  onChangeText={setMobileNumber}
                 />
               </View>
 
-              <View>
+              <View className="mb-4">
                 <Text
-                  style={{ color: textColor }}
-                  className="text-gray-700 mb-1"
+                  className="text-sm mb-2 font-medium"
+                  style={{ color: tintText }}
                 >
                   Date of Birth
                 </Text>
                 <TouchableOpacity
-                  className="border border-gray-300 rounded-md p-2 flex-row justify-between items-center"
+                  className="h-12 border rounded-xl px-4 flex-row items-center justify-between py-3"
+                  style={{ borderColor: tintText + "40" }}
                   onPress={showDatepicker}
                 >
-                  <Text style={{ color: textColor }} className="text-gray-500">
+                  <Text style={{ color: textColor }}>
                     {date.toLocaleDateString()}
                   </Text>
-                  <Icon name="calendar-today" size={24} color={textColor} />
+                  <Icon name="calendar-today" size={20} color={tintColor} />
                 </TouchableOpacity>
                 {showDatePicker && (
                   <DateTimePicker
@@ -161,34 +285,51 @@ export default function ProfileCreation() {
                     is24Hour={true}
                     display="default"
                     onChange={onDateChange}
+                    maximumDate={new Date()}
                   />
                 )}
               </View>
 
-              <View>
+              <View className="mb-4">
                 <Text
-                  style={{ color: textColor }}
-                  className="text-gray-700 mb-1"
+                  className="text-sm mb-2 font-medium"
+                  style={{ color: tintText }}
                 >
                   Location
                 </Text>
-                <TouchableOpacity className="border border-gray-300 rounded-md p-2 flex-row justify-between items-center">
-                  <Text style={{ color: textColor }} className="text-gray-500">
-                    Location
+                <TouchableOpacity
+                  className="h-12 border rounded-xl px-4 flex-row items-center justify-between py-3"
+                  style={{ borderColor: tintText + "40" }}
+                  onPress={handleGetLocation}
+                  disabled={locationLoading}
+                >
+                  <Text
+                    style={{ color: tintText }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {locationLoading
+                      ? "Getting location..."
+                      : location
+                      ? location
+                      : "Set your location"}
                   </Text>
-                  <Icon name="location-on" size={24} color={textColor} />
+                  <Icon name="location-on" size={20} color={tintColor} />
                 </TouchableOpacity>
               </View>
             </View>
 
+            {/* Continue Button */}
             <TouchableOpacity
+              className="h-14 rounded-2xl flex-row items-center justify-center mt-6"
+              style={{ backgroundColor: tintColor }}
               activeOpacity={0.8}
-              className="bg-orange-400 rounded-md py-3 mt-8"
               onPress={() => router.replace("ProfileSetup/fieldOfInterest")}
             >
-              <Text className="text-white text-center font-semibold">
+              <Text className="text-black text-base font-semibold mr-2">
                 Continue
               </Text>
+              <Icon name="arrow-forward" size={20} color="#fff" />
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -196,3 +337,17 @@ export default function ProfileCreation() {
     </KeyboardAvoidingView>
   );
 }
+
+// Styles
+const styles = StyleSheet.create({
+  profilePictureButton: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+    position: "relative",
+  },
+});
