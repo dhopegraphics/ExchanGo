@@ -21,6 +21,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import * as Location from "expo-location";
 import { useProfileStore } from "@/stores/useProfileStore";
+import { Client, Databases, Account, ID } from "react-native-appwrite";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
@@ -41,6 +42,13 @@ export default function ProfileCreation() {
   const [errors, setErrors] = useState({});
   const setProfile = useProfileStore((state) => state.setProfile);
   const savedProfile = useProfileStore((state) => state.profile);
+  const [coords, setCoords] = useState({ latitude: null, longitude: null });
+  const client = new Client()
+    .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT)
+    .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID);
+
+  const databases = new Databases(client);
+  const account = new Account(client);
 
   React.useEffect(() => {
     if (savedProfile) {
@@ -102,6 +110,10 @@ export default function ProfileCreation() {
         return;
       }
       let loc = await Location.getCurrentPositionAsync({});
+      setCoords({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      });
       let addresses = await Location.reverseGeocodeAsync({
         latitude: loc.coords.latitude,
         longitude: loc.coords.longitude,
@@ -157,19 +169,47 @@ export default function ProfileCreation() {
   };
 
   // Handle continue
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (validate()) {
-      // Save profile data persistently
-      setProfile({
-        profilePicture,
-        firstName,
-        middleName,
-        lastName,
-        mobileNumber,
-        dateOfBirth: date.toISOString(),
-        location,
-      });
-      router.replace("ProfileSetup/fieldOfInterest");
+      try {
+        // Get current user ID from Appwrite session
+        const user = await account.get();
+
+        // Save profile data persistently (local state)
+        setProfile({
+          profilePicture,
+          firstName,
+          middleName,
+          lastName,
+          mobileNumber,
+          dateOfBirth: date.toISOString(),
+          location,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        });
+
+        // Upload to Appwrite Database
+        await databases.createDocument(
+          "685d3b7f0020f5be8f33", // databaseId
+          "685d3bea000de3d5db55", // collectionId
+          ID.unique(), // documentId (use user id as doc id, or use ID.unique())
+          {
+            user_id: user.$id,
+            first_name: firstName,
+            middle_name: middleName,
+            last_name: lastName,
+            phone_number: mobileNumber,
+            date_of_birth: date.toISOString(),
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            address: location,
+          }
+        );
+
+        router.replace("ProfileSetup/fieldOfInterest");
+      } catch (error) {
+        Alert.alert("Error", error.message || "Failed to save profile.");
+      }
     } else {
       Alert.alert("Validation Error", "Please fix the errors in the form.");
     }
