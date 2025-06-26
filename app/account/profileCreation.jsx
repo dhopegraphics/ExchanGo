@@ -27,6 +27,8 @@ import {
   usersDatabaseId,
   avatarsBucketStorageId,
 } from "@/constants/queryIdsExport";
+import { getCountryCallingCode } from "libphonenumber-js";
+import * as Localization from "expo-localization";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
@@ -40,6 +42,8 @@ export default function ProfileCreation() {
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [location, setLocation] = useState("");
+  const countryCode = Localization.getLocales(); // e.g., 'GH', 'US', 'NG'
+  const dialingCode = getCountryCallingCode(countryCode); // e.g., '233'
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -172,15 +176,20 @@ export default function ProfileCreation() {
     }
   };
 
+  let formattedNumber = mobileNumber.trim();
+  // If the number doesn't start with '+', prepend the country code
+  if (!formattedNumber.startsWith("+")) {
+    formattedNumber = `+${dialingCode}${formattedNumber.replace(/^0+/, "")}`;
+  }
+
   // Validation logic
   const validate = () => {
     const newErrors = {};
     if (!firstName.trim()) newErrors.firstName = "First name is required";
     if (!lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!mobileNumber.trim()) {
-      newErrors.mobileNumber = "Mobile number is required";
-    } else if (!/^\+?\d{7,15}$/.test(mobileNumber.trim())) {
-      newErrors.mobileNumber = "Enter a valid mobile number";
+
+    if (!/^\+\d{7,15}$/.test(formattedNumber)) {
+      newErrors.mobileNumber = "Enter a valid mobile number with country code";
     }
     if (!date || isNaN(date.getTime()))
       newErrors.date = "Date of birth is required";
@@ -213,7 +222,7 @@ export default function ProfileCreation() {
           firstName,
           middleName,
           lastName,
-          mobileNumber,
+          formattedNumber,
           dateOfBirth: date.toISOString(),
           location,
           latitude: coords.latitude,
@@ -230,7 +239,7 @@ export default function ProfileCreation() {
             first_name: firstName,
             middle_name: middleName,
             last_name: lastName,
-            phone_number: mobileNumber,
+            phone_number: formattedNumber,
             date_of_birth: date.toISOString(),
             latitude: coords.latitude,
             longitude: coords.longitude,

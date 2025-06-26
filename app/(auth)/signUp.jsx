@@ -22,62 +22,71 @@ import * as SecureStore from "expo-secure-store";
 import { Client, Account, ID } from "react-native-appwrite";
 import { useAuthStore } from "@/stores/useAuthStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const InputField = ({
-  label,
-  placeholder,
-  value,
-  textColor,
-  cardBackground,
-  tintText,
-  onChangeText,
-  error,
-  secureTextEntry,
-  isPasswordVisible,
-  togglePasswordVisibility,
-  keyboardType = "default",
-  autoCapitalize = "none",
-}) => {
-  return (
-    <View className="mb-4">
-      <Text style={{ color: textColor }} className="text-sm font-semibold mb-2">
-        {label}
-      </Text>
-      <View className="relative">
-        <TextInput
-          style={{
-            backgroundColor: cardBackground,
-            borderColor: error ? "#EF4444" : "#E5E7EB",
-            color: textColor,
-          }}
-          className={`border rounded-xl px-4 py-4 pr-12 text-base ${
-            error ? "border-red-500" : "border-gray-200"
-          }`}
-          placeholder={placeholder}
-          placeholderTextColor={tintText}
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType}
-          autoCapitalize={autoCapitalize}
-          autoCorrect={false}
-        />
-        {togglePasswordVisibility && (
-          <TouchableOpacity
-            className="absolute right-4 top-4"
-            onPress={togglePasswordVisibility}
-          >
-            <Ionicons
-              name={isPasswordVisible ? "eye" : "eye-off"}
-              size={20}
-              color={tintText}
-            />
-          </TouchableOpacity>
+
+const InputField = React.memo(
+  ({
+    label,
+    placeholder,
+    value,
+    textColor,
+    cardBackground,
+    tintText,
+    onChangeText,
+    error,
+    secureTextEntry,
+    isPasswordVisible,
+    togglePasswordVisibility,
+    keyboardType = "default",
+    autoCapitalize = "none",
+  }) => {
+    InputField.displayName = "InputField"; // For debugging purposes
+    return (
+      <View className="mb-4">
+        <Text
+          style={{ color: textColor }}
+          className="text-sm font-semibold mb-2"
+        >
+          {label}
+        </Text>
+        <View className="relative">
+          <TextInput
+            style={{
+              backgroundColor: cardBackground,
+              borderColor: error ? "#EF4444" : "#E5E7EB",
+              color: textColor,
+            }}
+            className={`border rounded-xl px-4 py-4 pr-12 text-base ${
+              error ? "border-red-500" : "border-gray-200"
+            }`}
+            placeholder={placeholder}
+            placeholderTextColor={tintText}
+            value={value}
+            onChangeText={onChangeText}
+            secureTextEntry={secureTextEntry}
+            keyboardType={keyboardType}
+            autoCapitalize={autoCapitalize}
+            autoCorrect={false}
+          />
+          {togglePasswordVisibility && (
+            <TouchableOpacity
+              className="absolute right-4 top-4"
+              onPress={togglePasswordVisibility}
+            >
+              <Ionicons
+                name={isPasswordVisible ? "eye" : "eye-off"}
+                size={20}
+                color={tintText}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        {error && (
+          <Text className="text-red-500 text-xs mt-1 ml-1">{error}</Text>
         )}
       </View>
-      {error && <Text className="text-red-500 text-xs mt-1 ml-1">{error}</Text>}
-    </View>
-  );
-};
+    );
+  }
+);
 
 const SignUpScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -101,10 +110,6 @@ const SignUpScreen = () => {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
-    }
 
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
