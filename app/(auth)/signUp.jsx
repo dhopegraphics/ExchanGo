@@ -86,7 +86,6 @@ const SignUpScreen = () => {
   const cardBackground = useThemeColor({}, "cardBackground");
 
   const [formData, setFormData] = useState({
-    fullName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -140,15 +139,10 @@ const SignUpScreen = () => {
 
     try {
       // Create user in Appwrite
-      await account.create(
-        ID.unique(),
-        formData.email,
-        formData.password,
-        formData.fullName
-      );
+      await account.create(ID.unique(), formData.email, formData.password);
 
       // Create session (login)
-      const session = await account.createEmailSession(
+      const session = await account.createEmailPasswordSession(
         formData.email,
         formData.password
       );
@@ -168,6 +162,7 @@ const SignUpScreen = () => {
         "Error",
         error?.message || "Failed to create account. Please try again."
       );
+      console.log("Sign Up Error:", error);
     } finally {
       setIsLoading(false);
       scale.value = withSpring(1);
@@ -236,18 +231,6 @@ const SignUpScreen = () => {
 
           {/* Form */}
           <View className="mb-6">
-            <InputField
-              label="Full Name"
-              placeholder="Enter your full name"
-              value={formData.fullName}
-              onChangeText={(text) => updateFormData("fullName", text)}
-              error={errors.fullName}
-              autoCapitalize="words"
-              textColor={textColor}
-              cardBackground={cardBackground}
-              tintText={tintText}
-            />
-
             <InputField
               label="Email Address"
               placeholder="Enter your email"
