@@ -11,6 +11,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { SettingItem, SettingsGroup } from "@/components/SettingsSection";
+import { router } from "expo-router";
 
 const SettingsScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -27,7 +28,6 @@ const SettingsScreen = () => {
       style={{
         backgroundColor: backgroundColor,
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
       }}
     >
       <ScrollView className="px-3" style={{}}>
@@ -42,7 +42,9 @@ const SettingsScreen = () => {
         </View>
 
         {/* Avatar Section */}
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push("/account/mainPersonalProfile")}
+        >
           <View className="bg-gray-800 rounded-xl mb-4 p-4 flex-row items-center">
             <Image
               source={{
@@ -78,18 +80,6 @@ const SettingsScreen = () => {
             color="#8B5CF6"
             onPress={() => handlePress("Advertise")}
           />
-          <SettingItem
-            icon={<Ionicons name="briefcase" size={20} color="white" />}
-            label="Business tools"
-            color="#3B82F6"
-            onPress={() => handlePress("Business tools")}
-          />
-          <SettingItem
-            icon={<Ionicons name="checkmark-circle" size={20} color="white" />}
-            label="Meta Verified"
-            color="#3B82F6"
-            onPress={() => handlePress("Meta Verified")}
-          />
         </SettingsGroup>
 
         <SettingsGroup SectionHeader="General">
@@ -99,12 +89,7 @@ const SettingsScreen = () => {
             color="#FF2D55"
             onPress={() => handlePress("Favourites")}
           />
-          <SettingItem
-            icon={<Ionicons name="megaphone" size={20} color="white" />}
-            label="Broadcast lists"
-            color="#4CD964"
-            onPress={() => handlePress("Broadcast lists")}
-          />
+
           <SettingItem
             icon={<Ionicons name="star" size={20} color="white" />}
             label="Starred messages"
@@ -116,12 +101,6 @@ const SettingsScreen = () => {
             label="Communities"
             color="#007AFF"
             onPress={() => handlePress("Communities")}
-          />
-          <SettingItem
-            icon={<Ionicons name="laptop-outline" size={20} color="white" />}
-            label="Linked devices"
-            color="#5AC8FA"
-            onPress={() => handlePress("Linked devices")}
           />
         </SettingsGroup>
 
@@ -138,12 +117,7 @@ const SettingsScreen = () => {
             color="#32ADE6"
             onPress={() => handlePress("Privacy")}
           />
-          <SettingItem
-            icon={<Ionicons name="chatbubbles" size={20} color="white" />}
-            label="Chats"
-            color="#25D366"
-            onPress={() => handlePress("Chats")}
-          />
+
           <SettingItem
             icon={<Ionicons name="notifications" size={20} color="white" />}
             label="Notifications"
@@ -158,24 +132,22 @@ const SettingsScreen = () => {
           />
         </SettingsGroup>
 
-        <View className="mb-20">
-          <SettingsGroup SectionHeader="Help">
-            <SettingItem
-              icon={
-                <Ionicons name="information-circle" size={20} color="white" />
-              }
-              label="Help"
-              color="#007AFF"
-              onPress={() => handlePress("Help")}
-            />
-            <SettingItem
-              icon={<Ionicons name="person-add" size={20} color="white" />}
-              label="Invite a contact"
-              color="#FFCC00"
-              onPress={() => handlePress("Invite a contact")}
-            />
-          </SettingsGroup>
-        </View>
+        <SettingsGroup SectionHeader="Help">
+          <SettingItem
+            icon={
+              <Ionicons name="information-circle" size={20} color="white" />
+            }
+            label="Help"
+            color="#007AFF"
+            onPress={() => handlePress("Help")}
+          />
+          <SettingItem
+            icon={<Ionicons name="person-add" size={20} color="white" />}
+            label="Invite a contact"
+            color="#FFCC00"
+            onPress={() => handlePress("Invite a contact")}
+          />
+        </SettingsGroup>
       </ScrollView>
     </View>
   );
