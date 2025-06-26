@@ -44,8 +44,8 @@ export default function ProfileCreation() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [location, setLocation] = useState("");
   const locales = Localization.getLocales();
-  const countryCode = locales[0]?.country || "US"; // fallback to 'US' if not found
-  const dialingCode = getCountryCallingCode(countryCode); // e.g., '233'
+  const countryCode = locales[0]?.country || "US";
+  const dialingCode = getCountryCallingCode(countryCode);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
@@ -218,6 +218,9 @@ export default function ProfileCreation() {
     if (!firstName.trim()) newErrors.firstName = "First name is required";
     if (!lastName.trim()) newErrors.lastName = "Last name is required";
 
+    if (!profilePicture) {
+      newErrors.profilePicture = "Profile picture is required";
+    }
     if (!/^\d{7,15}$/.test(formattedNumber)) {
       newErrors.mobileNumber = "Enter a valid mobile number with country code";
     }
@@ -268,14 +271,10 @@ export default function ProfileCreation() {
 
         if (fileId) {
           // Generate URL for database storage
-          avatarUrl = storage
-            .getFilePreview(
-              avatarsBucketStorageId,
-              fileId,
-              400, // width
-              400 // height
-            )
-            .toString();
+          avatarUrl = storage.getFileDownloadURL(
+            avatarsBucketStorageId,
+            fileId
+          );
         }
       }
 
@@ -297,8 +296,7 @@ export default function ProfileCreation() {
           latitude: coords.latitude,
           longitude: coords.longitude,
           address: location,
-          avatar_url: avatarUrl || null, // null if no URL available
-          created_at: new Date().toISOString(),
+          avatar_url: avatarUrl || null,
         }
       );
 
@@ -344,7 +342,7 @@ export default function ProfileCreation() {
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 100}
     >
-      <View className="flex-row items-center justify-between mx-5 mb-6">
+      <View className="flex-row  items-center  justify-between  pt-20 px-8 mb-2">
         <View className="flex-row items-center">
           <View className="h-8 w-8 rounded-full bg-orange-400 items-center justify-center">
             <Text className="text-white font-bold">1</Text>
@@ -353,8 +351,8 @@ export default function ProfileCreation() {
           <View className="h-8 w-8 rounded-full bg-gray-300 items-center justify-center">
             <Text className="text-gray-600 font-bold">2</Text>
           </View>
-          <View className="h-1 w-8 bg-gray-300 mx-1" />
         </View>
+        <View className="h-1 w-8 bg-gray-300 mx-1" />
         <Text style={{ color: tintText }} className="text-sm">
           Step 1 of 2
         </Text>
@@ -363,7 +361,6 @@ export default function ProfileCreation() {
         <ScrollView
           style={{ backgroundColor, flex: 1 }}
           contentContainerStyle={{
-            paddingTop: insets.top,
             paddingBottom: 40,
           }}
           showsVerticalScrollIndicator={false}
@@ -425,6 +422,16 @@ export default function ProfileCreation() {
                 </>
               )}
             </TouchableOpacity>
+            <View>
+              {isUploading && (
+                <Text className="text-xs text-gray-500 mt-1">Uploading...</Text>
+              )}
+              {errors.profilePicture && (
+                <Text className="text-xs text-red-500 mt-1">
+                  {errors.profilePicture}
+                </Text>
+              )}
+            </View>
             <Text
               className="text-base font-medium"
               style={{ color: textColor }}
