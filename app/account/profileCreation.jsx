@@ -344,6 +344,21 @@ export default function ProfileCreation() {
       behavior={Platform.OS === "ios" ? "padding" : null}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 100}
     >
+      <View className="flex-row items-center justify-between mx-5 mb-6">
+        <View className="flex-row items-center">
+          <View className="h-8 w-8 rounded-full bg-orange-400 items-center justify-center">
+            <Text className="text-white font-bold">1</Text>
+          </View>
+          <View className="h-1 w-8 bg-orange-400 mx-1" />
+          <View className="h-8 w-8 rounded-full bg-gray-300 items-center justify-center">
+            <Text className="text-gray-600 font-bold">2</Text>
+          </View>
+          <View className="h-1 w-8 bg-gray-300 mx-1" />
+        </View>
+        <Text style={{ color: tintText }} className="text-sm">
+          Step 1 of 2
+        </Text>
+      </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
           style={{ backgroundColor, flex: 1 }}

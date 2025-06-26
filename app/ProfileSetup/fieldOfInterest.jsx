@@ -10,6 +10,7 @@ import {
   usersDatabaseId,
   fieldOfInterestCollectionId,
 } from "@/constants/queryIdsExport";
+import * as Haptics from "expo-haptics";
 
 export default function FieldOfInterest() {
   const backgroundColor = useThemeColor({}, "background");
@@ -20,6 +21,11 @@ export default function FieldOfInterest() {
   const insets = useSafeAreaInsets();
   const [teachInterests, setTeachInterests] = useState([]);
   const [learnInterests, setLearnInterests] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+
   const client = new Client()
     .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT)
     .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID);
@@ -53,16 +59,31 @@ export default function FieldOfInterest() {
 
   const handleContinue = async () => {
     if (teachInterests.length === 0 || learnInterests.length === 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setError(
         "Please select at least one interest for both Teach and Learn categories."
       );
       return;
     }
 
-    setError("");
-
     try {
+      // Start submission process
+      setError("");
+      setIsSubmitting(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      // Calculate total items for progress tracking
+      const totalInterests = teachInterests.length + learnInterests.length;
+      setTotalItems(totalInterests);
+      setProgress(0);
+
+      // Get current user
+      setStatusMessage("Getting account information...");
       const user = await account.get();
+
+      // Upload teach interests with progress
+      setStatusMessage("Saving your teaching interests...");
+      let currentProgress = 0;
 
       // Create a document for each Teach interest
       for (const interest of teachInterests) {
@@ -76,9 +97,12 @@ export default function FieldOfInterest() {
             type: "Teach",
           }
         );
+        currentProgress++;
+        setProgress(Math.floor((currentProgress / totalInterests) * 100));
       }
 
       // Create a document for each Learn interest
+      setStatusMessage("Saving your learning interests...");
       for (const interest of learnInterests) {
         await databases.createDocument(
           usersDatabaseId,
@@ -90,20 +114,59 @@ export default function FieldOfInterest() {
             type: "Learn",
           }
         );
+        currentProgress++;
+        setProgress(Math.floor((currentProgress / totalInterests) * 100));
       }
 
-      // After successful interests selection
+      // Update onboarding stage
+      setStatusMessage("Completing setup...");
       await AsyncStorage.setItem("onboardingStage", "done");
-      router.replace("/(main)/Explore");
-    } catch (_error) {
-      setError("Failed to save interests. Please try again.");
+
+      // Show success message before navigation
+      setStatusMessage("Your interests have been saved!");
+      setProgress(100);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      // Short delay to show success state before navigating
+      setTimeout(() => {
+        router.replace("/(main)/Explore");
+      }, 1200);
+    } catch (error) {
+      console.error("Interest setup error:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
+      if (error.code === 401) {
+        setError("Session expired. Please sign in again.");
+      } else {
+        setError("Failed to save interests. Please try again.");
+      }
+
+      setIsSubmitting(false);
+      setStatusMessage("");
     }
   };
+
   return (
     <View
       className="flex-1  p-4"
       style={{ paddingTop: insets.top, backgroundColor: backgroundColor }}
     >
+      <View className="flex-row items-center justify-between mx-5 mb-6">
+        <View className="flex-row items-center">
+          <View className="h-8 w-8 rounded-full bg-gray-300  items-center justify-center">
+            <Text className=" text-gray-600  font-bold">1</Text>
+          </View>
+          <View className="h-1 w-8 bg-orange-400 mx-1" />
+          <View className="h-8 w-8 rounded-full bg-orange-400 items-center justify-center">
+            <Text className="text-white font-bold">2</Text>
+          </View>
+          <View className="h-1 w-8 bg-gray-300 mx-1" />
+        </View>
+        <Text style={{ color: tintText }} className="text-sm">
+          Step 2 of 2
+        </Text>
+      </View>
+
       <Text
         style={{ color: textColor }}
         className="text-2xl font-JakartaSemiBold mb-4"
@@ -205,10 +268,72 @@ export default function FieldOfInterest() {
             : "bg-gray-300"
         }`}
         onPress={handleContinue}
-        disabled={teachInterests.length === 0 || learnInterests.length === 0}
+        disabled={
+          isSubmitting ||
+          teachInterests.length === 0 ||
+          learnInterests.length === 0
+        }
       >
-        <Text className="text-white text-center font-semibold">Continue</Text>
+        <Text className="text-white text-center font-semibold">
+          {isSubmitting ? "Saving..." : "Continue"}
+        </Text>
       </TouchableOpacity>
+
+      {/* Loading Overlay */}
+      {isSubmitting && (
+        <View
+          className="absolute inset-0 bg-black/40 flex items-center justify-center"
+          style={{ zIndex: 1000 }}
+        >
+          <View className="bg-white dark:bg-gray-800 rounded-xl p-6 w-4/5 items-center">
+            <View className="w-full mb-3">
+              <Text
+                className="text-center font-semibold mb-2"
+                style={{ color: textColor }}
+              >
+                {statusMessage}
+              </Text>
+              <View>
+                <Text
+                  className="text-center text-sm mb-2"
+                  style={{ color: tintText }}
+                >
+                  {totalItems > 0
+                    ? `Saving ${totalItems} interest${
+                        totalItems > 1 ? "s" : ""
+                      }`
+                    : "Saving interests..."}
+                </Text>
+              </View>
+              {/* Progress bar */}
+              <View className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+                <View
+                  className="h-full bg-orange-400"
+                  style={{ width: `${progress}%` }}
+                />
+              </View>
+
+              <Text
+                className="text-center text-sm mt-1"
+                style={{ color: tintText }}
+              >
+                {progress}% Complete
+              </Text>
+            </View>
+
+            {progress === 100 ? (
+              <View className="items-center">
+                <View className="h-16 w-16 rounded-full bg-green-100 items-center justify-center mb-2">
+                  <Text className="text-2xl">✓</Text>
+                </View>
+                <Text className="text-green-600 font-semibold">All set!</Text>
+              </View>
+            ) : (
+              <View className="h-10 w-10 rounded-full border-4 border-t-orange-400 border-r-gray-200 border-b-gray-200 border-l-gray-200 animate-spin" />
+            )}
+          </View>
+        </View>
+      )}
     </View>
   );
 }
