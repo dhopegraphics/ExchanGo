@@ -159,17 +159,19 @@ const SignUpScreen = () => {
   const SocialButton = ({ icon, label, onPress, style = {} }) => (
     <TouchableOpacity
       style={[{ backgroundColor: cardBackground }, style]}
-      className="border border-gray-200 rounded-xl py-4 mb-3 flex-row justify-center items-center"
+      className="border  border-gray-200 rounded-xl py-4 mb-3 flex-row justify-center items-center"
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Ionicons name={icon} size={20} color={textColor} />
-      <Text
-        style={{ color: textColor }}
-        className="ml-3 font-semibold text-base"
-      >
-        {label}
-      </Text>
+      <View className="flex-row ml-40 items-center w-96">
+        <Ionicons name={icon} size={20} color={textColor} />
+        <Text
+          style={{ color: textColor }}
+          className="ml-3 font-semibold text-base"
+        >
+          {label}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 
