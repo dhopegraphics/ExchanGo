@@ -178,9 +178,9 @@ export default function ProfileCreation() {
   };
 
   let formattedNumber = mobileNumber.trim();
-  // If the number doesn't start with '+', prepend the country code
-  if (!formattedNumber.startsWith("+")) {
-    formattedNumber = `+${dialingCode}${formattedNumber.replace(/^0+/, "")}`;
+  // If the number doesn't start with the dialing code, prepend it
+  if (!formattedNumber.startsWith(dialingCode)) {
+    formattedNumber = `${dialingCode}${formattedNumber.replace(/^0+/, "")}`;
   }
 
   // Validation logic
@@ -189,7 +189,7 @@ export default function ProfileCreation() {
     if (!firstName.trim()) newErrors.firstName = "First name is required";
     if (!lastName.trim()) newErrors.lastName = "Last name is required";
 
-    if (!/^\+\d{7,15}$/.test(formattedNumber)) {
+    if (!/^\d{7,15}$/.test(formattedNumber)) {
       newErrors.mobileNumber = "Enter a valid mobile number with country code";
     }
     if (!date || isNaN(date.getTime()))
