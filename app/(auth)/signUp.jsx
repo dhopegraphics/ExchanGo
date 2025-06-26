@@ -21,7 +21,7 @@ import Animated, {
 import * as SecureStore from "expo-secure-store";
 import { Client, Account, ID } from "react-native-appwrite";
 import { useAuthStore } from "@/stores/useAuthStore";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const InputField = ({
   label,
   placeholder,
@@ -161,6 +161,7 @@ const SignUpScreen = () => {
       setUser(user);
 
       Alert.alert("Success", "Account created successfully!");
+      await AsyncStorage.setItem("hasOnboarded", "true");
       router.replace("account/profileCreation");
     } catch (error) {
       Alert.alert(

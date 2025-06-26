@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { interests } from "@/constants/data";
+import { useProfileStore } from "@/stores/useProfileStore";
 
 export default function FieldOfInterest() {
   const backgroundColor = useThemeColor({}, "background");
@@ -12,8 +13,21 @@ export default function FieldOfInterest() {
   const [activeTab, setActiveTab] = useState("Teach");
   const [error, setError] = useState("");
   const insets = useSafeAreaInsets();
+  const setProfile = useProfileStore((state) => state.setProfile);
+  const savedProfile = useProfileStore((state) => state.profile);
+
   const [teachInterests, setTeachInterests] = useState([]);
   const [learnInterests, setLearnInterests] = useState([]);
+
+  // Persist changes to store on every update
+  useEffect(() => {
+    setProfile({
+      ...savedProfile,
+      teachInterests,
+      learnInterests,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teachInterests, learnInterests]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -46,14 +60,14 @@ export default function FieldOfInterest() {
       );
     } else {
       setError("");
-      console.log("Final Selection:");
-      console.log("Teach Interests:", teachInterests);
-      console.log("Learn Interests:", learnInterests);
+      setProfile({
+        ...savedProfile,
+        teachInterests,
+        learnInterests,
+      });
       router.replace("/(main)/Explore");
-      // Add navigation logic here
     }
   };
-
   return (
     <View
       className="flex-1  p-4"
