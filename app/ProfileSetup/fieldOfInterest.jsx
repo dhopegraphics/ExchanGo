@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { interests } from "@/constants/data";
-import { useProfileStore } from "@/stores/useProfileStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Client, Databases, Account, ID } from "react-native-appwrite";
 import {
@@ -19,8 +18,6 @@ export default function FieldOfInterest() {
   const [activeTab, setActiveTab] = useState("Teach");
   const [error, setError] = useState("");
   const insets = useSafeAreaInsets();
-  const setProfile = useProfileStore((state) => state.setProfile);
-  const savedProfile = useProfileStore((state) => state.profile);
   const [teachInterests, setTeachInterests] = useState([]);
   const [learnInterests, setLearnInterests] = useState([]);
   const client = new Client()
@@ -29,16 +26,6 @@ export default function FieldOfInterest() {
 
   const databases = new Databases(client);
   const account = new Account(client);
-
-  // Persist changes to store on every update
-  useEffect(() => {
-    setProfile({
-      ...savedProfile,
-      teachInterests,
-      learnInterests,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teachInterests, learnInterests]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -73,11 +60,6 @@ export default function FieldOfInterest() {
     }
 
     setError("");
-    setProfile({
-      ...savedProfile,
-      teachInterests,
-      learnInterests,
-    });
 
     try {
       const user = await account.get();

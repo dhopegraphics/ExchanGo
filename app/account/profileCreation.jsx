@@ -20,7 +20,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import * as Location from "expo-location";
-import { useProfileStore } from "@/stores/useProfileStore";
 import { Client, Databases, Account, ID, Storage } from "react-native-appwrite";
 import {
   usersCollectionId,
@@ -30,6 +29,7 @@ import {
 import { getCountryCallingCode } from "libphonenumber-js";
 import * as Localization from "expo-localization";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Haptics from "expo-haptics";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
@@ -49,9 +49,10 @@ export default function ProfileCreation() {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
   const [errors, setErrors] = useState({});
-  const setProfile = useProfileStore((state) => state.setProfile);
-  const savedProfile = useProfileStore((state) => state.profile);
   const [coords, setCoords] = useState({ latitude: null, longitude: null });
   const client = new Client()
     .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT)
@@ -59,20 +60,6 @@ export default function ProfileCreation() {
   const databases = new Databases(client);
   const account = new Account(client);
   const storage = new Storage(client);
-
-  React.useEffect(() => {
-    if (savedProfile) {
-      if (savedProfile.profilePicture)
-        setProfilePicture(savedProfile.profilePicture);
-      if (savedProfile.firstName) setFirstName(savedProfile.firstName);
-      if (savedProfile.middleName) setMiddleName(savedProfile.middleName);
-      if (savedProfile.lastName) setLastName(savedProfile.lastName);
-      if (savedProfile.mobileNumber) setMobileNumber(savedProfile.mobileNumber);
-      if (savedProfile.dateOfBirth) setDate(new Date(savedProfile.dateOfBirth));
-      if (savedProfile.location) setLocation(savedProfile.location);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -109,28 +96,68 @@ export default function ProfileCreation() {
 
   const uploadProfilePicture = async (uri) => {
     if (!uri) return null;
-    try {
-      const fileName = uri.split("/").pop();
-      const fileType = "image/jpeg";
 
+    try {
+      // Show loading state for image upload
+      setIsUploading(true);
+
+      // Extract file information
+      const fileName = uri.split("/").pop();
+      const extension = fileName.split(".").pop().toLowerCase();
+
+      // Validate file type
+      const validTypes = ["jpg", "jpeg", "png"];
+      const fileType = validTypes.includes(extension)
+        ? `image/${extension === "jpg" ? "jpeg" : extension}`
+        : "image/jpeg";
+
+      // Create file object with properly structured data
+      const fileObject = {
+        name: fileName,
+        type: fileType,
+        size: 0, // Actual size is determined by the SDK
+        uri: uri,
+      };
+
+      // Log upload attempt
+      console.log(
+        `Uploading ${fileType} file to bucket: ${avatarsBucketStorageId}`
+      );
+
+      // Upload file to Appwrite storage
       const response = await storage.createFile(
         avatarsBucketStorageId,
         ID.unique(),
-        {
-          name: fileName,
-          type: fileType,
-          size: 0,
-          uri: uri,
-        }
+        fileObject
       );
-      console.log("Upload response:", response);
+
+      console.log("Upload successful:", response.$id);
       return response?.$id;
     } catch (error) {
+      // Detailed error logging
       console.log("Image upload error:", error);
-      Alert.alert("Error", "Failed to upload profile picture.");
+
+      // User-friendly error messages based on error type
+      if (error.code === 401) {
+        Alert.alert(
+          "Authentication Error",
+          "Please sign in again to continue."
+        );
+      } else if (error.code === 413) {
+        Alert.alert("File Too Large", "Please choose a smaller image.");
+      } else {
+        Alert.alert(
+          "Upload Failed",
+          "We couldn't upload your profile picture. Please try again."
+        );
+      }
       return null;
+    } finally {
+      // Always reset loading state
+      setIsUploading(false);
     }
   };
+
   const handleGetLocation = async () => {
     try {
       setLocationLoading(true);
@@ -209,64 +236,105 @@ export default function ProfileCreation() {
 
   // Handle continue
   const handleContinue = async () => {
-    if (validate()) {
-      try {
-        const user = await account.get();
+    // First validate all form fields
+    if (!validate()) {
+      // Show validation errors with visual feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(
+        "Please Fix Errors",
+        "Some information is missing or incorrect."
+      );
+      return;
+    }
 
-        let avatarUrl = "";
-        let fileId = null;
-        if (profilePicture) {
-          fileId = await uploadProfilePicture(profilePicture);
-          if (fileId) {
-            avatarUrl = storage.getFileDownloadURL(
+    try {
+      // Begin submission - show loading state
+      setIsSubmitting(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      // Get current user
+      const user = await account.get();
+
+      // Handle profile picture upload with visual feedback
+      let avatarUrl = "";
+      let fileId = null;
+
+      if (profilePicture) {
+        // Update status message
+        setStatusMessage("Uploading profile picture...");
+
+        // Upload profile picture
+        fileId = await uploadProfilePicture(profilePicture);
+
+        if (fileId) {
+          // Generate URL for database storage
+          avatarUrl = storage
+            .getFilePreview(
               avatarsBucketStorageId,
-              fileId
-            );
-          }
+              fileId,
+              400, // width
+              400 // height
+            )
+            .toString();
         }
-        console.log("File ID", fileId);
-        console.log("Avatar URL", avatarUrl);
+      }
 
-        setProfile({
-          profilePicture,
-          firstName,
-          middleName,
-          lastName,
-          formattedNumber,
-          dateOfBirth: date.toISOString(),
-          location,
+      // Update status for database operation
+      setStatusMessage("Saving your profile...");
+
+      // Create user profile document
+      await databases.createDocument(
+        usersDatabaseId,
+        usersCollectionId,
+        ID.unique(),
+        {
+          user_id: user.$id,
+          first_name: firstName.trim(),
+          middle_name: middleName.trim(),
+          last_name: lastName.trim(),
+          phone_number: formattedNumber,
+          date_of_birth: date.toISOString(),
           latitude: coords.latitude,
           longitude: coords.longitude,
-        });
+          address: location,
+          avatar_url: avatarUrl || null, // null if no URL available
+          created_at: new Date().toISOString(),
+        }
+      );
 
-        await databases.createDocument(
-          usersDatabaseId,
-          usersCollectionId,
-          ID.unique(),
-          {
-            user_id: user.$id,
-            first_name: firstName,
-            middle_name: middleName,
-            last_name: lastName,
-            phone_number: formattedNumber,
-            date_of_birth: date.toISOString(),
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            address: location,
-            avatar_url: avatarUrl || "", // Always a string
-          }
-        );
+      // Update onboarding progress
+      await AsyncStorage.setItem("onboardingStage", "interests");
 
-        await AsyncStorage.setItem("onboardingStage", "interests");
+      // Show success feedback before navigation
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setStatusMessage("Profile created successfully!");
+
+      // Small delay for user to see success message
+      setTimeout(() => {
+        // Navigate to next screen with smooth transition
         router.replace("ProfileSetup/fieldOfInterest");
-      } catch (error) {
-        Alert.alert("Error", error.message || "Failed to save profile.");
-        console.log("Profile save error:", error);
+      }, 500);
+    } catch (error) {
+      // Handle errors with appropriate feedback
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      console.log("Profile save error:", error);
+
+      // Show specific error message based on error type
+      if (error.code === 401) {
+        Alert.alert("Session Expired", "Please sign in again to continue.");
+      } else {
+        Alert.alert(
+          "Couldn't Save Profile",
+          error.message || "Please check your connection and try again."
+        );
       }
-    } else {
-      Alert.alert("Validation Error", "Please fix the errors in the form.");
+    } finally {
+      // Always cleanup loading state
+      setIsSubmitting(false);
+      setStatusMessage("");
     }
   };
+
   return (
     <KeyboardAvoidingView
       style={{
@@ -512,19 +580,80 @@ export default function ProfileCreation() {
 
             {/* Continue Button */}
             <TouchableOpacity
-              className="h-14 rounded-2xl flex-row items-center justify-center mt-6"
+              className={`h-14 rounded-2xl flex-row items-center justify-center mt-6 ${
+                isSubmitting ? "opacity-70" : ""
+              }`}
               style={{ backgroundColor: tintColor }}
               activeOpacity={0.8}
               onPress={handleContinue}
+              disabled={isSubmitting}
             >
+              {isSubmitting ? (
+                <View className="h-5 w-5 rounded-full border-2 border-t-white border-r-transparent border-b-white border-l-transparent animate-spin mr-2" />
+              ) : null}
               <Text className="text-black text-base font-semibold mr-2">
-                Continue
+                {isSubmitting ? "Saving..." : "Continue"}
               </Text>
-              <Icon name="arrow-forward" size={20} color="#fff" />
+              {!isSubmitting && (
+                <Icon name="arrow-forward" size={20} color="#fff" />
+              )}
             </TouchableOpacity>
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>
+
+      {/* Status Message Toast */}
+      {statusMessage && !isUploading && !isSubmitting && (
+        <View
+          className="absolute bottom-10 left-0 right-0 mx-auto w-4/5 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-xl"
+          style={{ zIndex: 1000 }}
+        >
+          <View className="flex-row items-center">
+            <Icon
+              name={statusMessage.includes("success") ? "check-circle" : "info"}
+              size={24}
+              color={statusMessage.includes("success") ? "#4ade80" : tintColor}
+              style={{ marginRight: 10 }}
+            />
+            <Text className="text-base flex-1" style={{ color: textColor }}>
+              {statusMessage}
+            </Text>
+          </View>
+        </View>
+      )}
+      {/* Loading Overlay */}
+      {(isUploading || isSubmitting) && (
+        <View
+          className="absolute inset-0 bg-black/30 flex items-center justify-center"
+          style={{ zIndex: 1000 }}
+        >
+          <View className="bg-white dark:bg-gray-800 rounded-xl p-6 w-4/5 items-center">
+            {isUploading && (
+              <View className="items-center">
+                <View className="h-16 w-16 rounded-full border-4 border-t-orange-400 border-gray-200 animate-spin mb-3" />
+                <Text
+                  className="text-base font-medium"
+                  style={{ color: textColor }}
+                >
+                  Uploading Image...
+                </Text>
+              </View>
+            )}
+
+            {isSubmitting && !isUploading && (
+              <View className="items-center">
+                <View className="h-16 w-16 rounded-full border-4 border-t-orange-400 border-gray-200 animate-spin mb-3" />
+                <Text
+                  className="text-base font-medium"
+                  style={{ color: textColor }}
+                >
+                  {statusMessage || "Saving profile..."}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
     </KeyboardAvoidingView>
   );
 }
