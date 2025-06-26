@@ -12,7 +12,6 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ConnectionCard } from "@/components/SwapConnect";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Easing } from "react-native-reanimated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "@/components/FilterBottomitems";
 import { users, currentUser } from "@/data/users";
@@ -24,6 +23,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
+  Easing,
 } from "react-native-reanimated";
 
 const SwapCenter = () => {

@@ -43,7 +43,8 @@ export default function ProfileCreation() {
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [location, setLocation] = useState("");
-  const countryCode = Localization.getLocales(); // e.g., 'GH', 'US', 'NG'
+  const locales = Localization.getLocales();
+  const countryCode = locales[0]?.country || "US"; // fallback to 'US' if not found
   const dialingCode = getCountryCallingCode(countryCode); // e.g., '233'
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -110,25 +111,26 @@ export default function ProfileCreation() {
     if (!uri) return null;
     try {
       const fileName = uri.split("/").pop();
-      const fileType = "image/jpeg"; // You can improve this by detecting type
-      const file = {
-        uri,
-        name: fileName,
-        type: fileType,
-      };
+      const fileType = "image/jpeg";
+
       const response = await storage.createFile(
         avatarsBucketStorageId,
         ID.unique(),
-        file
+        {
+          name: fileName,
+          type: fileType,
+          size: 0,
+          uri: uri,
+        }
       );
-      return response.$id;
+      console.log("Upload response:", response);
+      return response?.$id;
     } catch (error) {
       console.log("Image upload error:", error);
       Alert.alert("Error", "Failed to upload profile picture.");
       return null;
     }
   };
-
   const handleGetLocation = async () => {
     try {
       setLocationLoading(true);
@@ -209,15 +211,22 @@ export default function ProfileCreation() {
   const handleContinue = async () => {
     if (validate()) {
       try {
-        // Get current user ID from Appwrite session
         const user = await account.get();
 
-        const fileId = await uploadProfilePicture(profilePicture);
-        const avatarUrl = storage.getFilePreview(
-          avatarsBucketStorageId,
-          fileId
-        );
-        // Save profile data persistently (local state)
+        let avatarUrl = "";
+        let fileId = null;
+        if (profilePicture) {
+          fileId = await uploadProfilePicture(profilePicture);
+          if (fileId) {
+            avatarUrl = storage.getFileDownloadURL(
+              avatarsBucketStorageId,
+              fileId
+            );
+          }
+        }
+        console.log("File ID", fileId);
+        console.log("Avatar URL", avatarUrl);
+
         setProfile({
           profilePicture,
           firstName,
@@ -230,7 +239,6 @@ export default function ProfileCreation() {
           longitude: coords.longitude,
         });
 
-        // Upload to Appwrite Database
         await databases.createDocument(
           usersDatabaseId,
           usersCollectionId,
@@ -245,21 +253,20 @@ export default function ProfileCreation() {
             latitude: coords.latitude,
             longitude: coords.longitude,
             address: location,
-            avatar_url: avatarUrl,
+            avatar_url: avatarUrl || "", // Always a string
           }
         );
 
         await AsyncStorage.setItem("onboardingStage", "interests");
-
         router.replace("ProfileSetup/fieldOfInterest");
       } catch (error) {
         Alert.alert("Error", error.message || "Failed to save profile.");
+        console.log("Profile save error:", error);
       }
     } else {
       Alert.alert("Validation Error", "Please fix the errors in the form.");
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={{
