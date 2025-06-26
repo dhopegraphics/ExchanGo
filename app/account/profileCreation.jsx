@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import * as Location from "expo-location";
+import { useProfileStore } from "@/stores/useProfileStore";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
@@ -38,6 +39,21 @@ export default function ProfileCreation() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [locationLoading, setLocationLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const setProfile = useProfileStore((state) => state.setProfile);
+  const savedProfile = useProfileStore((state) => state.profile);
+
+  React.useEffect(() => {
+    if (savedProfile) {
+      if (savedProfile.profilePicture)
+        setProfilePicture(savedProfile.profilePicture);
+      if (savedProfile.firstName) setFirstName(savedProfile.firstName);
+      if (savedProfile.middleName) setMiddleName(savedProfile.middleName);
+      if (savedProfile.lastName) setLastName(savedProfile.lastName);
+      if (savedProfile.mobileNumber) setMobileNumber(savedProfile.mobileNumber);
+      if (savedProfile.dateOfBirth) setDate(new Date(savedProfile.dateOfBirth));
+      if (savedProfile.location) setLocation(savedProfile.location);
+    }
+  }, []);
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -117,6 +133,7 @@ export default function ProfileCreation() {
   };
 
   // Validation logic
+
   const validate = () => {
     const newErrors = {};
     if (!firstName.trim()) newErrors.firstName = "First name is required";
@@ -142,6 +159,16 @@ export default function ProfileCreation() {
   // Handle continue
   const handleContinue = () => {
     if (validate()) {
+      // Save profile data persistently
+      setProfile({
+        profilePicture,
+        firstName,
+        middleName,
+        lastName,
+        mobileNumber,
+        dateOfBirth: date.toISOString(),
+        location,
+      });
       router.replace("ProfileSetup/fieldOfInterest");
     } else {
       Alert.alert("Validation Error", "Please fix the errors in the form.");

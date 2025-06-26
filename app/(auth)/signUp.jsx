@@ -18,6 +18,9 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import * as SecureStore from "expo-secure-store";
+import { Client, Account, ID } from "react-native-appwrite";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const InputField = ({
   label,
@@ -93,6 +96,7 @@ const SignUpScreen = () => {
     useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const setUser = useAuthStore((state) => state.setUser);
 
   const scale = useSharedValue(1);
 
@@ -122,6 +126,11 @@ const SignUpScreen = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  const client = new Client()
+    .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT)
+    .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID);
+
+  const account = new Account(client);
 
   const handleSignUp = async () => {
     if (!validateForm()) return;
@@ -130,11 +139,34 @@ const SignUpScreen = () => {
     scale.value = withSpring(0.95);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Create user in Appwrite
+      await account.create(
+        ID.unique(),
+        formData.email,
+        formData.password,
+        formData.fullName
+      );
+
+      // Create session (login)
+      const session = await account.createEmailSession(
+        formData.email,
+        formData.password
+      );
+
+      // Store session token securely
+      await SecureStore.setItemAsync("session", session.$id);
+
+      // Get user info and update Zustand store
+      const user = await account.get();
+      setUser(user);
+
+      Alert.alert("Success", "Account created successfully!");
       router.replace("account/profileCreation");
     } catch (error) {
-      Alert.alert("Error", "Failed to create account. Please try again.");
+      Alert.alert(
+        "Error",
+        error?.message || "Failed to create account. Please try again."
+      );
     } finally {
       setIsLoading(false);
       scale.value = withSpring(1);
