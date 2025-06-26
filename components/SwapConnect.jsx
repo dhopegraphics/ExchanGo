@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { AirbnbRating } from "@rneui/themed";
+import { AirbnbRating } from "@rn-vui/themed";
 import { router } from "expo-router";
 import { getUserSkills } from "../utils/databasefunctions";
 import { useThemeColor } from "@/hooks/useThemeColor";
