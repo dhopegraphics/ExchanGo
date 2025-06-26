@@ -13,14 +13,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true ,
-        "bundleIdentifier": "com.smarthivelabs.exchango",
-         "infoPlist": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.smarthivelabs.exchango",
+      "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-        "package": "com.smarthivelabs.exchango",
+      "package": "com.smarthivelabs.exchango",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/exchanGoLogoNoBg.png",
         "backgroundColor": "#ffffff"
@@ -36,13 +36,14 @@
       "expo-video",
       "expo-font",
       "expo-web-browser",
-      "expo-sqlite" ,
-       [
+      "expo-sqlite",
+      [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you set Up Your Profile."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

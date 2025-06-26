@@ -28,9 +28,9 @@ export default function ProfileCreation() {
   const tintColor = useThemeColor({}, "tint");
   const cardBackground = useThemeColor({}, "cardBackground");
   const tintText = useThemeColor({}, "tintText");
-
   const [profilePicture, setProfilePicture] = useState(null);
   const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [location, setLocation] = useState("");
@@ -261,6 +261,22 @@ export default function ProfileCreation() {
                     {errors.firstName}
                   </Text>
                 )}
+              </View>
+
+              <View className="mb-4">
+                <Text
+                  className="text-sm mb-2 font-medium"
+                  style={{ color: tintText }}
+                >
+                  Middle Name
+                </Text>
+                <TextInput
+                  className="h-12 border rounded-xl px-4 text-base"
+                  style={{ color: textColor, borderColor: tintText + "40" }}
+                  placeholder="Enter your first name"
+                  placeholderTextColor={tintText}
+                  onChangeText={setMiddleName}
+                />
               </View>
 
               <View className="mb-4">
