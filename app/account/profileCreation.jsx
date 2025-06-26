@@ -21,14 +21,18 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import * as Location from "expo-location";
 import { useProfileStore } from "@/stores/useProfileStore";
-import { Client, Databases, Account, ID } from "react-native-appwrite";
+import { Client, Databases, Account, ID, Storage } from "react-native-appwrite";
+import {
+  usersCollectionId,
+  usersDatabaseId,
+  avatarsBucketStorageId,
+} from "@/constants/queryIdsExport";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
-  const cardBackground = useThemeColor({}, "cardBackground");
   const tintText = useThemeColor({}, "tintText");
   const [profilePicture, setProfilePicture] = useState(null);
   const [firstName, setFirstName] = useState("");
@@ -46,9 +50,9 @@ export default function ProfileCreation() {
   const client = new Client()
     .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT)
     .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID);
-
   const databases = new Databases(client);
   const account = new Account(client);
+  const storage = new Storage(client);
 
   React.useEffect(() => {
     if (savedProfile) {
@@ -61,6 +65,7 @@ export default function ProfileCreation() {
       if (savedProfile.dateOfBirth) setDate(new Date(savedProfile.dateOfBirth));
       if (savedProfile.location) setLocation(savedProfile.location);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDateChange = (event, selectedDate) => {
@@ -93,6 +98,29 @@ export default function ProfileCreation() {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setProfilePicture(result.assets[0].uri);
+    }
+  };
+
+  const uploadProfilePicture = async (uri) => {
+    if (!uri) return null;
+    try {
+      const fileName = uri.split("/").pop();
+      const fileType = "image/jpeg"; // You can improve this by detecting type
+      const file = {
+        uri,
+        name: fileName,
+        type: fileType,
+      };
+      const response = await storage.createFile(
+        avatarsBucketStorageId,
+        ID.unique(),
+        file
+      );
+      return response.$id;
+    } catch (error) {
+      console.log("Image upload error:", error);
+      Alert.alert("Error", "Failed to upload profile picture.");
+      return null;
     }
   };
 
@@ -135,7 +163,7 @@ export default function ProfileCreation() {
         setLocation("Location found, but address unavailable");
         setErrors((prev) => ({ ...prev, location: "Address unavailable" }));
       }
-    } catch (error) {
+    } catch (_error) {
       Alert.alert("Error", "Could not fetch location.");
       setLocation("Unable to get location");
       setErrors((prev) => ({ ...prev, location: "Unable to get location" }));
@@ -145,7 +173,6 @@ export default function ProfileCreation() {
   };
 
   // Validation logic
-
   const validate = () => {
     const newErrors = {};
     if (!firstName.trim()) newErrors.firstName = "First name is required";
@@ -175,6 +202,11 @@ export default function ProfileCreation() {
         // Get current user ID from Appwrite session
         const user = await account.get();
 
+        const fileId = await uploadProfilePicture(profilePicture);
+        const avatarUrl = storage.getFilePreview(
+          avatarsBucketStorageId,
+          fileId
+        );
         // Save profile data persistently (local state)
         setProfile({
           profilePicture,
@@ -190,9 +222,9 @@ export default function ProfileCreation() {
 
         // Upload to Appwrite Database
         await databases.createDocument(
-          "685d3b7f0020f5be8f33", // databaseId
-          "685d3bea000de3d5db55", // collectionId
-          ID.unique(), // documentId (use user id as doc id, or use ID.unique())
+          usersDatabaseId,
+          usersCollectionId,
+          ID.unique(),
           {
             user_id: user.$id,
             first_name: firstName,
@@ -203,6 +235,7 @@ export default function ProfileCreation() {
             latitude: coords.latitude,
             longitude: coords.longitude,
             address: location,
+            avatar_url: avatarUrl,
           }
         );
 
