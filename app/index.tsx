@@ -8,7 +8,12 @@ import { Client, Account } from "react-native-appwrite";
 
 export default function Index() {
   const [initialRoute, setInitialRoute] = useState<
-    null | "/(main)/Explore" | "/(auth)/signUp" | "/(auth)"
+    | null
+    | "/(main)/Explore"
+    | "/(auth)/signUp"
+    | "/(auth)"
+    | "/account/profileCreation"
+    | "/ProfileSetup/fieldOfInterest"
   >(null);
 
   useEffect(() => {
@@ -16,13 +21,23 @@ export default function Index() {
       try {
         const sessionId = await SecureStore.getItemAsync("session");
         if (sessionId) {
-          // Try to verify session with Appwrite
           const client = new Client()
             .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!)
             .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!);
           const account = new Account(client);
           await account.get();
-          setInitialRoute("/(main)/Explore");
+
+          // Check onboarding stage
+          const onboardingStage = await AsyncStorage.getItem("onboardingStage");
+          if (onboardingStage === "profile") {
+            setInitialRoute("/account/profileCreation");
+          } else if (onboardingStage === "interests") {
+            setInitialRoute("/ProfileSetup/fieldOfInterest");
+          } else if (onboardingStage === "done") {
+            setInitialRoute("/(main)/Explore");
+          } else {
+            setInitialRoute("/(auth)/signUp");
+          }
           return;
         }
 

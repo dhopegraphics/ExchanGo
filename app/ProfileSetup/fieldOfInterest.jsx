@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { interests } from "@/constants/data";
 import { useProfileStore } from "@/stores/useProfileStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function FieldOfInterest() {
   const backgroundColor = useThemeColor({}, "background");
@@ -53,7 +54,7 @@ export default function FieldOfInterest() {
     }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (teachInterests.length === 0 || learnInterests.length === 0) {
       setError(
         "Please select at least one interest for both Teach and Learn categories."
@@ -65,6 +66,8 @@ export default function FieldOfInterest() {
         teachInterests,
         learnInterests,
       });
+      // After successful interests selection
+      await AsyncStorage.setItem("onboardingStage", "done");
       router.replace("/(main)/Explore");
     }
   };

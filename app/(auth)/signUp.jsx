@@ -161,6 +161,7 @@ const SignUpScreen = () => {
 
       Alert.alert("Success", "Account created successfully!");
       await AsyncStorage.setItem("hasOnboarded", "true");
+      await AsyncStorage.setItem("onboardingStage", "profile");
       router.replace("account/profileCreation");
     } catch (error) {
       Alert.alert(

@@ -29,6 +29,7 @@ import {
 } from "@/constants/queryIdsExport";
 import { getCountryCallingCode } from "libphonenumber-js";
 import * as Localization from "expo-localization";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ProfileCreation() {
   const insets = useSafeAreaInsets();
@@ -247,6 +248,8 @@ export default function ProfileCreation() {
             avatar_url: avatarUrl,
           }
         );
+
+        await AsyncStorage.setItem("onboardingStage", "interests");
 
         router.replace("ProfileSetup/fieldOfInterest");
       } catch (error) {
