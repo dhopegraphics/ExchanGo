@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -6,6 +6,11 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { interests } from "@/constants/data";
 import { useProfileStore } from "@/stores/useProfileStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Client, Databases, Account, ID } from "react-native-appwrite";
+import {
+  usersDatabaseId,
+  fieldOfInterestCollectionId,
+} from "@/constants/queryIdsExport";
 
 export default function FieldOfInterest() {
   const backgroundColor = useThemeColor({}, "background");
@@ -16,9 +21,14 @@ export default function FieldOfInterest() {
   const insets = useSafeAreaInsets();
   const setProfile = useProfileStore((state) => state.setProfile);
   const savedProfile = useProfileStore((state) => state.profile);
-
   const [teachInterests, setTeachInterests] = useState([]);
   const [learnInterests, setLearnInterests] = useState([]);
+  const client = new Client()
+    .setEndpoint(process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT)
+    .setProject(process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID);
+
+  const databases = new Databases(client);
+  const account = new Account(client);
 
   // Persist changes to store on every update
   useEffect(() => {
@@ -59,16 +69,52 @@ export default function FieldOfInterest() {
       setError(
         "Please select at least one interest for both Teach and Learn categories."
       );
-    } else {
-      setError("");
-      setProfile({
-        ...savedProfile,
-        teachInterests,
-        learnInterests,
-      });
+      return;
+    }
+
+    setError("");
+    setProfile({
+      ...savedProfile,
+      teachInterests,
+      learnInterests,
+    });
+
+    try {
+      const user = await account.get();
+
+      // Create a document for each Teach interest
+      for (const interest of teachInterests) {
+        await databases.createDocument(
+          usersDatabaseId,
+          fieldOfInterestCollectionId,
+          ID.unique(),
+          {
+            user_id: user.$id,
+            name: interest,
+            type: "Teach",
+          }
+        );
+      }
+
+      // Create a document for each Learn interest
+      for (const interest of learnInterests) {
+        await databases.createDocument(
+          usersDatabaseId,
+          fieldOfInterestCollectionId,
+          ID.unique(),
+          {
+            user_id: user.$id,
+            name: interest,
+            type: "Learn",
+          }
+        );
+      }
+
       // After successful interests selection
       await AsyncStorage.setItem("onboardingStage", "done");
       router.replace("/(main)/Explore");
+    } catch (_error) {
+      setError("Failed to save interests. Please try again.");
     }
   };
   return (
