@@ -16,7 +16,6 @@ export interface SectionHeaderProps {
 }
 
 export interface CategoryChipsProps {
-  categories: Category[];
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
   cardBackground: string;
@@ -68,7 +67,7 @@ export interface ForYouSectionProps {
   cardBackground: string;
   communityDetails: any[];
   users: any[];
-  joinedCommunities: any[];
+  joinedCommunities?: any[];
 }
 
 export interface ThemeColors {

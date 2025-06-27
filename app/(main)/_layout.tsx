@@ -19,7 +19,12 @@ export default function TabLayout() {
   const tabIconSelected = useThemeColor({}, "tabIconSelected");
   const tabIconDefault = useThemeColor({}, "tabIconDefault");
   const cardBackground = useThemeColor({}, "cardBackground");
-  const statusBarStyle = useThemeColor({}, "statusBar");
+  // Map or cast statusBarStyle to a valid StatusBarStyle value
+  const statusBarStyle = useThemeColor({}, "statusBar") as
+    | "auto"
+    | "inverted"
+    | "light"
+    | "dark";
 
   return (
     <>

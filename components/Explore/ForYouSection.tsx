@@ -14,7 +14,7 @@ const ForYouSection: React.FC<ForYouSectionProps> = ({
   users,
   joinedCommunities = [],
 }) => {
-  const randomCommunities = getRandomCommunities(communityDetails, 3);
+  const randomCommunities = getRandomCommunities(communityDetails);
 
   const renderCommunityItem = (item: any) => (
     <View key={item.id} className="mb-4">

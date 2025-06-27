@@ -10,7 +10,38 @@ import Animated, {
 } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 
-const CommunityCard = ({ community, users, joinedCommunities = [] }) => {
+interface Community {
+  id: string;
+  name: string;
+  bio: string;
+  profileImage: string;
+  category?: string;
+  featured?: boolean;
+  verified?: boolean;
+}
+
+interface User {
+  id: string;
+  profileImage: string;
+  // add other user fields as needed
+}
+
+interface JoinedCommunity {
+  communityId: string;
+  userIds: string[];
+}
+
+interface CommunityCardProps {
+  community: Community;
+  users: User[];
+  joinedCommunities?: JoinedCommunity[];
+}
+
+const CommunityCard: React.FC<CommunityCardProps> = ({
+  community,
+  users,
+  joinedCommunities = [],
+}) => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
@@ -128,7 +159,7 @@ const CommunityCard = ({ community, users, joinedCommunities = [] }) => {
               avatars: JSON.stringify(
                 communityMembers
                   .filter((member) => member?.profileImage)
-                  .map((member) => ({ uri: member.profileImage }))
+                  .map((member) => ({ uri: member?.profileImage }))
               ),
               bio: community.bio,
             },

@@ -1,5 +1,5 @@
 // screens/ExploreScreen.tsx
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useCallback } from "react";
 import { useToast } from "@/Context/ToastContext";
@@ -30,16 +30,11 @@ import { joinedCommunities } from "@/data/joinedCommunities";
 import { BlurView } from "expo-blur";
 import EnhancedSearchBar from "@/components/Explore/EnhancedSearchBar";
 import QuickActions from "@/components/Explore/QuickActions";
-
-// Import new components
 import CategoryChips from "@/components/Explore/CategoryChips";
 import TrendingSection from "@/components/Explore/TrendingSection";
 import CategoriesSection from "@/components/Explore/CategoriesSection";
 import DiscoverSection from "@/components/Explore/DiscoverSection";
 import ForYouSection from "@/components/Explore/ForYouSection";
-
-// Import types
-import { Category } from "@/types/ExploreTypes";
 
 const HERO_HEIGHT = 280;
 const IMG_HEIGHT = 300;
@@ -52,7 +47,6 @@ const ExploreScreen = () => {
   const tintColor = useThemeColor({}, "tint");
   const insets = useSafeAreaInsets();
   const { showToast } = useToast();
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -61,16 +55,6 @@ const ExploreScreen = () => {
   // Animated values
   const scrollY = useSharedValue(0);
   const searchScale = useSharedValue(1);
-
-  // Categories data
-  const categories: Category[] = [
-    { id: "all", name: "All", icon: "grid", color: "#FF6B6B" },
-    { id: "trending", name: "Trending", icon: "trending-up", color: "#4ECDC4" },
-    { id: "featured", name: "Featured", icon: "star", color: "#45B7D1" },
-    { id: "nearby", name: "Nearby", icon: "map-pin", color: "#96CEB4" },
-    { id: "new", name: "New", icon: "zap", color: "#FFEAA7" },
-    { id: "popular", name: "Popular", icon: "heart", color: "#FD79A8" },
-  ];
 
   // Handlers
   const onRefresh = useCallback(() => {
@@ -231,7 +215,6 @@ const ExploreScreen = () => {
 
         {/* Category Chips */}
         <CategoryChips
-          categories={categories}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           cardBackground={cardBackground}
