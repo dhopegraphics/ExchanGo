@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   RefreshControl,
+  ScrollView,
+  FlatList,
 } from "react-native";
 import { SCREEN_WIDTH } from "@/constants/Screen";
 import Animated, {
@@ -18,7 +20,7 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import { HelloWave } from "@/components/HelloWave";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { imageDataURL } from "@/constants/ImageData";
@@ -30,7 +32,6 @@ import { joinedCommunities } from "@/data/joinedCommunities";
 import { BlurView } from "expo-blur";
 import EnhancedSearchBar from "@/components/Explore/EnhancedSearchBar";
 import QuickActions from "@/components/Explore/QuickActions";
-import CategoryChips from "@/components/Explore/CategoryChips";
 import TrendingSection from "@/components/Explore/TrendingSection";
 import CategoriesSection from "@/components/Explore/CategoriesSection";
 import DiscoverSection from "@/components/Explore/DiscoverSection";
@@ -49,6 +50,7 @@ const ExploreScreen = () => {
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -133,6 +135,63 @@ const ExploreScreen = () => {
       opacity,
     };
   });
+  const categories = [
+    { id: "all", name: "All", icon: "grid", color: "#FF6B6B" },
+    {
+      id: "trending",
+      name: "Trending",
+      icon: "trending-up",
+      color: "#4ECDC4",
+    },
+    { id: "featured", name: "Featured", icon: "star", color: "#45B7D1" },
+    { id: "nearby", name: "Nearby", icon: "map-pin", color: "#96CEB4" },
+    { id: "new", name: "New", icon: "zap", color: "#FFEAA7" },
+    { id: "popular", name: "Popular", icon: "heart", color: "#FD79A8" },
+  ];
+  const CategoryChips = () => (
+    <View className="mb-6">
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={categories}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            onPress={() => setSelectedCategory(item.id)}
+            className={`mr-3 px-4 py-2 rounded-full flex-row items-center ${
+              selectedCategory === item.id ? "shadow-lg" : ""
+            }`}
+            style={{
+              backgroundColor:
+                selectedCategory === item.id ? item.color : cardBackground,
+              shadowColor: selectedCategory === item.id ? item.color : "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: selectedCategory === item.id ? 0.3 : 0.1,
+              shadowRadius: 8,
+              elevation: selectedCategory === item.id ? 8 : 2,
+            }}
+          >
+            <Feather
+              name={item.icon}
+              size={16}
+              color={selectedCategory === item.id ? "white" : tintText}
+            />
+            <Text
+              className={`ml-2 font-semibold ${
+                selectedCategory === item.id ? "text-white" : ""
+              }`}
+              style={{
+                color: selectedCategory === item.id ? "white" : textColor,
+              }}
+            >
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -214,11 +273,7 @@ const ExploreScreen = () => {
         </View>
 
         {/* Category Chips */}
-        <CategoryChips
-          cardBackground={cardBackground}
-          textColor={textColor}
-          tintText={tintText}
-        />
+        <CategoryChips />
 
         {/* Quick Actions */}
         <QuickActions textColor={textColor} tintText={tintColor} />
