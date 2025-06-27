@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,34 +14,40 @@ import { currentUser } from "@/data/users";
 import { getUserSkills } from "@/utils/databasefunctions";
 import { userSkills } from "@/data/userSkills";
 import { connectedUsers } from "@/data/userConnection";
-
 import { getUserTools } from "@/data/ToolsUsed";
 import { UserWorksUpload } from "@/data/userWorks";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useRouter } from "expo-router";
 
 const MainUserProfile = () => {
+  // Theme colors
+  const backgroundColor = useThemeColor({}, "background");
+  const textColor = useThemeColor({}, "text");
+  const tintText = useThemeColor({}, "tintText");
+  const cardBackground = useThemeColor({}, "cardBackground");
+  const tintColor = useThemeColor({}, "tint");
+
+  const router = useRouter();
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const skills = getUserSkills(currentUser.id, userSkills); // Call the function to get skills
+
+  // Data fetching
+  const skills = getUserSkills(currentUser.id, userSkills);
   const connectedUser =
     connectedUsers.find((connected) => connected.userId === currentUser.id) ||
-    {}; // Fallback to an empty object if not found
-  const connectedCount = connectedUser.connectedFollowers
-    ? connectedUser.connectedFollowers.length
-    : 0;
-  const swappedCount = connectedUser.swappedWith
-    ? connectedUser.swappedWith.length
-    : 0;
+    {};
+  const connectedCount = connectedUser.connectedFollowers?.length || 0;
+  const swappedCount = connectedUser.swappedWith?.length || 0;
+  const userToolsList = getUserTools(currentUser.id);
 
-  const userToolsList = getUserTools(currentUser.id); // Call the function to get the list of tools
-
-  const insets = useSafeAreaInsets();
-
-  // Filter and sort the works data to show only the current user's uploads, sorted by uploadedAt date (oldest to most recent)
+  // Sort works by date
   const currentUserWorks = UserWorksUpload.filter(
     (work) => work.uploaderId === currentUser.id
   ).sort((a, b) => new Date(a.uploadedAt) - new Date(b.uploadedAt));
 
-  // Function to handle video thumbnail click
+  const insets = useSafeAreaInsets();
+
+  // Video handling
   const handleVideoPress = (videoUri) => {
     setSelectedVideo(videoUri);
     setModalVisible(true);
@@ -50,189 +57,212 @@ const MainUserProfile = () => {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: backgroundColor,
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
       }}
     >
-      <ScrollView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-        {/* Header */}
-        <View
-          style={{ padding: 16, flexDirection: "row", alignItems: "center" }}
+      <StatusBar
+        barStyle={backgroundColor === "#fff" ? "dark-content" : "light-content"}
+      />
+
+      {/* Header */}
+      <View className="px-4 py-3 flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800">
+        <TouchableOpacity
+          className="p-2 rounded-full"
+          onPress={() => router.back()}
+          style={{ backgroundColor: `${tintColor}10` }}
         >
-          <TouchableOpacity>
-            <Ionicons name="arrow-back" size={24} color="#000" />
-          </TouchableOpacity>
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Profile</Text>
+          <Ionicons name="arrow-back" size={22} color={tintColor} />
+        </TouchableOpacity>
+
+        <Text className="font-JakartaBold text-lg" style={{ color: textColor }}>
+          My Profile
+        </Text>
+
+        <TouchableOpacity
+          className="p-2 rounded-full"
+          style={{ backgroundColor: `${tintColor}10` }}
+        >
+          <Ionicons name="settings-outline" size={22} color={tintColor} />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView
+        className="flex-1"
+        style={{ backgroundColor: backgroundColor }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Banner and Info Section */}
+        <View className="mb-6">
+          {/* Banner Image */}
+          <View className="h-32 w-full bg-gray-200 dark:bg-gray-800" />
+
+          {/* Profile Picture */}
+          <View className="px-5 mt-[-50px]">
+            <Image
+              source={{ uri: currentUser.profileImage }}
+              className="h-[100px] w-[100px] rounded-full border-4"
+              style={{ borderColor: backgroundColor }}
+            />
           </View>
-          <TouchableOpacity>
-            <Ionicons name="ellipsis-vertical" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-        <View style={{ alignItems: "flex-start", paddingLeft: 16 }}>
-          <Image
-            source={{ uri: currentUser.profileImage }}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-        </View>
-        <View className="flex-row items-center">
-          {/* Profile Picture and Info */}
-          <View style={{ alignItems: "flex-start", paddingLeft: 16 }}>
-            <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+
+          {/* Name and Skills */}
+          <View className="px-5 mt-2">
+            <Text
+              className="font-JakartaBold text-xl mb-1"
+              style={{ color: textColor }}
+            >
               {currentUser.name}
             </Text>
-            <View className="flex-row justify-evenly ">
-              {skills.length > 0 && (
-                <>
-                  <Text>{skills[0]}</Text>
-                  {skills.length > 1 && (
-                    <>
-                      <Text
-                        className="mr-3 ml-3"
-                        style={{ fontSize: 14, color: "#888" }}
-                      >
-                        |
-                      </Text>
-                      {skills.slice(1, -1).map((skill) => (
-                        <Text key={skill}>{skill}</Text>
-                      ))}
-                    </>
+
+            <View className="flex-row flex-wrap mb-4">
+              {skills.map((skill, index) => (
+                <React.Fragment key={skill}>
+                  <Text
+                    className="font-JakartaMedium text-sm"
+                    style={{ color: tintText }}
+                  >
+                    {skill}
+                  </Text>
+                  {index < skills.length - 1 && (
+                    <Text
+                      className="mx-2 font-JakartaMedium text-sm"
+                      style={{ color: tintText }}
+                    >
+                      •
+                    </Text>
                   )}
-                </>
-              )}
+                </React.Fragment>
+              ))}
             </View>
           </View>
-          {/* Connections and Swaps */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              paddingHorizontal: 20,
-              paddingBottom: 32,
-            }}
-          >
+
+          {/* Stats Cards */}
+          <View className="flex-row justify-center px-5 mb-4">
             <View
-              style={{
-                alignItems: "center",
-                backgroundColor: "#fbfbfb",
-                width: 110,
-                height: 80,
-                justifyContent: "center",
-                borderRadius: 8,
-                borderColor: "#A9A9A9",
-                borderWidth: 1,
-              }}
+              className="flex-1 mr-3 p-4 rounded-xl items-center"
+              style={{ backgroundColor: cardBackground }}
             >
               <Text
-                style={{ fontSize: 20, fontWeight: "bold", color: "black" }}
+                className="font-JakartaBold text-2xl"
+                style={{ color: tintColor }}
               >
                 {connectedCount}
               </Text>
-              <Text style={{ fontSize: 14, color: "#000" }}>Connected</Text>
+              <Text
+                className="font-JakartaMedium text-sm"
+                style={{ color: tintText }}
+              >
+                Connected
+              </Text>
             </View>
+
             <View
-              style={{
-                alignItems: "center",
-                backgroundColor: "#fbfbfb",
-                width: 110,
-                height: 80,
-                justifyContent: "center",
-                borderRadius: 8,
-                marginLeft: 10,
-                borderColor: "#A9A9A9",
-                borderWidth: 1,
-              }}
+              className="flex-1 ml-3 p-4 rounded-xl items-center"
+              style={{ backgroundColor: cardBackground }}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text
+                className="font-JakartaBold text-2xl"
+                style={{ color: tintColor }}
+              >
                 {swappedCount}
               </Text>
-              <Text style={{ fontSize: 14, color: "#000" }}>Swapped</Text>
+              <Text
+                className="font-JakartaMedium text-sm"
+                style={{ color: tintText }}
+              >
+                Swapped
+              </Text>
             </View>
+          </View>
+
+          {/* Action Buttons */}
+          <View className="flex-row justify-between px-5">
+            <TouchableOpacity
+              className="flex-1 mr-2 py-3 rounded-full flex-row justify-center items-center"
+              style={{ backgroundColor: tintColor }}
+            >
+              <Ionicons
+                name="pencil"
+                size={18}
+                color="#FFF"
+                style={{ marginRight: 6 }}
+              />
+              <Text className="font-JakartaSemiBold text-white">
+                Edit Profile
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-1 ml-2 py-3 rounded-full flex-row justify-center items-center"
+              style={{ backgroundColor: `${tintColor}20` }}
+            >
+              <Ionicons
+                name="cloud-upload-outline"
+                size={18}
+                color={tintColor}
+                style={{ marginRight: 6 }}
+              />
+              <Text
+                className="font-JakartaSemiBold"
+                style={{ color: tintColor }}
+              >
+                Upload Work
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
-        {/* Connect and Message Buttons */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#000",
-              paddingHorizontal: 32,
-              paddingVertical: 12,
-              borderRadius: 24,
-              marginRight: 16,
-              alignItems: "center",
-              width: 180,
-            }}
-          >
-            <Text
-              className="font-JakartaSemiBold"
-              style={{ color: "#FFF", fontSize: 14 }}
-            >
-              Edit Profile
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#000",
-              paddingHorizontal: 32,
-              paddingVertical: 12,
-              borderRadius: 24,
-              alignItems: "center",
-              width: 180,
-            }}
-          >
-            <Text
-              className="font-JakartaSemiBold"
-              style={{ color: "#FFF", fontSize: 14 }}
-            >
-              Upload
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         {/* About Section */}
-        <View style={{ paddingHorizontal: 16, marginVertical: 16 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
+        <View
+          className="mx-5 p-4 rounded-xl mb-6"
+          style={{ backgroundColor: cardBackground }}
+        >
+          <Text
+            className="font-JakartaBold text-lg mb-2"
+            style={{ color: textColor }}
+          >
             About
           </Text>
           <Text
-            className="font-JakartaSemiBold"
-            style={{ fontSize: 14, color: "#444" }}
+            className="font-JakartaMedium text-sm leading-5"
+            style={{ color: tintText }}
           >
-            {currentUser.bio}
+            {currentUser.bio ||
+              "No bio available yet. Add something about yourself by editing your profile."}
           </Text>
         </View>
 
         {/* Tools Section */}
-        <View style={{ paddingHorizontal: 16, marginVertical: 16 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
-            Tools
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              marginVertical: 8,
-            }}
-          >
+        <View className="mx-5 mb-6">
+          <View className="flex-row justify-between items-center mb-3">
+            <Text
+              className="font-JakartaBold text-lg"
+              style={{ color: textColor }}
+            >
+              Tools & Software
+            </Text>
+            <TouchableOpacity>
+              <Text
+                className="font-JakartaMedium text-sm"
+                style={{ color: tintColor }}
+              >
+                Edit
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="flex-row flex-wrap">
             {userToolsList.map((tool, index) => (
               <View
                 key={index}
-                style={{
-                  backgroundColor: "#F3F4F6",
-                  paddingHorizontal: 8,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  margin: 4,
-                }}
+                className="mr-2 mb-2 px-3 py-2 rounded-lg"
+                style={{ backgroundColor: `${tintColor}15` }}
               >
-                <Text className="font-JakartaSemiBold" style={{ fontSize: 13 }}>
+                <Text
+                  className="font-JakartaMedium text-sm"
+                  style={{ color: tintColor }}
+                >
                   {tool.toolName}
                 </Text>
               </View>
@@ -241,75 +271,75 @@ const MainUserProfile = () => {
         </View>
 
         {/* Works Section */}
-        <View style={{ paddingHorizontal: 16, marginVertical: 16 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
-            Works
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              justifyContent: "space-between",
-            }}
-          >
-            {currentUserWorks.map((work, index) => (
-              <View key={work.id} style={{ marginBottom: 16 }}>
-                {work.type === "image" ? (
-                  <Image
-                    source={{ uri: work.uploadWork }}
-                    style={{
-                      width: 180,
-                      height: 130,
-                      borderRadius: 12,
-                    }}
-                  />
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => handleVideoPress(work.uploadWork)}
-                  >
-                    <Image
-                      source={{ uri: work.thumbnail }} // Render the thumbnail for video
-                      style={{
-                        width: 180,
-                        height: 130,
-                        borderRadius: 12,
-                      }}
-                    />
-                  </TouchableOpacity>
+        <View className="mx-5 mb-8">
+          <View className="flex-row justify-between items-center mb-3">
+            <Text
+              className="font-JakartaBold text-lg"
+              style={{ color: textColor }}
+            >
+              Portfolio
+            </Text>
+            <TouchableOpacity>
+              <Text
+                className="font-JakartaMedium text-sm"
+                style={{ color: tintColor }}
+              >
+                See All
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="flex-row flex-wrap justify-between">
+            {currentUserWorks.map((work) => (
+              <TouchableOpacity
+                key={work.id}
+                className="mb-4 rounded-2xl overflow-hidden"
+                style={{ width: "48%" }}
+                onPress={() =>
+                  work.type === "video" && handleVideoPress(work.uploadWork)
+                }
+              >
+                <Image
+                  source={{
+                    uri:
+                      work.type === "video" ? work.thumbnail : work.uploadWork,
+                  }}
+                  className="w-full h-[120px]"
+                />
+
+                {work.type === "video" && (
+                  <View className="absolute inset-0 flex items-center justify-center">
+                    <View className="bg-black/30 h-10 w-10 rounded-full items-center justify-center">
+                      <Ionicons name="play" size={20} color="#FFF" />
+                    </View>
+                  </View>
                 )}
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
       </ScrollView>
+
+      {/* Video Modal */}
       <Modal
         visible={isModalVisible}
         transparent={true}
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {/* <Video
-            source={{ uri: selectedVideo }}
-            rate={1.0}
-            volume={1.0}
-            isMuted={false}
-            resizeMode="contain"
-            shouldPlay
-            style={{ width: "90%", height: 300 }}
-          /> */}
+        <View className="flex-1 bg-black/90 justify-center items-center">
+          <View className="w-full h-[40%] items-center justify-center">
+            {/* Replace with actual Video component */}
+            <View className="bg-gray-800 w-[90%] h-[250px] rounded-lg items-center justify-center">
+              <Text className="text-white">Video Player Here</Text>
+            </View>
+          </View>
+
           <TouchableOpacity
             onPress={() => setModalVisible(false)}
-            style={{ marginTop: 20 }}
+            className="mt-6 bg-white/20 py-2 px-6 rounded-full"
           >
-            <Text style={{ color: "#fff", fontSize: 18 }}>Close</Text>
+            <Text className="text-white font-JakartaMedium">Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>

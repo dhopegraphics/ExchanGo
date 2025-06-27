@@ -37,6 +37,7 @@ import { users } from "@/data/users";
 import { joinedCommunities } from "@/data/joinedCommunities";
 import { getRandomCommunities } from "@/utils/databasefunctions";
 import { BlurView } from "expo-blur";
+import EnhancedSearchBar from "@/components/Explore/EnhancedSearchBar";
 
 const HERO_HEIGHT = 280;
 const IMG_HEIGHT = 300;
@@ -149,51 +150,6 @@ const ExploreScreen = () => {
   }));
 
   // Components
-  const EnhancedSearchBar = () => (
-    <Animated.View style={[searchAnimatedStyle]} className="px-4 mb-4">
-      <View
-        className="flex-row items-center px-4 py-3 rounded-2xl"
-        style={{
-          backgroundColor: cardBackground,
-          borderWidth: isSearchFocused ? 2 : 1,
-          borderColor: isSearchFocused ? tintColor : "#E5E7EB",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          elevation: 3,
-        }}
-      >
-        <Ionicons
-          name="search"
-          size={20}
-          color={isSearchFocused ? tintColor : tintText}
-        />
-        <TextInput
-          className="flex-1 ml-3 text-base"
-          style={{ color: textColor }}
-          placeholder="Discover communities, people, skills..."
-          placeholderTextColor={tintText}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onFocus={handleSearchFocus}
-          onBlur={handleSearchBlur}
-        />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery("")}>
-            <Ionicons name="close-circle" size={20} color={tintText} />
-          </TouchableOpacity>
-        )}
-        <View
-          className="w-px h-6 mx-3"
-          style={{ backgroundColor: "#E5E7EB" }}
-        />
-        <TouchableOpacity>
-          <MaterialIcons name="tune" size={20} color={tintColor} />
-        </TouchableOpacity>
-      </View>
-    </Animated.View>
-  );
 
   const CategoryChips = () => (
     <View className="mb-6">
@@ -487,7 +443,17 @@ const ExploreScreen = () => {
 
         {/* Search Bar */}
         <View style={{ marginTop: -40 }}>
-          <EnhancedSearchBar />
+          <EnhancedSearchBar
+            tintColor={tintColor}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            cardBackground={cardBackground}
+            isSearchFocused={isSearchFocused}
+            handleSearchFocus={handleSearchFocus}
+            handleSearchBlur={handleSearchBlur}
+            tintText={tintText}
+            textColor={textColor}
+          />
         </View>
 
         {/* Category Chips */}
