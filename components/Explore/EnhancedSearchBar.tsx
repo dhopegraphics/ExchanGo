@@ -1,17 +1,6 @@
 import { View, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-
-type EnhancedSearchBarProps = {
-  cardBackground: string;
-  isSearchFocused: boolean;
-  tintColor: string;
-  tintText: string;
-  textColor: string;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  handleSearchFocus: () => void;
-  handleSearchBlur: () => void;
-};
+import { EnhancedSearchBarProps } from "../../types/ExploreTypes";
 
 const EnhancedSearchBar = ({
   cardBackground,
