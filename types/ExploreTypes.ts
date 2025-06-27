@@ -16,8 +16,6 @@ export interface SectionHeaderProps {
 }
 
 export interface CategoryChipsProps {
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
   cardBackground: string;
   textColor: string;
   tintText: string;

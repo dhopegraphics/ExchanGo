@@ -1,11 +1,8 @@
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { LastVisitedCommunityProvider } from "../Context/LastVisitedCommunityContext";
 import "react-native-url-polyfill/auto";
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import { ToastProvider } from "@/Context/ToastContext";
-
 import { JoinProvider } from "@/Context/CommunityJoinContext";
 
 const MainLayout = () => {
@@ -51,17 +48,13 @@ const MainLayout = () => {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <ToastProvider>
-        <LastVisitedCommunityProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheetModalProvider>
-              <JoinProvider>
-                <MainLayout />
-              </JoinProvider>
-            </BottomSheetModalProvider>
-          </GestureHandlerRootView>
-        </LastVisitedCommunityProvider>
-      </ToastProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ToastProvider>
+          <JoinProvider>
+            <MainLayout />
+          </JoinProvider>
+        </ToastProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

@@ -48,7 +48,7 @@ const ExploreScreen = () => {
   const insets = useSafeAreaInsets();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -215,8 +215,6 @@ const ExploreScreen = () => {
 
         {/* Category Chips */}
         <CategoryChips
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
           cardBackground={cardBackground}
           textColor={textColor}
           tintText={tintText}

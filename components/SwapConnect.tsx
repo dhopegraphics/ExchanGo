@@ -12,7 +12,35 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-export const ConnectionCard = ({
+type User = {
+  id: string;
+  name: string;
+  bio?: string;
+  profileImage?: string;
+  featured?: boolean;
+  location?: string;
+};
+
+type ConnectedUser = {
+  userId: string;
+  connectedFollowers?: any[];
+  swappedWith?: any[];
+};
+
+type Rating = {
+  ratedUserId: string;
+  ratedBy: { rating: number }[];
+};
+
+type ConnectionCardProps = {
+  user: User;
+  connectedUsers?: ConnectedUser[];
+  ratings: Rating[];
+  userSkill: any;
+  index?: number;
+};
+
+export const ConnectionCard: React.FC<ConnectionCardProps> = ({
   user,
   connectedUsers = [],
   ratings,
@@ -29,8 +57,9 @@ export const ConnectionCard = ({
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0);
 
-  const connectedUser =
-    connectedUsers.find((connected) => connected.userId === user.id) || {};
+  const connectedUser = connectedUsers.find(
+    (connected) => connected.userId === user.id
+  ) || { userId: user.id, connectedFollowers: [], swappedWith: [] };
 
   const userRatings = ratings.find((rating) => rating.ratedUserId === user.id);
   const averageRating = userRatings
@@ -39,8 +68,8 @@ export const ConnectionCard = ({
     : 0;
 
   const skills = getUserSkills(user.id, userSkill);
-  const connectedCount = connectedUser.connectedFollowers?.length || 0;
-  const swappedCount = connectedUser.swappedWith?.length || 0;
+  const connectedCount = connectedUser?.connectedFollowers?.length || 0;
+  const swappedCount = connectedUser?.swappedWith?.length || 0;
 
   React.useEffect(() => {
     opacity.value = withTiming(1, { duration: 300 + index * 100 });
@@ -59,7 +88,7 @@ export const ConnectionCard = ({
     opacity: opacity.value,
   }));
 
-  const SkillBadge = ({ skill }) => (
+  const SkillBadge: React.FC<{ skill: string }> = ({ skill }) => (
     <View
       className="px-2 py-1 rounded-lg mr-2 mb-1"
       style={{ backgroundColor: tintColor + "20" }}
@@ -155,7 +184,7 @@ export const ConnectionCard = ({
 
             {/* Skills */}
             <View className="flex-row flex-wrap mb-2">
-              {skills.slice(0, 3).map((skill, index) => (
+              {skills.slice(0, 3).map((skill: any, index: number) => (
                 <SkillBadge key={index} skill={skill} />
               ))}
               {skills.length > 3 && (

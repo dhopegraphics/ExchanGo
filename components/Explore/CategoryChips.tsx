@@ -1,16 +1,15 @@
 // components/Explore/CategoryChips.tsx
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { CategoryChipsProps } from "@/types/ExploreTypes";
 
 const CategoryChips: React.FC<CategoryChipsProps> = ({
-  selectedCategory,
-  setSelectedCategory,
   cardBackground,
   textColor,
   tintText,
 }) => {
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const renderCategory = ({ item }: { item: any }) => (
     <TouchableOpacity
       onPress={() => setSelectedCategory(item.id)}

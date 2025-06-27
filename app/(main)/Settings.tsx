@@ -17,7 +17,7 @@ const SettingsScreen = () => {
   const backgroundColor = useThemeColor({}, "background");
   const insets = useSafeAreaInsets();
 
-  const handlePress = (label) => {
+  const handlePress = (label: string) => {
     console.log(`Pressed: ${label}`);
     // Add your navigation or action logic here
   };

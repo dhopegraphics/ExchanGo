@@ -19,7 +19,7 @@ import { users } from "../../data/users";
 import { likesData } from "../../data/PostLikes";
 import { router, useLocalSearchParams } from "expo-router";
 import { useJoin } from "../../Context/CommunityJoinContext";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Easing } from "react-native-reanimated";
 import MessageInput from "../../components/MessageInput";
 
@@ -120,7 +120,7 @@ const CommunityPage = () => {
             )}
           </View>
         </ScrollView>
-        <BottomSheetModal
+        {/* <BottomSheetModal
           ref={filterSheetBottomSheetRef}
           index={0}
           snapPoints={["40%"]}
@@ -133,36 +133,38 @@ const CommunityPage = () => {
           }}
           enablePanDownToClose={true}
         >
-          <View className="flex-1 p-6">
-            <Text className="text-xl font-JakartaBold text-center mb-4">
-              Are you sure you want to leave {communityName}?
-            </Text>
-            <Text className="text-sm text-gray-600 text-center mb-6">
-              To rejoin, you&apos;ll need an invitation. You&apos;ll no longer
-              receive notifications from this community. Keep in mind that you
-              can always rejoin later.
-            </Text>
-            <TouchableOpacity
-              className="bg-red-500 rounded-full py-3 mb-3"
-              onPress={() => {
-                leaveCommunity(communityId);
-                filterSheetBottomSheetRef.current?.close();
-              }}
-            >
-              <Text className="text-white font-JakartaBold text-center">
-                Leave
+          <BottomSheetView>
+            <View className="flex-1 p-6">
+              <Text className="text-xl font-JakartaBold text-center mb-4">
+                Are you sure you want to leave {communityName}?
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="bg-gray-200 rounded-full py-3"
-              onPress={() => filterSheetBottomSheetRef.current?.close()}
-            >
-              <Text className="text-gray-800 font-JakartaBold text-center">
-                Cancel
+              <Text className="text-sm text-gray-600 text-center mb-6">
+                To rejoin, you&apos;ll need an invitation. You&apos;ll no longer
+                receive notifications from this community. Keep in mind that you
+                can always rejoin later.
               </Text>
-            </TouchableOpacity>
-          </View>
-        </BottomSheetModal>
+              <TouchableOpacity
+                className="bg-red-500 rounded-full py-3 mb-3"
+                onPress={() => {
+                  leaveCommunity(communityId);
+                  filterSheetBottomSheetRef.current?.close();
+                }}
+              >
+                <Text className="text-white font-JakartaBold text-center">
+                  Leave
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="bg-gray-200 rounded-full py-3"
+                onPress={() => filterSheetBottomSheetRef.current?.close()}
+              >
+                <Text className="text-gray-800 font-JakartaBold text-center">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </BottomSheetView>
+        </BottomSheetModal> */}
         {isJoined(communityId) && <MessageInput />}
       </View>
     </KeyboardAvoidingView>

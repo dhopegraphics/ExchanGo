@@ -11,7 +11,7 @@ import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ConnectionCard } from "@/components/SwapConnect";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "@/components/FilterBottomitems";
 import { users, currentUser } from "@/data/users";
@@ -39,11 +39,15 @@ const SwapCenter = () => {
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  const filterSheetBottomSheetRef = useRef(null);
+  const filterSheetBottomSheetRef = useRef<BottomSheetModal>(null);
   const searchScale = useSharedValue(1);
   const headerOpacity = useSharedValue(1);
 
-  const categories = [
+  const categories: {
+    id: string;
+    name: string;
+    icon: React.ComponentProps<typeof Ionicons>["name"];
+  }[] = [
     { id: "all", name: "All", icon: "grid-outline" },
     { id: "featured", name: "Featured", icon: "star-outline" },
     { id: "nearby", name: "Nearby", icon: "location-outline" },
@@ -64,8 +68,11 @@ const SwapCenter = () => {
       const matchesFilter =
         selectedFilter === "all" ||
         (selectedFilter === "featured" && user.featured) ||
-        (selectedFilter === "nearby" && user.location) ||
-        (selectedFilter === "skilled" && user.rating > 4);
+        (selectedFilter === "nearby" && "location" in user && user.location) ||
+        (selectedFilter === "skilled" &&
+          "rating" in user &&
+          typeof user.rating === "number" &&
+          user.rating > 4);
       return matchesSearch && matchesFilter;
     });
 
@@ -288,7 +295,7 @@ const SwapCenter = () => {
         </View>
       </View>
 
-      <BottomSheetModal
+      {/* <BottomSheetView
         ref={filterSheetBottomSheetRef}
         index={0}
         snapPoints={["50%", "70%", "80%", "90%"]}
@@ -302,7 +309,7 @@ const SwapCenter = () => {
         enablePanDownToClose={true}
       >
         <FilterScreen />
-      </BottomSheetModal>
+      </BottomSheetView> */}
     </>
   );
 };
