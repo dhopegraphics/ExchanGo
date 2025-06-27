@@ -15,12 +15,10 @@ const CommunityDiscoverCard = ({
   joinedCommunities = [],
   onPress,
 }) => {
-  const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
   const cardBackground = useThemeColor({}, "cardBackground");
   const tintColor = useThemeColor({}, "tint");
-  const tintBackground = useThemeColor({}, "tintBackground");
 
   // Define scale BEFORE using it in useAnimatedStyle
   const scale = useSharedValue(1);

@@ -16,7 +16,6 @@ import Animated, {
   useSharedValue,
   interpolateColor,
 } from "react-native-reanimated";
-import { SearchBar } from "react-native-elements";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
@@ -201,15 +200,7 @@ const CommunityCenter = () => {
             <Text style={[{ color: textColor }]}>
               Find communities to join or create your own
             </Text>
-            <SearchBar
-              placeholder="Search communities"
-              onChangeText={setSearch}
-              value={search}
-              lightTheme
-              round
-              containerStyle={styles.searchBarContainer}
-              inputContainerStyle={styles.searchBarInput}
-            />
+
             <Text
               className="text-lg font-bold mb-2"
               style={{ color: textColor }}

@@ -7,7 +7,6 @@
     "icon": "./assets/images/exchanGoLogoWithBG.png",
     "scheme": "exchango",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
     "splash": {
       "image": "./assets/images/exchanGoLogoNoBg.png",
       "resizeMode": "contain",

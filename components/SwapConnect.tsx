@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { AirbnbRating } from "@rn-vui/themed";
 import { router } from "expo-router";
 import { getUserSkills } from "../utils/databasefunctions";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -170,13 +169,6 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
 
             {/* Rating */}
             <View className="flex-row items-center mb-2">
-              <AirbnbRating
-                count={5}
-                defaultRating={averageRating}
-                size={14}
-                showRating={false}
-                isDisabled={true}
-              />
               <Text style={{ color: tintText }} className="ml-2 text-sm">
                 ({averageRating.toFixed(1)})
               </Text>

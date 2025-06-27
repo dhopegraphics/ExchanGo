@@ -4,13 +4,9 @@ import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { CategoryChipsProps } from "@/types/ExploreTypes";
 
-const CategoryChips: React.FC<CategoryChipsProps> = ({
-  cardBackground,
-  textColor,
-  tintText,
-}) => {
+const CategoryChips = ({ cardBackground, textColor, tintText }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const renderCategory = ({ item }: { item: any }) => (
+  const renderCategory = ({ item }) => (
     <TouchableOpacity
       onPress={() => setSelectedCategory(item.id)}
       className={`mr-3 px-4 py-2 rounded-full flex-row items-center ${
