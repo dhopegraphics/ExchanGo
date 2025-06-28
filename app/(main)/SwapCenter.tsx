@@ -49,8 +49,6 @@ const SwapCenter = () => {
   const setUsers = useUsersStore((state: any) => state.setUsers);
   const currentUser = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  console.log("Current User:", currentUser);
-  console.log("Users from Store:", users);
 
   useEffect(() => {
     if (appwriteCurrentUser) setUser(appwriteCurrentUser);
