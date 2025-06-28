@@ -13,9 +13,11 @@ import Animated, {
 import { User } from "../stores/useUsersStore";
 
 type ConnectedUser = {
-  userId: string;
-  connectedFollowers?: any[];
+  connection_type: string;
+  connector_user_id: string;
+  connect_with_user_id?: any[];
   swappedWith?: any[];
+  user_accept_connection?: boolean;
 };
 
 type Rating = {
@@ -48,10 +50,6 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0);
 
-  const connectedUser = connectedUsers.find(
-    (connected) => connected.userId === user.user_id
-  ) || { userId: user.user_id, connectedFollowers: [], swappedWith: [] };
-
   const userRatings = ratings.find(
     (rating) => rating.ratedUserId === user.user_id
   );
@@ -61,8 +59,45 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
     : 0;
 
   const skills = getUserSkills(user.user_id, userSkill);
-  const connectedCount = connectedUser?.connectedFollowers?.length || 0;
-  const swappedCount = connectedUser?.swappedWith?.length || 0;
+
+  // 1. Get all accepted connections for this user (either as connector or connectee)
+  const acceptedConnections = connectedUsers.filter(
+    (conn) =>
+      (conn.connector_user_id === user.user_id ||
+        (Array.isArray(conn.connect_with_user_id)
+          ? conn.connect_with_user_id.includes(user.user_id)
+          : conn.connect_with_user_id === user.user_id)) &&
+      conn.user_accept_connection === true
+  );
+
+  // 2. Get unique user IDs this user is connected with
+  const connectedUserIds = Array.from(
+    new Set(
+      acceptedConnections.map((conn) =>
+        conn.connector_user_id === user.user_id
+          ? conn.connect_with_user_id
+          : conn.connector_user_id
+      )
+    )
+  );
+
+  // 3. connectedCount is the number of unique users this user is connected with
+  const connectedCount = connectedUserIds.length;
+
+  // 4. swappedCount: unique users where connection_type === "swap" and accepted
+  const swappedUserIds = Array.from(
+    new Set(
+      acceptedConnections
+        .filter((conn) => conn.connection_type === "swap")
+        .map((conn) =>
+          conn.connector_user_id === user.user_id
+            ? conn.connect_with_user_id
+            : conn.connector_user_id
+        )
+    )
+  );
+
+  const swappedCount = swappedUserIds.length;
 
   React.useEffect(() => {
     opacity.value = withTiming(1, { duration: 300 + index * 100 });

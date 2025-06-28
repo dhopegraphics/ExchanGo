@@ -16,7 +16,6 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "@/components/FilterBottomitems";
-import { connectedUsers } from "@/data/userConnection";
 import { UserRating } from "@/data/userRating";
 import { userSkills } from "@/data/userSkills";
 import Animated, {
@@ -38,6 +37,7 @@ import {
 import { useUsersStore, User } from "../../stores/useUsersStore";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useAppwrite } from "../../Context/useAppwrite";
+import { Query } from "react-native-appwrite";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -52,11 +52,85 @@ const SwapCenter = () => {
   const filterSheetBottomSheetRef = useRef<BottomSheetModal>(null);
   const searchScale = useSharedValue(1);
   const headerOpacity = useSharedValue(1);
-  const { getAllUsers, currentUser: appwriteCurrentUser } = useAppwrite();
+  const {
+    getAllUsers,
+    currentUser: appwriteCurrentUser,
+    getDocuments,
+  } = useAppwrite();
   const users = useUsersStore((state: any) => state.users);
   const setUsers = useUsersStore((state: any) => state.setUsers);
   const currentUser = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
+  const [connectedUsers, setConnectedUsers] = useState<User[]>([]);
+  const [connections, setConnections] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchConnections = async () => {
+      if (!currentUser?.$id) return;
+      try {
+        const connectionsRes = await getDocuments(
+          usersDatabaseId,
+          usersConnectionsCollectionId,
+          [
+            Query.or([
+              Query.equal("connector_user_id", currentUser.$id),
+              Query.equal("connect_with_user_id", currentUser.$id),
+            ]),
+            Query.equal("user_accept_connection", true),
+            Query.limit(1000),
+          ]
+        );
+        setConnections(connectionsRes); // Store all connection docs
+      } catch (err) {
+        setConnections([]);
+      }
+    };
+    fetchConnections();
+  }, [currentUser, users]);
+
+  useEffect(() => {
+    const fetchConnections = async () => {
+      if (!currentUser?.$id) return;
+      try {
+        // Get all connections where the current user is either connector or connectee, and accepted
+        const connections = await getDocuments(
+          usersDatabaseId,
+          usersConnectionsCollectionId,
+          [
+            // Get all connections where current user is involved and accepted
+            Query.or([
+              Query.equal("connector_user_id", currentUser.$id),
+              Query.equal("connect_with_user_id", currentUser.$id),
+            ]),
+            Query.equal("user_accept_connection", true),
+            Query.limit(1000),
+          ]
+        );
+
+        // Get all user IDs the current user is connected with
+        const otherUserIds = connections
+          .map((conn: { connector_user_id: any; connect_with_user_id: any }) =>
+            conn.connector_user_id === currentUser.$id
+              ? conn.connect_with_user_id
+              : conn.connector_user_id
+          )
+          // Remove duplicates
+          .filter(
+            (id: any, idx: any, arr: string | any[]) => arr.indexOf(id) === idx
+          );
+
+        // Get all users from the store that match these IDs
+        const allUsers = useUsersStore.getState().users;
+        const connected = allUsers.filter((user) =>
+          otherUserIds.includes(user.user_id)
+        );
+        setConnectedUsers(connected);
+      } catch (err) {
+        setConnectedUsers([]);
+      }
+    };
+    fetchConnections();
+  }, [currentUser, users]);
 
   useEffect(() => {
     if (appwriteCurrentUser) setUser(appwriteCurrentUser);
@@ -314,7 +388,7 @@ const SwapCenter = () => {
               renderItem={({ item, index }) => (
                 <ConnectionCard
                   user={item}
-                  connectedUsers={connectedUsers}
+                  connectedUsers={connections}
                   ratings={UserRating}
                   userSkill={userSkills}
                   index={index}
