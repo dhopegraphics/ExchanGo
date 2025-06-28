@@ -33,8 +33,26 @@ export const AppwriteProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        // 1. Get session user
         const user = await account.get();
         setCurrentUser(user);
+
+        // 2. Find user document in collection
+        const response = await databases.listDocuments(
+          usersDatabaseId,
+          usersCollectionId,
+          [Query.equal("user_id", user.$id), Query.limit(1)]
+        );
+        // 3. If found, you can store this user document as well
+        if (response.documents.length > 0) {
+          // Optionally, set this in a separate state or Zustand store
+          // For example, setCurrentUserDoc(response.documents[0]);
+          // Or merge with currentUser if you want
+          setCurrentUser({
+            ...user,
+            ...response.documents[0],
+          });
+        }
       } catch {
         setCurrentUser(null);
       } finally {

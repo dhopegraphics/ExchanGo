@@ -26,8 +26,13 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-import { categories } from "../../utils/SwapCenterUtils";
-import { useUsersStore } from "../../stores/useUsersStore";
+
+import {
+  categories,
+  getDistanceFromLatLonInKm,
+  NEARBY_RADIUS_KM,
+} from "../../utils/SwapCenterUtils";
+import { useUsersStore, User } from "../../stores/useUsersStore";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useAppwrite } from "../../Context/useAppwrite";
 
@@ -71,30 +76,36 @@ const SwapCenter = () => {
   };
 
   const filteredUsers = users
-    .filter((user: { id: any }) => user.id !== currentUser.id)
-    .filter(
-      (user: {
-        name: string;
-        featured: any;
-        location: any;
-        rating: number;
-      }) => {
-        const matchesSearch = user.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-        const matchesFilter =
-          selectedFilter === "all" ||
-          (selectedFilter === "featured" && user.featured) ||
-          (selectedFilter === "nearby" &&
-            "location" in user &&
-            user.location) ||
-          (selectedFilter === "skilled" &&
-            "rating" in user &&
-            typeof user.rating === "number" &&
-            user.rating > 4);
-        return matchesSearch && matchesFilter;
-      }
-    );
+    .filter((user: User) => user?.$id !== currentUser?.$id)
+    .filter((user: User) => {
+      const fullName = [user.first_name, user.middle_name, user.last_name]
+        .filter(Boolean)
+        .join(" ");
+      const matchesSearch = fullName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+      const matchesFilter =
+        selectedFilter === "all" ||
+        (selectedFilter === "featured" && user?.featured) ||
+        (selectedFilter === "nearby" &&
+          typeof user.latitude === "number" &&
+          typeof user.longitude === "number" &&
+          typeof currentUser?.latitude === "number" &&
+          typeof currentUser?.longitude === "number" &&
+          getDistanceFromLatLonInKm(
+            currentUser.latitude,
+            currentUser.longitude,
+            user.latitude,
+            user.longitude
+          ) <= NEARBY_RADIUS_KM) ||
+        (selectedFilter === "skilled" &&
+          "rating" in user &&
+          typeof user?.rating === "number" &&
+          user?.rating > 4);
+
+      return matchesSearch && matchesFilter;
+    });
 
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
@@ -294,9 +305,9 @@ const SwapCenter = () => {
 
         {/* Main Content */}
         <View className="flex-1 px-4">
-          {users.length > 0 ? (
+          {filteredUsers.length > 0 ? (
             <FlatList
-              data={users}
+              data={filteredUsers}
               renderItem={({ item, index }) => (
                 <ConnectionCard
                   user={item}
