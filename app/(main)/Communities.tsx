@@ -23,7 +23,7 @@ import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
 import { communityDetails } from "@/data/communitiesDetail";
 import { joinedCommunities } from "@/data/joinedCommunities";
 import { users } from "@/data/users";
-import { LastVisitedCommunityContext } from "@/Context/LastVisitedCommunityContext";
+// import { LastVisitedCommunityContext } from "@/Context/LastVisitedCommunityContext";
 
 const IMG_HEIGHT = 300;
 
@@ -33,9 +33,9 @@ const CommunityCenter = () => {
   const textColor = useThemeColor({}, "text");
   const [search, setSearch] = useState("");
   const [visibleItems, setVisibleItems] = useState(5);
-  const { lastVisitedCommunity, setLastVisitedCommunity } = useContext(
-    LastVisitedCommunityContext
-  );
+  // const { lastVisitedCommunity, setLastVisitedCommunity } = useContext(
+  //   LastVisitedCommunityContext
+  // );
   const [loading, setLoading] = useState(false); // State to manage loading
   const [timer, setTimer] = useState<number | null>(null); // State to manage the timer
   const [displayCommunity, setDisplayCommunity] = useState(); // State to manage displayed community

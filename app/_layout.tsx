@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "@/Context/ThemeContext";
 import { ToastProvider } from "@/Context/ToastContext";
 import { JoinProvider } from "@/Context/CommunityJoinContext";
-
+import { AppwriteProvider } from "../Context/useAppwrite";
 const MainLayout = () => {
   return (
     <Stack>
@@ -51,7 +51,9 @@ export default function RootLayout() {
       <ToastProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <JoinProvider>
-            <MainLayout />
+            <AppwriteProvider>
+              <MainLayout />
+            </AppwriteProvider>
           </JoinProvider>
         </GestureHandlerRootView>
       </ToastProvider>

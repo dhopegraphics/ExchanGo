@@ -7,11 +7,14 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, Feather } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ConnectionCard } from "@/components/SwapConnect";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "@/components/FilterBottomitems";
 import { users, currentUser } from "@/data/users";
@@ -46,13 +49,24 @@ const SwapCenter = () => {
   const categories: {
     id: string;
     name: string;
-    icon: React.ComponentProps<typeof Ionicons>["name"];
+    icon: React.ComponentProps<typeof Feather>["name"];
+    color: string;
   }[] = [
-    { id: "all", name: "All", icon: "grid-outline" },
-    { id: "featured", name: "Featured", icon: "star-outline" },
-    { id: "nearby", name: "Nearby", icon: "location-outline" },
-    { id: "skilled", name: "Top Rated", icon: "trophy-outline" },
-    { id: "recent", name: "Recent", icon: "time-outline" },
+    { id: "all", name: "All", icon: "grid", color: "#FF6B6B" },
+    {
+      id: "featured",
+      name: "Featured",
+      icon: "trending-up",
+      color: "#4ECDC4",
+    },
+    { id: "nearby", name: "Nearby", icon: "map-pin", color: "#96CEB4" },
+    {
+      id: "skilled",
+      name: "Top Rated",
+      icon: "award",
+      color: "#FD79A8",
+    },
+    { id: "recent", name: "Recent", icon: "watch", color: "#96CEB4" },
   ];
 
   const handlePresentFilterModalPress = useCallback(() => {
@@ -97,44 +111,47 @@ const SwapCenter = () => {
   }));
 
   const CategoryFilter = () => (
-    <View className="flex-row px-4 mb-6 overflow-x-auto">
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {categories.map((category) => (
-          <View key={category.id}>
-            <TouchableOpacity
-              onPress={() => setSelectedFilter(category.id)}
-              className={`mr-3 h-12 w-32 px-4 py-2 rounded-full flex-row items-center ${
-                selectedFilter === category.id ? "bg-orange-400" : ""
+    <View className="mb-6">
+      <FlatList
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        data={categories}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            onPress={() => setSelectedFilter(item.id)}
+            className={`mr-3 px-4 py-2 rounded-full flex-row items-center ${
+              selectedFilter === item.id ? "shadow-lg" : ""
+            }`}
+            style={{
+              backgroundColor:
+                selectedFilter === item.id ? item.color : cardBackground,
+              shadowColor: selectedFilter === item.id ? item.color : "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: selectedFilter === item.id ? 0.3 : 0.1,
+              shadowRadius: 8,
+              elevation: selectedFilter === item.id ? 8 : 2,
+            }}
+          >
+            <Feather
+              name={item.icon as React.ComponentProps<typeof Feather>["name"]}
+              size={16}
+              color={selectedFilter === item.id ? "white" : tintText}
+            />
+            <Text
+              className={`ml-2 font-semibold ${
+                selectedFilter === item.id ? "text-white" : ""
               }`}
               style={{
-                backgroundColor:
-                  selectedFilter === category.id
-                    ? highlightFilter
-                    : cardBackground,
-                borderWidth: 1,
-                borderColor:
-                  selectedFilter === category.id ? tintColor : "#E5E7EB",
+                color: selectedFilter === item.id ? "white" : textColor,
               }}
             >
-              <Ionicons
-                name={category.icon}
-                size={16}
-                color={selectedFilter === category.id ? "white" : tintText}
-              />
-              <Text
-                className={`ml-2 font-medium ${
-                  selectedFilter === category.id ? "text-white" : ""
-                }`}
-                style={{
-                  color: selectedFilter === category.id ? "white" : textColor,
-                }}
-              >
-                {category.name}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
+              {item.name}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 
@@ -295,7 +312,7 @@ const SwapCenter = () => {
         </View>
       </View>
 
-      {/* <BottomSheetView
+      <BottomSheet
         ref={filterSheetBottomSheetRef}
         index={0}
         snapPoints={["50%", "70%", "80%", "90%"]}
@@ -308,8 +325,10 @@ const SwapCenter = () => {
         }}
         enablePanDownToClose={true}
       >
-        <FilterScreen />
-      </BottomSheetView> */}
+        <BottomSheetView className="flex-1">
+          <FilterScreen />
+        </BottomSheetView>
+      </BottomSheet>
     </>
   );
 };

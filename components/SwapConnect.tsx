@@ -133,7 +133,7 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
         {user.featured && (
           <View className="absolute top-0 right-0 z-10">
             <View
-              className="px-3 py-1 rounded-bl-xl rounded-tr-2xl"
+              className="px-3  rounded-bl-xl rounded-tr-2xl"
               style={{ backgroundColor: "#FFD700" }}
             >
               <Text className="text-xs font-bold text-black">Featured</Text>
@@ -150,7 +150,7 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
             />
             {/* Online Status Indicator */}
             <View
-              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white"
+              className="absolute -right-2 w-6 h-6 rounded-full border-2 border-white"
               style={{ backgroundColor: "#4CAF50" }}
             />
           </View>
@@ -158,20 +158,24 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
           {/* Content */}
           <View className="flex-1">
             {/* Header */}
-            <View className="flex-row items-center justify-between mb-2">
-              <Text style={{ color: textColor }} className="text-lg font-bold">
-                {user.name}
-              </Text>
+            <View className="flex-row items-center justify-between ">
+              <View className="flex-1 flex-row items-center">
+                <Text
+                  style={{ color: textColor }}
+                  className="text-lg font-bold"
+                >
+                  {user.name}
+                </Text>
+                {/* Rating */}
+                <View className="flex-row items-center">
+                  <Text style={{ color: tintText }} className="ml-2 text-sm">
+                    ({averageRating.toFixed(1)})
+                  </Text>
+                </View>
+              </View>
               <TouchableOpacity className="p-1">
                 <Ionicons name="heart-outline" size={20} color={tintText} />
               </TouchableOpacity>
-            </View>
-
-            {/* Rating */}
-            <View className="flex-row items-center mb-2">
-              <Text style={{ color: tintText }} className="ml-2 text-sm">
-                ({averageRating.toFixed(1)})
-              </Text>
             </View>
 
             {/* Skills */}
