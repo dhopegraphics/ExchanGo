@@ -52,23 +52,23 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
   const opacity = useSharedValue(0);
 
   const userRatings = ratings.filter(
-    (rating) => rating.rated_User_id === user.user_id
+    (rating) => rating?.rated_User_id === user?.user_id
   );
   const averageRating =
     userRatings.length > 0
       ? userRatings.reduce((acc, r) => acc + r.rating, 0) / userRatings.length
       : 0;
 
-  const skills = getUserSkills(user.user_id, userSkill);
+  const skills = getUserSkills(user?.user_id, userSkill);
 
   // 1. Get all accepted connections for this user (either as connector or connectee)
   const acceptedConnections = connectedUsers.filter(
     (conn) =>
-      (conn.connector_user_id === user.user_id ||
+      (conn?.connector_user_id === user?.user_id ||
         (Array.isArray(conn.connect_with_user_id)
-          ? conn.connect_with_user_id.includes(user.user_id)
-          : conn.connect_with_user_id === user.user_id)) &&
-      conn.user_accept_connection === true
+          ? conn?.connect_with_user_id.includes(user?.user_id)
+          : conn?.connect_with_user_id === user.user_id)) &&
+      conn?.user_accept_connection === true
   );
 
   // 2. Get unique user IDs this user is connected with
@@ -137,11 +137,11 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
           router.push({
             pathname: `/account/${user.user_id}`,
             params: {
-              userId: user.user_id,
-              userName: user.first_name + " " + user.last_name,
-              bio: user.bio,
+              userId: user?.user_id,
+              userName: user?.first_name + " " + user?.last_name,
+              bio: user?.bio,
               rating: averageRating,
-              profileImage: user.avatar_url,
+              profileImage: user?.avatar_url,
               connectedFollowers: connectedCount,
               swappedWith: swappedCount,
               skills: JSON.stringify(skills),
@@ -232,7 +232,14 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
               <View className="flex-row items-center">
                 <Ionicons name="location-outline" size={14} color={tintText} />
                 <Text style={{ color: tintText }} className="ml-1 text-sm">
-                  {user.address || "Unknown Location"}
+                  {user?.address
+                    ? user?.address
+                        .split(",")
+                        .slice(1)
+                        .join(",")
+                        .trim()
+                        .replace(/^,/, "") || "Unknown Location"
+                    : "Unknown Location"}
                 </Text>
               </View>
 

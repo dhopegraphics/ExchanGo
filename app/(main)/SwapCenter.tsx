@@ -16,8 +16,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "@/components/FilterBottomitems";
-import { UserRating } from "@/data/userRating";
-import { userSkills } from "@/data/userSkills";
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -29,6 +28,7 @@ import {
   usersConnectionsCollectionId,
   usersDatabaseId,
   ratingsCollectionId,
+  usersSkillsCollectionId,
 } from "@/constants/queryIdsExport";
 import {
   categories,
@@ -65,6 +65,7 @@ const SwapCenter = () => {
   const [connectedUsers, setConnectedUsers] = useState<User[]>([]);
   const [connections, setConnections] = useState<any[]>([]);
   const [ratings, setRatings] = useState<any[]>([]);
+  const [userSkills, setUserSkills] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchConnections = async () => {
@@ -168,6 +169,22 @@ const SwapCenter = () => {
     fetchRatings();
   }, [getDocuments]);
 
+  useEffect(() => {
+    const fetchUserSkills = async () => {
+      try {
+        const skillsRes = await getDocuments(
+          usersDatabaseId,
+          usersSkillsCollectionId,
+          [Query.limit(1000)]
+        );
+        setUserSkills(skillsRes.documents || skillsRes || []);
+      } catch (err) {
+        setUserSkills([]);
+      }
+    };
+    fetchUserSkills();
+  }, [getDocuments]);
+
   const handlePresentFilterModalPress = () => {
     filterSheetBottomSheetRef.current?.expand();
   };
@@ -181,6 +198,19 @@ const SwapCenter = () => {
       const matchesSearch = fullName
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
+
+      // Find all ratings for this user
+      const userRatings = ratings.filter(
+        (r: any) => r.user_id === user.user_id || r.user_id === user.$id
+      );
+      // Calculate average rating
+      const avgRating =
+        userRatings.length > 0
+          ? userRatings.reduce(
+              (sum: number, r: any) => sum + (r.rating || 0),
+              0
+            ) / userRatings.length
+          : 0;
 
       const matchesFilter =
         selectedFilter === "all" ||
@@ -196,10 +226,7 @@ const SwapCenter = () => {
             user.latitude,
             user.longitude
           ) <= NEARBY_RADIUS_KM) ||
-        (selectedFilter === "skilled" &&
-          "rating" in user &&
-          typeof user?.rating === "number" &&
-          user?.rating > 4);
+        (selectedFilter === "skilled" && avgRating > 4);
 
       return matchesSearch && matchesFilter;
     });
@@ -409,7 +436,7 @@ const SwapCenter = () => {
                 <ConnectionCard
                   user={item}
                   connectedUsers={connections}
-                  ratings={UserRating}
+                  ratings={ratings}
                   userSkill={userSkills}
                   index={index}
                 />
