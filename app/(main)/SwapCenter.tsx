@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -26,7 +26,10 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
-
+import {
+  usersConnectionsCollectionId,
+  usersDatabaseId,
+} from "../../constants/queryIdsExport";
 import {
   categories,
   getDistanceFromLatLonInKm,

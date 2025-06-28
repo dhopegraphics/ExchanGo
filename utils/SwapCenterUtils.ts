@@ -21,7 +21,7 @@ export const categories: {
   },
   { id: "recent", name: "Recent", icon: "watch", color: "#96CEB4" },
 ];
-export const NEARBY_RADIUS_KM = 20; // Set your desired radius
+export const NEARBY_RADIUS_KM = 200; // Set your desired radius
 
 export function getDistanceFromLatLonInKm(
   lat1: number,
