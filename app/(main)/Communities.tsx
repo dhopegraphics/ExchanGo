@@ -37,19 +37,17 @@ const CommunityCenter = () => {
     LastVisitedCommunityContext
   );
   const [loading, setLoading] = useState(false); // State to manage loading
-  const [timer, setTimer] = useState(null); // State to manage the timer
-  const [displayCommunity, setDisplayCommunity] =
-    useState(lastVisitedCommunity); // State to manage displayed community
+  const [timer, setTimer] = useState<number | null>(null); // State to manage the timer
+  const [displayCommunity, setDisplayCommunity] = useState(); // State to manage displayed community
   const filteredCommunities = communityDetails.filter(
     (community) => community.name.toLowerCase().includes(search.toLowerCase()) // Adjust the property to match your community object
   );
 
-  const handleCommunityPress = (community) => {
+  const handleCommunityPress = (community: any) => {
     setTimer(
       setTimeout(() => {
         setLoading(true);
         setTimeout(() => {
-          setLastVisitedCommunity(community);
           setLoading(false);
         }, 2000);
       }, 1000)
@@ -64,9 +62,9 @@ const CommunityCenter = () => {
     };
   }, [timer]);
 
-  useEffect(() => {
-    setDisplayCommunity(lastVisitedCommunity);
-  }, [lastVisitedCommunity]);
+  // useEffect(() => {
+  //   setDisplayCommunity(lastVisitedCommunity);
+  // }, [lastVisitedCommunity]);
 
   const handleShowMore = () => {
     if (visibleItems + 5 >= communityDetails.length) {
@@ -75,7 +73,7 @@ const CommunityCenter = () => {
       setVisibleItems(visibleItems + 5);
     }
   };
-  const scrollRef = useAnimatedRef();
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useSharedValue(0);
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollOffset.value = event.contentOffset.y;
@@ -207,7 +205,7 @@ const CommunityCenter = () => {
             >
               Recently Visited
             </Text>
-            {loading ? ( // Show loading state while waiting
+            {/* {loading ? ( // Show loading state while waiting
               <ActivityIndicator />
             ) : lastVisitedCommunity ? ( // Check if there is a last visited community
               <CommunityDiscoverCard
@@ -217,9 +215,9 @@ const CommunityCenter = () => {
               />
             ) : (
               <Text style={{ color: textColor }}>
-                No recently visited communities.
+                No recently visited communities
               </Text> // Optional message if none
-            )}
+            )} */}
           </Animated.View>
           <View
             style={{
@@ -239,7 +237,7 @@ const CommunityCenter = () => {
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <CommunityDiscoverCard
-                  community={item}
+                  community={{ ...item, id: item.id.toString() }}
                   users={users}
                   joinedCommunities={joinedCommunities}
                   onPress={handleCommunityPress} // Pass the function reference

@@ -9,7 +9,34 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-const CommunityDiscoverCard = ({
+type User = {
+  id: string;
+  profileImage?: string;
+  // Add other user fields as needed
+};
+
+type Community = {
+  id: string;
+  name?: string;
+  profileImage?: string;
+  bio?: string;
+  isVerified?: boolean;
+  // Add other community fields as needed
+};
+
+type JoinedCommunity = {
+  communityId: string;
+  userIds: string[];
+};
+
+type CommunityDiscoverCardProps = {
+  community: Community;
+  users?: User[];
+  joinedCommunities?: any[];
+  onPress?: (community: Community) => void;
+};
+
+const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
   community,
   users = [],
   joinedCommunities = [],
@@ -39,7 +66,7 @@ const CommunityDiscoverCard = ({
 
   const communityMembers = joinedCommunity?.userIds
     ? joinedCommunity.userIds
-        .map((userId) => users.find((user) => user?.id === userId))
+        .map((userId: string) => users.find((user) => user?.id === userId))
         .filter(Boolean) // Remove any null/undefined users
     : [];
 
@@ -50,15 +77,18 @@ const CommunityDiscoverCard = ({
 
     if (community?.id) {
       router.push({
-        pathname: `/community/${community.id}`,
+        pathname: "/community/[id]",
         params: {
+          id: community.id,
           communityId: community.id,
           communityName: community.name || "Unknown Community",
           memberCount: communityMembers.length,
           avatars: JSON.stringify(
             communityMembers
-              .filter((member) => member?.profileImage)
-              .map((member) => ({ uri: member.profileImage }))
+              .filter((member: { profileImage: any }) => member?.profileImage)
+              .map((member: { profileImage: any }) => ({
+                uri: member?.profileImage,
+              }))
           ),
           bio: community.bio || "",
         },
@@ -80,36 +110,38 @@ const CommunityDiscoverCard = ({
 
     return (
       <View style={styles.avatarContainer}>
-        {displayMembers.map((member, index) => (
-          <View
-            key={member?.id || index}
-            style={[
-              styles.avatarWrapper,
-              {
-                marginLeft: index > 0 ? -8 : 0,
-                zIndex: displayMembers.length - index,
-              },
-            ]}
-          >
-            {member?.profileImage ? (
-              <Image
-                source={{ uri: member.profileImage }}
-                style={[styles.memberAvatar, { borderColor: cardBackground }]}
-                defaultSource={require("@/assets/images/exchanGoLogo.jpg")}
-              />
-            ) : (
-              <View
-                style={[
-                  styles.memberAvatar,
-                  styles.defaultAvatar,
-                  { backgroundColor: tintColor + "20" },
-                ]}
-              >
-                <Ionicons name="person" size={12} color={tintColor} />
-              </View>
-            )}
-          </View>
-        ))}
+        {displayMembers.map(
+          (member: { id: any; profileImage: any }, index: number) => (
+            <View
+              key={member?.id || index}
+              style={[
+                styles.avatarWrapper,
+                {
+                  marginLeft: index > 0 ? -8 : 0,
+                  zIndex: displayMembers.length - index,
+                },
+              ]}
+            >
+              {member?.profileImage ? (
+                <Image
+                  source={{ uri: member.profileImage }}
+                  style={[styles.memberAvatar, { borderColor: cardBackground }]}
+                  defaultSource={require("@/assets/images/exchanGoLogo.jpg")}
+                />
+              ) : (
+                <View
+                  style={[
+                    styles.memberAvatar,
+                    styles.defaultAvatar,
+                    { backgroundColor: tintColor + "20" },
+                  ]}
+                >
+                  <Ionicons name="person" size={12} color={tintColor} />
+                </View>
+              )}
+            </View>
+          )
+        )}
 
         {remainingCount > 0 && (
           <View

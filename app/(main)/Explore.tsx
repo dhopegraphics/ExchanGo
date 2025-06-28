@@ -173,7 +173,7 @@ const ExploreScreen = () => {
             }}
           >
             <Feather
-              name={item.icon}
+              name={item.icon as React.ComponentProps<typeof Feather>["name"]}
               size={16}
               color={selectedCategory === item.id ? "white" : tintText}
             />
