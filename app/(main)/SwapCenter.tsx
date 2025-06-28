@@ -28,7 +28,8 @@ import Animated, {
 import {
   usersConnectionsCollectionId,
   usersDatabaseId,
-} from "../../constants/queryIdsExport";
+  ratingsCollectionId,
+} from "@/constants/queryIdsExport";
 import {
   categories,
   getDistanceFromLatLonInKm,
@@ -63,6 +64,7 @@ const SwapCenter = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const [connectedUsers, setConnectedUsers] = useState<User[]>([]);
   const [connections, setConnections] = useState<any[]>([]);
+  const [ratings, setRatings] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchConnections = async () => {
@@ -86,6 +88,7 @@ const SwapCenter = () => {
       }
     };
     fetchConnections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, users]);
 
   useEffect(() => {
@@ -130,6 +133,7 @@ const SwapCenter = () => {
       }
     };
     fetchConnections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, users]);
 
   useEffect(() => {
@@ -147,6 +151,22 @@ const SwapCenter = () => {
     };
     fetchUsers();
   }, [getAllUsers, setUsers]);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const ratingsRes = await getDocuments(
+          usersDatabaseId,
+          ratingsCollectionId,
+          [Query.limit(1000)]
+        );
+        setRatings(ratingsRes); // or ratingsRes.documents if your getDocuments returns {documents: [...]}
+      } catch (err) {
+        setRatings([]);
+      }
+    };
+    fetchRatings();
+  }, [getDocuments]);
 
   const handlePresentFilterModalPress = () => {
     filterSheetBottomSheetRef.current?.expand();

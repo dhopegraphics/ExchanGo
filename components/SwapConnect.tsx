@@ -21,8 +21,9 @@ type ConnectedUser = {
 };
 
 type Rating = {
-  ratedUserId: string;
+  rated_User_id: string;
   ratedBy: { rating: number }[];
+  rating: number;
 };
 
 type ConnectionCardProps = {
@@ -50,13 +51,13 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0);
 
-  const userRatings = ratings.find(
-    (rating) => rating.ratedUserId === user.user_id
+  const userRatings = ratings.filter(
+    (rating) => rating.rated_User_id === user.user_id
   );
-  const averageRating = userRatings
-    ? userRatings.ratedBy.reduce((acc, rated) => acc + rated.rating, 0) /
-      userRatings.ratedBy.length
-    : 0;
+  const averageRating =
+    userRatings.length > 0
+      ? userRatings.reduce((acc, r) => acc + r.rating, 0) / userRatings.length
+      : 0;
 
   const skills = getUserSkills(user.user_id, userSkill);
 

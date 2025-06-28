@@ -4,3 +4,4 @@ export const avatarsBucketStorageId = "685d52bb0022336b94cf";
 export const fieldOfInterestCollectionId = "685d5af100269c516284";
 export const usersSkillsCollectionId = "685fc6e4001e120e3328";
 export const usersConnectionsCollectionId = "685fea9c0000f264864c";
+export const ratingsCollectionId = "685ffda9000d1ad00dc2";
