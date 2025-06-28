@@ -7,6 +7,10 @@ import {
   Storage,
   Query,
 } from "react-native-appwrite";
+import {
+  usersDatabaseId,
+  usersCollectionId,
+} from "../constants/queryIdsExport";
 
 const AppwriteContext = createContext();
 
@@ -40,15 +44,21 @@ export const AppwriteProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // Fetch all users (requires admin privileges)
+  // Fetch all users from the users collection and filter out the current user
   const getAllUsers = async () => {
     try {
-      const users = await account.list();
-      if (!currentUser) return users; // fallback if currentUser not loaded
-      // Filter out the current user
+      const response = await databases.listDocuments(
+        usersDatabaseId,
+        usersCollectionId,
+        [Query.limit(1000)] // adjust limit as needed
+      );
+      if (!currentUser) return response; // fallback if currentUser not loaded
+      // Filter out the current user by user_id
       const filteredUsers = {
-        ...users,
-        users: users.users.filter((user) => user.$id !== currentUser.$id),
+        ...response,
+        documents: response.documents.filter(
+          (user) => user.user_id !== currentUser.$id
+        ),
       };
       return filteredUsers;
     } catch (error) {

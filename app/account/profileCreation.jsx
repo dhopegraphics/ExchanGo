@@ -271,10 +271,7 @@ export default function ProfileCreation() {
 
         if (fileId) {
           // Generate URL for database storage
-          avatarUrl = storage.getFileDownloadURL(
-            avatarsBucketStorageId,
-            fileId
-          );
+          avatarUrl = storage.getFilePreviewURL(avatarsBucketStorageId, fileId);
         }
       }
 

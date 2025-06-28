@@ -10,15 +10,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-
-type User = {
-  id: string;
-  name: string;
-  bio?: string;
-  profileImage?: string;
-  featured?: boolean;
-  location?: string;
-};
+import { User } from "../stores/useUsersStore";
 
 type ConnectedUser = {
   userId: string;
@@ -57,16 +49,18 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
   const opacity = useSharedValue(0);
 
   const connectedUser = connectedUsers.find(
-    (connected) => connected.userId === user.id
-  ) || { userId: user.id, connectedFollowers: [], swappedWith: [] };
+    (connected) => connected.userId === user.user_id
+  ) || { userId: user.user_id, connectedFollowers: [], swappedWith: [] };
 
-  const userRatings = ratings.find((rating) => rating.ratedUserId === user.id);
+  const userRatings = ratings.find(
+    (rating) => rating.ratedUserId === user.user_id
+  );
   const averageRating = userRatings
     ? userRatings.ratedBy.reduce((acc, rated) => acc + rated.rating, 0) /
       userRatings.ratedBy.length
     : 0;
 
-  const skills = getUserSkills(user.id, userSkill);
+  const skills = getUserSkills(user.user_id, userSkill);
   const connectedCount = connectedUser?.connectedFollowers?.length || 0;
   const swappedCount = connectedUser?.swappedWith?.length || 0;
 
@@ -105,13 +99,13 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
         onPressOut={handlePressOut}
         onPress={() => {
           router.push({
-            pathname: `/account/${user.id}`,
+            pathname: `/account/${user.user_id}`,
             params: {
-              userId: user.id,
-              userName: user.name,
+              userId: user.user_id,
+              userName: user.first_name + " " + user.last_name,
               bio: user.bio,
               rating: averageRating,
-              profileImage: user.profileImage,
+              profileImage: user.avatar_url,
               connectedFollowers: connectedCount,
               swappedWith: swappedCount,
               skills: JSON.stringify(skills),
@@ -145,7 +139,9 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
           {/* Profile Image with Status */}
           <View className="relative mr-4">
             <Image
-              source={{ uri: user.profileImage }}
+              source={{
+                uri: user.avatar_url || "https://via.placeholder.com/150",
+              }}
               className="w-20 h-20 rounded-2xl"
             />
             {/* Online Status Indicator */}
@@ -164,7 +160,7 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
                   style={{ color: textColor }}
                   className="text-lg font-bold"
                 >
-                  {user.name}
+                  {user.first_name} {user.last_name}
                 </Text>
                 {/* Rating */}
                 <View className="flex-row items-center">
@@ -200,7 +196,7 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
               <View className="flex-row items-center">
                 <Ionicons name="location-outline" size={14} color={tintText} />
                 <Text style={{ color: tintText }} className="ml-1 text-sm">
-                  {user.location}
+                  {user.address || "Unknown Location"}
                 </Text>
               </View>
 

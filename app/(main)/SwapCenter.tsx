@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,7 +16,6 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FilterScreen from "@/components/FilterBottomitems";
-import { users, currentUser } from "@/data/users";
 import { connectedUsers } from "@/data/userConnection";
 import { UserRating } from "@/data/userRating";
 import { userSkills } from "@/data/userSkills";
@@ -28,6 +27,9 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { categories } from "../../utils/SwapCenterUtils";
+import { useUsersStore } from "../../stores/useUsersStore";
+import { useAuthStore } from "../../stores/useAuthStore";
+import { useAppwrite } from "../../Context/useAppwrite";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
@@ -36,35 +38,65 @@ const SwapCenter = () => {
   const cardBackground = useThemeColor({}, "cardBackground");
   const tintColor = useThemeColor({}, "tint");
   const insets = useSafeAreaInsets();
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-
   const filterSheetBottomSheetRef = useRef<BottomSheetModal>(null);
   const searchScale = useSharedValue(1);
   const headerOpacity = useSharedValue(1);
+  const { getAllUsers, currentUser: appwriteCurrentUser } = useAppwrite();
+  const users = useUsersStore((state: any) => state.users);
+  const setUsers = useUsersStore((state: any) => state.setUsers);
+  const currentUser = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
+  console.log("Current User:", currentUser);
+  console.log("Users from Store:", users);
+
+  useEffect(() => {
+    if (appwriteCurrentUser) setUser(appwriteCurrentUser);
+  }, [appwriteCurrentUser, setUser]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersRes = await getAllUsers();
+        setUsers(usersRes.documents || []);
+      } catch (err) {
+        // handle error
+      }
+    };
+    fetchUsers();
+  }, [getAllUsers, setUsers]);
 
   const handlePresentFilterModalPress = () => {
     filterSheetBottomSheetRef.current?.expand();
   };
 
   const filteredUsers = users
-    .filter((user) => user.id !== currentUser.id)
-    .filter((user) => {
-      const matchesSearch = user.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesFilter =
-        selectedFilter === "all" ||
-        (selectedFilter === "featured" && user.featured) ||
-        (selectedFilter === "nearby" && "location" in user && user.location) ||
-        (selectedFilter === "skilled" &&
-          "rating" in user &&
-          typeof user.rating === "number" &&
-          user.rating > 4);
-      return matchesSearch && matchesFilter;
-    });
+    .filter((user: { id: any }) => user.id !== currentUser.id)
+    .filter(
+      (user: {
+        name: string;
+        featured: any;
+        location: any;
+        rating: number;
+      }) => {
+        const matchesSearch = user.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+        const matchesFilter =
+          selectedFilter === "all" ||
+          (selectedFilter === "featured" && user.featured) ||
+          (selectedFilter === "nearby" &&
+            "location" in user &&
+            user.location) ||
+          (selectedFilter === "skilled" &&
+            "rating" in user &&
+            typeof user.rating === "number" &&
+            user.rating > 4);
+        return matchesSearch && matchesFilter;
+      }
+    );
 
   const handleSearchFocus = () => {
     setIsSearchFocused(true);
@@ -264,9 +296,9 @@ const SwapCenter = () => {
 
         {/* Main Content */}
         <View className="flex-1 px-4">
-          {filteredUsers.length > 0 ? (
+          {users.length > 0 ? (
             <FlatList
-              data={filteredUsers}
+              data={users}
               renderItem={({ item, index }) => (
                 <ConnectionCard
                   user={item}
@@ -276,7 +308,7 @@ const SwapCenter = () => {
                   index={index}
                 />
               )}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.$id}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 120 }}
               scrollEventThrottle={16}
@@ -290,7 +322,7 @@ const SwapCenter = () => {
 
       <BottomSheet
         ref={filterSheetBottomSheetRef}
-        index={0}
+        index={-1}
         snapPoints={["50%", "70%", "80%", "90%"]}
         animationConfigs={{
           duration: 800,
