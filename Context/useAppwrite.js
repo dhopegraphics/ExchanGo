@@ -44,12 +44,17 @@ export const AppwriteProvider = ({ children }) => {
   const getAllUsers = async () => {
     try {
       const users = await account.list();
-      return users;
+      if (!currentUser) return users; // fallback if currentUser not loaded
+      // Filter out the current user
+      const filteredUsers = {
+        ...users,
+        users: users.users.filter((user) => user.$id !== currentUser.$id),
+      };
+      return filteredUsers;
     } catch (error) {
       throw error;
     }
   };
-
   // Dynamic CRUD operations
   const createDocument = async (
     databaseId,

@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   RefreshControl,
-  ScrollView,
   FlatList,
 } from "react-native";
 import { SCREEN_WIDTH } from "@/constants/Screen";

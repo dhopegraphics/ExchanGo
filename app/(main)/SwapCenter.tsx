@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
-  ScrollView,
 } from "react-native";
 import { Ionicons, FontAwesome, Feather } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -28,13 +27,13 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { categories } from "../../utils/SwapCenterUtils";
 
 const SwapCenter = () => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");
   const cardBackground = useThemeColor({}, "cardBackground");
-  const highlightFilter = useThemeColor({}, "tabBarBackground");
   const tintColor = useThemeColor({}, "tint");
   const insets = useSafeAreaInsets();
 
@@ -46,32 +45,9 @@ const SwapCenter = () => {
   const searchScale = useSharedValue(1);
   const headerOpacity = useSharedValue(1);
 
-  const categories: {
-    id: string;
-    name: string;
-    icon: React.ComponentProps<typeof Feather>["name"];
-    color: string;
-  }[] = [
-    { id: "all", name: "All", icon: "grid", color: "#FF6B6B" },
-    {
-      id: "featured",
-      name: "Featured",
-      icon: "trending-up",
-      color: "#4ECDC4",
-    },
-    { id: "nearby", name: "Nearby", icon: "map-pin", color: "#96CEB4" },
-    {
-      id: "skilled",
-      name: "Top Rated",
-      icon: "award",
-      color: "#FD79A8",
-    },
-    { id: "recent", name: "Recent", icon: "watch", color: "#96CEB4" },
-  ];
-
-  const handlePresentFilterModalPress = useCallback(() => {
-    filterSheetBottomSheetRef.current?.present();
-  }, []);
+  const handlePresentFilterModalPress = () => {
+    filterSheetBottomSheetRef.current?.expand();
+  };
 
   const filteredUsers = users
     .filter((user) => user.id !== currentUser.id)
@@ -156,9 +132,9 @@ const SwapCenter = () => {
   );
 
   const QuickStats = () => (
-    <View className="flex-row px-4 mb-6">
+    <View className="flex-row px-2 mb-4">
       <View className="flex-1 mr-2" style={{ backgroundColor: cardBackground }}>
-        <View className="p-4 rounded-xl">
+        <View className="p-4 rounded-2xl">
           <View className="flex-row items-center justify-between mb-2">
             <Text style={{ color: textColor }} className="text-lg font-bold">
               {filteredUsers.length}
@@ -172,7 +148,7 @@ const SwapCenter = () => {
       </View>
 
       <View className="flex-1 ml-2" style={{ backgroundColor: cardBackground }}>
-        <View className="p-4 rounded-xl">
+        <View className="p-4 rounded-2xl">
           <View className="flex-row items-center justify-between mb-2">
             <Text style={{ color: textColor }} className="text-lg font-bold">
               {connectedUsers.length}
@@ -320,12 +296,12 @@ const SwapCenter = () => {
           duration: 800,
           easing: Easing.elastic(1),
         }}
-        backgroundStyle={{
-          backgroundColor: cardBackground,
-        }}
         enablePanDownToClose={true}
       >
-        <BottomSheetView className="flex-1">
+        <BottomSheetView
+          className="flex-1"
+          style={{ backgroundColor: backgroundColor }}
+        >
           <FilterScreen />
         </BottomSheetView>
       </BottomSheet>

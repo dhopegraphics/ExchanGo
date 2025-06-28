@@ -36,8 +36,11 @@ const FilterScreen = () => {
   };
 
   return (
-    <View style={{ paddingBottom: insets.bottom }} className="flex-1 bg-white">
-      <ScrollView className="flex-1 bg-white p-4">
+    <View
+      style={{ paddingBottom: insets.bottom }}
+      className="flex-1 dark:bg-yellow-300 bg-yellow-300"
+    >
+      <ScrollView className="flex-1 dark:bg-yellow-300 bg-blue-300 p-4">
         <Text className="text-lg font-bold mb-2">Select City</Text>
         <TouchableOpacity className="bg-orange-400 rounded-full py-2 px-4 mb-4 flex-row items-center justify-center">
           <Ionicons name="add" size={20} color="white" />
