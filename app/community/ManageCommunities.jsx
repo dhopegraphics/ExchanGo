@@ -19,6 +19,7 @@ import { useUsersStore } from "@/stores/useUsersStore";
 import {
   usersDatabaseId,
   communitiesCollectionId,
+  communityRulesCollectionId,
 } from "@/constants/queryIdsExport";
 import { Query } from "react-native-appwrite";
 import * as ImagePicker from "expo-image-picker";
@@ -75,6 +76,14 @@ const ManageCommunities = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const saveRule = async (communityId, ruleText) => {
+    await createDocument(usersDatabaseId, communityRulesCollectionId, {
+      communityId,
+      rule: ruleText,
+      created_by: currentUser?.user_id,
+    });
   };
 
   const handleCreateCommunity = async () => {

@@ -122,7 +122,7 @@ const CommunityPage = () => {
         </ScrollView>
         <BottomSheet
           ref={filterSheetBottomSheetRef}
-          index={0}
+          index={-1}
           snapPoints={["40%"]}
           animationConfigs={{
             duration: 800,

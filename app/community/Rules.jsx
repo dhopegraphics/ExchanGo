@@ -5,16 +5,38 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import { useJoin } from "@/Context/CommunityJoinContext";
+import { Query } from "react-native-appwrite";
+import { useAppwrite } from "@/Context/useAppwrite";
+import {
+  usersDatabaseId,
+  communityRulesCollectionId,
+} from "../../constants/queryIdsExport";
 
 const Rules = () => {
   const insets = useSafeAreaInsets();
   const { communityId, communityName } = useLocalSearchParams();
   const { joinCommunity } = useJoin();
+  const { getDocuments } = useAppwrite();
 
   const handleAgreeAndJoin = () => {
     joinCommunity(communityId);
     router.back();
   };
+
+  const fetchCommunityRules = async (communityId) => {
+    const res = await getDocuments(
+      usersDatabaseId,
+      communityRulesCollectionId,
+      [Query.equal("communityId", communityId)]
+    );
+    return res.documents || [];
+  };
+
+  const [rules, setRules] = React.useState([]);
+  React.useEffect(() => {
+    fetchCommunityRules(communityId).then(setRules);
+  }, [communityId]);
+
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       {/* Header */}
@@ -43,10 +65,9 @@ const Rules = () => {
           </Text>
 
           <View className="space-y-4">
-            <BulletPoint text="Be kind to each other: Please treat others the way you want to be treated." />
-            <BulletPoint text="No hate speech or discrimination: Everyone should feel safe and welcome, no matter their age, race, gender, sexual preferences, religion, or culture. We have zero tolerance for hate speech." />
-            <BulletPoint text="Keep Tweets on topic: This place is about UX Writing and Content Design, so off-topic tweets will be removed." />
-            <BulletPoint text="No sensitive media: Don't post anything that's not safe for work." />
+            {rules.map((r, i) => (
+              <BulletPoint key={i} text={r.rule} />
+            ))}
           </View>
         </View>
       </ScrollView>

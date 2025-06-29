@@ -7,3 +7,4 @@ export const usersConnectionsCollectionId = "685fea9c0000f264864c";
 export const ratingsCollectionId = "685ffda9000d1ad00dc2";
 export const communitiesCollectionId = "6860f9f80023bae4f583";
 export const joinedCommunitiesCollectionId = "6860fb23002408bab8f6";
+export const communityRulesCollectionId = "68611efd0012042906e6";
