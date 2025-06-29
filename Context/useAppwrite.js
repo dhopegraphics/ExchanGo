@@ -152,14 +152,9 @@ export const AppwriteProvider = ({ children }) => {
   };
 
   // Storage helpers (optional)
-  const uploadFile = async (bucketId, file, permissions = []) => {
+  const uploadFile = async (bucketId, file) => {
     try {
-      const response = await storage.createFile(
-        bucketId,
-        ID.unique(),
-        file,
-        permissions
-      );
+      const response = await storage.createFile(bucketId, ID.unique(), file);
       return response;
     } catch (error) {
       throw error;

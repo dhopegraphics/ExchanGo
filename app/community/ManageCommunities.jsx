@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -41,7 +42,7 @@ const ManageCommunities = () => {
   const [myCommunities, setMyCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [profilePicture, setProfilePicture] = useState(null);
   // Create community states
   const [newCommunity, setNewCommunity] = useState({
     name: "",
@@ -49,16 +50,10 @@ const ManageCommunities = () => {
     community_profile: null,
   });
   const [creatingCommunity, setCreatingCommunity] = useState(false);
-  const [imageUploading, setImageUploading] = useState(false);
-
-  // Bottom sheet refs
+  const [isUploading, setIsUploading] = useState(false);
   const createCommunitySheetRef = useRef(null);
   const manageCommunitySheetRef = useRef(null);
   const [selectedCommunity, setSelectedCommunity] = useState(null);
-
-  useEffect(() => {
-    fetchMyCommunities();
-  }, [currentUser]);
 
   const fetchMyCommunities = async () => {
     if (!currentUser) return;
@@ -69,13 +64,18 @@ const ManageCommunities = () => {
         communitiesCollectionId,
         [Query.equal("created_by", currentUser.user_id)]
       );
-      setMyCommunities(response.documents || []);
+
+      setMyCommunities(response || []);
     } catch (error) {
       console.error("Error fetching communities:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchMyCommunities();
+  }, [currentUser]);
 
   const saveRule = async (communityId, ruleText) => {
     await createDocument(usersDatabaseId, communityRulesCollectionId, {
@@ -89,17 +89,31 @@ const ManageCommunities = () => {
     if (
       !newCommunity.name.trim() ||
       !newCommunity.bio.trim() ||
-      !newCommunity.community_profile
+      !profilePicture
     ) {
       return;
     }
+    let fileId = null;
+
+    fileId = await uploadProfilePicture(profilePicture);
+    if (!fileId) {
+      Alert.alert("Upload Failed", "Please try uploading your image again.");
+      return;
+    }
+
+    const filePreviewUrl = await getFilePreview(
+      avatarsBucketStorageId,
+      fileId,
+      2000,
+      2000
+    );
 
     setCreatingCommunity(true);
     try {
       await createDocument(usersDatabaseId, communitiesCollectionId, {
         name: newCommunity.name,
         bio: newCommunity.bio,
-        community_profile: newCommunity.community_profile,
+        community_profile: filePreviewUrl,
         created_by: currentUser.user_id,
       });
       setNewCommunity({ name: "", bio: "", community_profile: null });
@@ -117,60 +131,87 @@ const ManageCommunities = () => {
     manageCommunitySheetRef.current?.expand();
   };
 
+  console.log("My Communities:", myCommunities);
+
   const filteredCommunities = myCommunities.filter((community) =>
     community.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    // Request permission to access the media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
+    // Launch the image picker
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.8,
+      quality: 1,
     });
 
-    if (!result.canceled && result.assets && result.assets[0]) {
-      setImageUploading(true);
-      try {
-        // Get image URI
-        const imageUri = result.assets[0].uri;
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfilePicture(result.assets[0].uri);
+    }
+  };
 
-        // Get image name from URI
-        const imageName = imageUri.substring(imageUri.lastIndexOf("/") + 1);
+  const uploadProfilePicture = async (uri) => {
+    if (!uri) return null;
 
-        // For React Native, we need to fetch the image as blob first
-        const response = await fetch(imageUri);
-        const blob = await response.blob();
+    try {
+      // Show loading state for image upload
+      setIsUploading(true);
 
-        // Upload image to Appwrite Storage
-        // Replace 'community_images' with your actual bucket ID
-        const uploadedFile = await uploadFile(
-          avatarsBucketStorageId, // Your bucket ID for community images
-          blob,
-          [`read("role:all")`, `write("user:${currentUser.$id}")`] // Set permissions
+      // Extract file information
+      const fileName = uri.split("/").pop();
+      const extension = fileName.split(".").pop().toLowerCase();
+
+      // Validate file type
+      const validTypes = ["jpg", "jpeg", "png"];
+      const fileType = validTypes.includes(extension)
+        ? `image/${extension === "jpg" ? "jpeg" : extension}`
+        : "image/jpeg";
+
+      // Create file object with properly structured data
+      const fileObject = {
+        name: fileName,
+        type: fileType,
+        size: 0, // Actual size is determined by the SDK
+        uri: uri,
+      };
+
+      const response = await uploadFile(
+        avatarsBucketStorageId, // Your bucket ID for community images
+        fileObject
+      );
+
+      return response?.$id;
+    } catch (error) {
+      // Detailed error logging
+      console.log("Image upload error:", error);
+
+      // User-friendly error messages based on error type
+      if (error.code === 401) {
+        Alert.alert(
+          "Authentication Error",
+          "Please sign in again to continue."
         );
-
-        // Get the file preview URL
-        const filePreviewUrl = await getFilePreview(
-          avatarsBucketStorageId, // Your bucket ID
-          uploadedFile.$id,
-          2000, // Width
-          2000 // Height
+      } else if (error.code === 413) {
+        Alert.alert("File Too Large", "Please choose a smaller image.");
+      } else {
+        Alert.alert(
+          "Upload Failed",
+          "We couldn't upload your profile picture. Please try again."
         );
-
-        // Update state with the image URL
-        setNewCommunity({
-          ...newCommunity,
-          community_profile: filePreviewUrl, // Store the URL
-          image_id: uploadedFile.$id, // Store ID for future reference
-        });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        // Show error to user (optional)
-        alert("Failed to upload image. Please try again.");
-      } finally {
-        setImageUploading(false);
       }
+      return null;
+    } finally {
+      // Always reset loading state
+      setIsUploading(false);
     }
   };
 
@@ -388,14 +429,14 @@ const ManageCommunities = () => {
               className="w-24 h-24 rounded-xl items-center justify-center"
               style={{ backgroundColor: `${tintColor}20` }}
               onPress={pickImage}
-              disabled={imageUploading}
+              disabled={isUploading}
             >
-              {newCommunity.community_profile ? (
+              {profilePicture ? (
                 <Image
-                  source={{ uri: newCommunity.community_profile }}
+                  source={{ uri: profilePicture }}
                   className="w-24 h-24 rounded-xl"
                 />
-              ) : imageUploading ? (
+              ) : isUploading ? (
                 <ActivityIndicator size="small" color={tintColor} />
               ) : (
                 <>

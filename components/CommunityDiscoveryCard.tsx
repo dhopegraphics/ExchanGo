@@ -212,7 +212,9 @@ const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
           {/* Bio Preview */}
           {community.bio && (
             <Text style={[styles.bio, { color: tintText }]} numberOfLines={2}>
-              {community.bio}
+              {community.bio.length > 60
+                ? community.bio.slice(0, 60) + "..."
+                : community.bio}
             </Text>
           )}
 
