@@ -55,6 +55,7 @@ module.exports = {
           800: "#9B2C2C",
           900: "#742A2A",
         },
+        background: "#151718",
         warning: {
           100: "#FFFBEB",
           200: "#FEF3C7",

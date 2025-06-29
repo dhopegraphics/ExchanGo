@@ -135,8 +135,9 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
         onPressOut={handlePressOut}
         onPress={() => {
           router.push({
-            pathname: `/account/${user.user_id}`,
+            pathname: "/account/[userProfilePreview]",
             params: {
+              userProfilePreview: user?.user_id,
               userId: user?.user_id,
               userName: user?.first_name + " " + user?.last_name,
               bio: user?.bio,
