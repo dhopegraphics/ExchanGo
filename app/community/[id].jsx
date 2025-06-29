@@ -11,21 +11,17 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import AvatarPreviews from "../../components/avatarPreviews";
-import CommunityPostCard from "../../components/posted";
-import { postData } from "../../data/postMade";
-import { commentsData } from "../../data/postComments";
-import { users } from "../../data/users";
-import { likesData } from "../../data/PostLikes";
+import AvatarPreviews from "@/components/avatarPreviews";
+import CommunityPostCard from "@/components/posted";
+import { postData } from "@/data/postMade";
+import { commentsData } from "@/data/postComments";
+import { users } from "@/data/users";
+import { likesData } from "@/data/PostLikes";
 import { router, useLocalSearchParams } from "expo-router";
-import { useJoin } from "../../Context/CommunityJoinContext";
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheet,
-} from "@gorhom/bottom-sheet";
+import { useJoin } from "@/Context/CommunityJoinContext";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Easing } from "react-native-reanimated";
-import MessageInput from "../../components/MessageInput";
+import MessageInput from "@/components/MessageInput";
 
 const CommunityPage = () => {
   const insets = useSafeAreaInsets();
@@ -124,7 +120,7 @@ const CommunityPage = () => {
             )}
           </View>
         </ScrollView>
-        {/* <BottomSheet
+        <BottomSheet
           ref={filterSheetBottomSheetRef}
           index={0}
           snapPoints={["40%"]}
@@ -150,7 +146,7 @@ const CommunityPage = () => {
               <TouchableOpacity
                 className="bg-red-500 rounded-full py-3 mb-3"
                 onPress={() => {
-                  leaveCommunity(communityId);
+                  // leaveCommunity(communityId);
                   filterSheetBottomSheetRef.current?.close();
                 }}
               >
@@ -168,7 +164,7 @@ const CommunityPage = () => {
               </TouchableOpacity>
             </View>
           </BottomSheetView>
-        </BottomSheet> */}
+        </BottomSheet>
         {isJoined(communityId) && <MessageInput />}
       </View>
     </KeyboardAvoidingView>

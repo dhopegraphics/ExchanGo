@@ -28,7 +28,7 @@ const ManageCommunities = () => {
   const backgroundColor = useThemeColor({}, "background");
   const cardBackground = useThemeColor({}, "cardBackground");
   const textColor = useThemeColor({}, "text");
-  const mutedTextColor = useThemeColor({}, "mutedText");
+  const mutedTextColor = useThemeColor({}, "tint");
   const tintColor = useThemeColor({}, "tint");
 
   const {
