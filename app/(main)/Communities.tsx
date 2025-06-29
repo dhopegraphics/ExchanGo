@@ -22,13 +22,12 @@ import Feather from "@expo/vector-icons/Feather";
 import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
 import { communityDetails } from "@/data/communitiesDetail";
 import {
-  usersCollectionId,
   usersDatabaseId,
   communitiesCollectionId,
   joinedCommunitiesCollectionId,
 } from "@/constants/queryIdsExport";
 import { Query } from "react-native-appwrite";
-import { useUsersStore, User } from "@/stores/useUsersStore";
+import { useUsersStore } from "@/stores/useUsersStore";
 import { useAppwrite } from "@/Context/useAppwrite";
 import { useLastVisitedCommunityStore } from "@/stores/useLastVisitedCommunityStore";
 
@@ -135,10 +134,6 @@ const CommunityCenter = () => {
       }
     };
   }, [timer]);
-
-  // useEffect(() => {
-  //   setDisplayCommunity(lastVisitedCommunity);
-  // }, [lastVisitedCommunity]);
 
   const handleShowMore = () => {
     if (visibleItems + 5 >= communityDetails.length) {

@@ -32,14 +32,6 @@ const SettingsScreen = () => {
     >
       <ScrollView className="px-3" style={{}}>
         <Text className="text-white text-2xl font-bold my-3">Settings</Text>
-        {/* Search Bar */}
-        <View className="bg-gray-800 rounded-lg mb-4">
-          <TextInput
-            className="text-white p-3"
-            placeholder="Search"
-            placeholderTextColor="#999"
-          />
-        </View>
 
         {/* Avatar Section */}
         <TouchableOpacity
@@ -69,12 +61,6 @@ const SettingsScreen = () => {
         {/* New Section */}
         <SettingsGroup SectionHeader="Profile">
           <SettingItem
-            icon={<Ionicons name="person" size={20} color="white" />}
-            label="Avatar"
-            color="#3B82F6"
-            onPress={() => handlePress("Avatar")}
-          />
-          <SettingItem
             icon={<Ionicons name="megaphone" size={20} color="white" />}
             label="Advertise"
             color="#8B5CF6"
@@ -100,7 +86,7 @@ const SettingsScreen = () => {
             icon={<Ionicons name="people" size={20} color="white" />}
             label="Communities"
             color="#007AFF"
-            onPress={() => handlePress("Communities")}
+            onPress={() => router.push("/community/ManageCommunities")}
           />
         </SettingsGroup>
 
@@ -117,19 +103,6 @@ const SettingsScreen = () => {
             color="#32ADE6"
             onPress={() => handlePress("Privacy")}
           />
-
-          <SettingItem
-            icon={<Ionicons name="notifications" size={20} color="white" />}
-            label="Notifications"
-            color="#FF3B30"
-            onPress={() => handlePress("Notifications")}
-          />
-          <SettingItem
-            icon={<Ionicons name="server" size={20} color="white" />}
-            label="Storage and data"
-            color="#34C759"
-            onPress={() => handlePress("Storage and data")}
-          />
         </SettingsGroup>
 
         <SettingsGroup SectionHeader="Help">
@@ -140,12 +113,6 @@ const SettingsScreen = () => {
             label="Help"
             color="#007AFF"
             onPress={() => handlePress("Help")}
-          />
-          <SettingItem
-            icon={<Ionicons name="person-add" size={20} color="white" />}
-            label="Invite a contact"
-            color="#FFCC00"
-            onPress={() => handlePress("Invite a contact")}
           />
         </SettingsGroup>
       </ScrollView>

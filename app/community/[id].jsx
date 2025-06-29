@@ -19,7 +19,11 @@ import { users } from "../../data/users";
 import { likesData } from "../../data/PostLikes";
 import { router, useLocalSearchParams } from "expo-router";
 import { useJoin } from "../../Context/CommunityJoinContext";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheet,
+} from "@gorhom/bottom-sheet";
 import { Easing } from "react-native-reanimated";
 import MessageInput from "../../components/MessageInput";
 
@@ -120,7 +124,7 @@ const CommunityPage = () => {
             )}
           </View>
         </ScrollView>
-        {/* <BottomSheetModal
+        {/* <BottomSheet
           ref={filterSheetBottomSheetRef}
           index={0}
           snapPoints={["40%"]}
@@ -164,7 +168,7 @@ const CommunityPage = () => {
               </TouchableOpacity>
             </View>
           </BottomSheetView>
-        </BottomSheetModal> */}
+        </BottomSheet> */}
         {isJoined(communityId) && <MessageInput />}
       </View>
     </KeyboardAvoidingView>
