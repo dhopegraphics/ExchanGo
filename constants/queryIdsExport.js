@@ -5,3 +5,5 @@ export const fieldOfInterestCollectionId = "685d5af100269c516284";
 export const usersSkillsCollectionId = "685fc6e4001e120e3328";
 export const usersConnectionsCollectionId = "685fea9c0000f264864c";
 export const ratingsCollectionId = "685ffda9000d1ad00dc2";
+export const communitiesCollectionId = "6860f9f80023bae4f583";
+export const joinedCommunitiesCollectionId = "6860fb23002408bab8f6";

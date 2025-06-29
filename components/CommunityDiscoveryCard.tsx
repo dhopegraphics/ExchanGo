@@ -10,23 +10,17 @@ import Animated, {
 } from "react-native-reanimated";
 
 type User = {
-  id: string;
-  profileImage?: string;
+  user_id: string;
+  avatar_url?: string;
   // Add other user fields as needed
 };
 
 type Community = {
-  id: string;
+  $id: string;
   name?: string;
-  profileImage?: string;
+  community_profile?: string;
   bio?: string;
   isVerified?: boolean;
-  // Add other community fields as needed
-};
-
-type JoinedCommunity = {
-  communityId: string;
-  userIds: string[];
 };
 
 type CommunityDiscoverCardProps = {
@@ -53,41 +47,38 @@ const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
-  // ...existing code...
   // Early return if community is null/undefined
   if (!community) {
     return null; // or return a skeleton/placeholder component
   }
 
   // Safely get community members with null checks
-  const joinedCommunity = joinedCommunities.find(
-    (join) => join?.communityId === community?.id
+  const joinedCommunity = joinedCommunities.filter(
+    (join) => join?.communityId === community?.$id // or community.id if that's the field
   );
-
-  const communityMembers = joinedCommunity?.userIds
-    ? joinedCommunity.userIds
-        .map((userId: string) => users.find((user) => user?.id === userId))
-        .filter(Boolean) // Remove any null/undefined users
-    : [];
+  const memberUserIds = joinedCommunity.map((join) => join?.user_id);
+  const communityMembers = users.filter((user) =>
+    memberUserIds.includes(user?.user_id)
+  );
 
   const handlePress = () => {
     if (onPress) {
       onPress(community);
     }
 
-    if (community?.id) {
+    if (community?.$id) {
       router.push({
         pathname: "/community/[id]",
         params: {
-          id: community.id,
-          communityId: community.id,
+          id: community.$id,
+          communityId: community.$id,
           communityName: community.name || "Unknown Community",
           memberCount: communityMembers.length,
           avatars: JSON.stringify(
             communityMembers
-              .filter((member: { profileImage: any }) => member?.profileImage)
-              .map((member: { profileImage: any }) => ({
-                uri: member?.profileImage,
+              .filter((member) => member?.avatar_url)
+              .map((member) => ({
+                uri: member?.avatar_url || "",
               }))
           ),
           bio: community.bio || "",
@@ -107,41 +98,38 @@ const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
   const MemberAvatars = () => {
     const displayMembers = communityMembers.slice(0, 5);
     const remainingCount = Math.max(0, communityMembers.length - 5);
-
     return (
       <View style={styles.avatarContainer}>
-        {displayMembers.map(
-          (member: { id: any; profileImage: any }, index: number) => (
-            <View
-              key={member?.id || index}
-              style={[
-                styles.avatarWrapper,
-                {
-                  marginLeft: index > 0 ? -8 : 0,
-                  zIndex: displayMembers.length - index,
-                },
-              ]}
-            >
-              {member?.profileImage ? (
-                <Image
-                  source={{ uri: member.profileImage }}
-                  style={[styles.memberAvatar, { borderColor: cardBackground }]}
-                  defaultSource={require("@/assets/images/exchanGoLogo.jpg")}
-                />
-              ) : (
-                <View
-                  style={[
-                    styles.memberAvatar,
-                    styles.defaultAvatar,
-                    { backgroundColor: tintColor + "20" },
-                  ]}
-                >
-                  <Ionicons name="person" size={12} color={tintColor} />
-                </View>
-              )}
-            </View>
-          )
-        )}
+        {displayMembers.map((member: User, index: number) => (
+          <View
+            key={member?.user_id || index}
+            style={[
+              styles.avatarWrapper,
+              {
+                marginLeft: index > 0 ? -8 : 0,
+                zIndex: displayMembers.length - index,
+              },
+            ]}
+          >
+            {member?.avatar_url ? (
+              <Image
+                source={{ uri: member.avatar_url }}
+                style={[styles.memberAvatar, { borderColor: cardBackground }]}
+                defaultSource={require("@/assets/images/exchanGoLogo.jpg")}
+              />
+            ) : (
+              <View
+                style={[
+                  styles.memberAvatar,
+                  styles.defaultAvatar,
+                  { backgroundColor: tintColor + "20" },
+                ]}
+              >
+                <Ionicons name="person" size={12} color={tintColor} />
+              </View>
+            )}
+          </View>
+        ))}
 
         {remainingCount > 0 && (
           <View
@@ -173,9 +161,9 @@ const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
       >
         {/* Community Image */}
         <View style={styles.imageContainer}>
-          {community.profileImage ? (
+          {community.community_profile ? (
             <Image
-              source={{ uri: community.profileImage }}
+              source={{ uri: community.community_profile }}
               style={styles.communityImage}
               defaultSource={require("@/assets/images/exchanGoLogo.jpg")}
             />

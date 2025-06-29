@@ -21,9 +21,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import CommunityDiscoverCard from "@/components/CommunityDiscoveryCard";
 import { communityDetails } from "@/data/communitiesDetail";
-import { joinedCommunities } from "@/data/joinedCommunities";
-import { users } from "@/data/users";
-// import { LastVisitedCommunityContext } from "@/Context/LastVisitedCommunityContext";
+import {
+  usersCollectionId,
+  usersDatabaseId,
+  communitiesCollectionId,
+  joinedCommunitiesCollectionId,
+} from "@/constants/queryIdsExport";
+import { Query } from "react-native-appwrite";
+import { useUsersStore, User } from "@/stores/useUsersStore";
+import { useAppwrite } from "@/Context/useAppwrite";
+import { useLastVisitedCommunityStore } from "@/stores/useLastVisitedCommunityStore";
 
 const IMG_HEIGHT = 300;
 
@@ -33,26 +40,93 @@ const CommunityCenter = () => {
   const textColor = useThemeColor({}, "text");
   const [search, setSearch] = useState("");
   const [visibleItems, setVisibleItems] = useState(5);
-  // const { lastVisitedCommunity, setLastVisitedCommunity } = useContext(
-  //   LastVisitedCommunityContext
-  // );
+  const {
+    lastVisitedCommunity,
+    setLastVisitedCommunity,
+    loadLastVisitedCommunity,
+  } = useLastVisitedCommunityStore();
+
+  type Community = {
+    $id: string;
+    name: string;
+    // add other properties as needed
+    [key: string]: any;
+  };
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [loadingCommunities, setLoadingCommunities] = useState(true);
+
   const [loading, setLoading] = useState(false); // State to manage loading
   const [timer, setTimer] = useState<number | null>(null); // State to manage the timer
   const [displayCommunity, setDisplayCommunity] = useState(); // State to manage displayed community
-  const filteredCommunities = communityDetails.filter(
-    (community) => community.name.toLowerCase().includes(search.toLowerCase()) // Adjust the property to match your community object
+  const {
+    getAllUsers,
+    currentUser: appwriteCurrentUser,
+    getDocuments,
+  } = useAppwrite();
+  const users = useUsersStore((state: any) => state.users);
+  const setUsers = useUsersStore((state: any) => state.setUsers);
+  const filteredCommunities = communities.filter(
+    (community) =>
+      community.name &&
+      community.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleCommunityPress = (community: any) => {
-    setTimer(
-      setTimeout(() => {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000);
-      }, 1000)
-    );
-  };
+  const [joinedCommunities, setJoinedCommunities] = useState([]);
+  const [loadingJoined, setLoadingJoined] = useState(true);
+
+  useEffect(() => {
+    loadLastVisitedCommunity();
+  }, [loadLastVisitedCommunity]);
+
+  useEffect(() => {
+    const fetchJoinedCommunities = async () => {
+      setLoadingJoined(true);
+      try {
+        const res = await getDocuments(
+          usersDatabaseId,
+          joinedCommunitiesCollectionId,
+          [Query.limit(1000)]
+        );
+        setJoinedCommunities(res.documents || []);
+      } catch (err) {
+        setJoinedCommunities([]);
+      } finally {
+        setLoadingJoined(false);
+      }
+    };
+    fetchJoinedCommunities();
+  }, [getDocuments]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersRes = await getAllUsers();
+        setUsers(usersRes.documents || []);
+      } catch (err) {
+        // handle error
+      }
+    };
+    fetchUsers();
+  }, [getAllUsers, setUsers]);
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      setLoadingCommunities(true);
+      try {
+        const res = await getDocuments(
+          usersDatabaseId,
+          communitiesCollectionId,
+          [Query.limit(1000)]
+        );
+        setCommunities(res || []);
+      } catch (err) {
+        setCommunities([]);
+      } finally {
+        setLoadingCommunities(false);
+      }
+    };
+    fetchCommunities();
+  }, [getDocuments]);
 
   useEffect(() => {
     return () => {
@@ -133,6 +207,18 @@ const CommunityCenter = () => {
     };
   });
 
+  const handleCommunityPress = (community: any) => {
+    setLastVisitedCommunity(community);
+    setTimer(
+      setTimeout(() => {
+        setLoading(true);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
+      }, 1000)
+    );
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: backgroundColor }]}>
       <Stack.Screen
@@ -205,19 +291,20 @@ const CommunityCenter = () => {
             >
               Recently Visited
             </Text>
-            {/* {loading ? ( // Show loading state while waiting
+
+            {loading ? (
               <ActivityIndicator />
-            ) : lastVisitedCommunity ? ( // Check if there is a last visited community
+            ) : lastVisitedCommunity ? (
               <CommunityDiscoverCard
-                community={displayCommunity} // Pass the last visited community
+                community={lastVisitedCommunity}
                 users={users}
                 joinedCommunities={joinedCommunities}
               />
             ) : (
               <Text style={{ color: textColor }}>
                 No recently visited communities
-              </Text> // Optional message if none
-            )} */}
+              </Text>
+            )}
           </Animated.View>
           <View
             style={{
@@ -234,17 +321,26 @@ const CommunityCenter = () => {
             </Text>
             <FlatList
               data={filteredCommunities.slice(0, visibleItems)}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) => item?.$id}
               renderItem={({ item }) => (
                 <CommunityDiscoverCard
-                  community={{ ...item, id: item.id.toString() }}
+                  community={item}
                   users={users}
                   joinedCommunities={joinedCommunities}
-                  onPress={handleCommunityPress} // Pass the function reference
+                  onPress={handleCommunityPress}
                 />
               )}
               contentContainerStyle={{ padding: 16 }}
               scrollEnabled={false}
+              ListEmptyComponent={
+                loadingCommunities ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text className="text-center text-gray-400 mt-4">
+                    No communities found.
+                  </Text>
+                )
+              }
             />
             {visibleItems < filteredCommunities.length ? (
               <TouchableOpacity onPress={handleShowMore} className="ml-4">
