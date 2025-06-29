@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -13,13 +13,12 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Ionicons, MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useRef } from "react";
 import { useAppwrite } from "@/Context/useAppwrite";
-import { useUsersStore } from "@/stores/useUsersStore";
 import {
   usersDatabaseId,
   communitiesCollectionId,
   communityRulesCollectionId,
+  avatarsBucketStorageId,
 } from "@/constants/queryIdsExport";
 import { Query } from "react-native-appwrite";
 import * as ImagePicker from "expo-image-picker";
@@ -146,14 +145,14 @@ const ManageCommunities = () => {
         // Upload image to Appwrite Storage
         // Replace 'community_images' with your actual bucket ID
         const uploadedFile = await uploadFile(
-          "community_images", // Your bucket ID for community images
+          avatarsBucketStorageId, // Your bucket ID for community images
           blob,
           [`read("role:all")`, `write("user:${currentUser.$id}")`] // Set permissions
         );
 
         // Get the file preview URL
         const filePreviewUrl = await getFilePreview(
-          "community_images", // Your bucket ID
+          avatarsBucketStorageId, // Your bucket ID
           uploadedFile.$id,
           2000, // Width
           2000 // Height

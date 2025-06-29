@@ -1,28 +1,26 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
 import { useJoin } from "@/Context/CommunityJoinContext";
 import { Query } from "react-native-appwrite";
 import { useAppwrite } from "@/Context/useAppwrite";
 import {
   usersDatabaseId,
   communityRulesCollectionId,
-} from "../../constants/queryIdsExport";
+} from "@/constants/queryIdsExport";
 
 const Rules = () => {
   const insets = useSafeAreaInsets();
   const { communityId, communityName } = useLocalSearchParams();
   const { joinCommunity } = useJoin();
   const { getDocuments } = useAppwrite();
-
+  const [rules, setRules] = React.useState([]);
   const handleAgreeAndJoin = () => {
     joinCommunity(communityId);
     router.back();
   };
-
   const fetchCommunityRules = async (communityId) => {
     const res = await getDocuments(
       usersDatabaseId,
@@ -32,7 +30,6 @@ const Rules = () => {
     return res.documents || [];
   };
 
-  const [rules, setRules] = React.useState([]);
   React.useEffect(() => {
     fetchCommunityRules(communityId).then(setRules);
   }, [communityId]);
