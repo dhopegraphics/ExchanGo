@@ -85,80 +85,6 @@ const ManageCommunities = () => {
     });
   };
 
-  const handleCreateCommunity = async () => {
-    if (
-      !newCommunity.name.trim() ||
-      !newCommunity.bio.trim() ||
-      !profilePicture
-    ) {
-      return;
-    }
-    let fileId = null;
-
-    fileId = await uploadProfilePicture(profilePicture);
-    if (!fileId) {
-      Alert.alert("Upload Failed", "Please try uploading your image again.");
-      return;
-    }
-
-    const filePreviewUrl = await getFilePreview(
-      avatarsBucketStorageId,
-      fileId,
-      2000,
-      2000
-    );
-
-    setCreatingCommunity(true);
-    try {
-      await createDocument(usersDatabaseId, communitiesCollectionId, {
-        name: newCommunity.name,
-        bio: newCommunity.bio,
-        community_profile: filePreviewUrl,
-        created_by: currentUser.user_id,
-      });
-      setNewCommunity({ name: "", bio: "", community_profile: null });
-      createCommunitySheetRef.current?.close();
-      fetchMyCommunities();
-    } catch (error) {
-      console.error("Error creating community:", error);
-    } finally {
-      setCreatingCommunity(false);
-    }
-  };
-
-  const handleSelectCommunity = (community) => {
-    setSelectedCommunity(community);
-    manageCommunitySheetRef.current?.expand();
-  };
-
-  console.log("My Communities:", myCommunities);
-
-  const filteredCommunities = myCommunities.filter((community) =>
-    community.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const pickImage = async () => {
-    // Request permission to access the media library
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
-      return;
-    }
-
-    // Launch the image picker
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setProfilePicture(result.assets[0].uri);
-    }
-  };
-
   const uploadProfilePicture = async (uri) => {
     if (!uri) return null;
 
@@ -212,6 +138,79 @@ const ManageCommunities = () => {
     } finally {
       // Always reset loading state
       setIsUploading(false);
+    }
+  };
+
+  const handleCreateCommunity = async () => {
+    if (
+      !newCommunity.name.trim() ||
+      !newCommunity.bio.trim() ||
+      !profilePicture
+    ) {
+      return;
+    }
+    let fileId = null;
+
+    fileId = await uploadProfilePicture(profilePicture);
+    if (!fileId) {
+      Alert.alert("Upload Failed", "Please try uploading your image again.");
+      return;
+    }
+
+    const filePreviewUrl = await getFilePreview(
+      avatarsBucketStorageId,
+      fileId,
+      2000,
+      2000
+    );
+
+    setCreatingCommunity(true);
+    try {
+      await createDocument(usersDatabaseId, communitiesCollectionId, {
+        name: newCommunity.name,
+        bio: newCommunity.bio,
+        community_profile: filePreviewUrl,
+        created_by: currentUser.user_id,
+        community_profile_fileId: fileId,
+      });
+      setNewCommunity({ name: "", bio: "", community_profile: null });
+      createCommunitySheetRef.current?.close();
+      fetchMyCommunities();
+    } catch (error) {
+      console.error("Error creating community:", error);
+    } finally {
+      setCreatingCommunity(false);
+    }
+  };
+
+  const handleSelectCommunity = (community) => {
+    setSelectedCommunity(community);
+    manageCommunitySheetRef.current?.expand();
+  };
+
+  const filteredCommunities = myCommunities.filter((community) =>
+    community.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const pickImage = async () => {
+    // Request permission to access the media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
+    // Launch the image picker
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfilePicture(result.assets[0].uri);
     }
   };
 

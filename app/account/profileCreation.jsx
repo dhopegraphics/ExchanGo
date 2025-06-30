@@ -294,6 +294,9 @@ export default function ProfileCreation() {
           longitude: coords.longitude,
           address: location,
           avatar_url: avatarUrl || null,
+          featured: false,
+          bio: "",
+          avatar_FileID: fileId || null,
         }
       );
 
