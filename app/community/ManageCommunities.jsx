@@ -31,6 +31,10 @@ const ManageCommunities = () => {
   const textColor = useThemeColor({}, "text");
   const mutedTextColor = useThemeColor({}, "tint");
   const tintColor = useThemeColor({}, "tint");
+  const [communityRules, setCommunityRules] = useState([]);
+  const [newRule, setNewRule] = useState("");
+  const [savingRules, setSavingRules] = useState(false);
+  const rulesBottomSheetRef = useRef(null);
 
   const {
     currentUser,
@@ -75,14 +79,68 @@ const ManageCommunities = () => {
 
   useEffect(() => {
     fetchMyCommunities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
+
+  const fetchCommunityRules = async (communityId) => {
+    try {
+      const res = await getDocuments(
+        usersDatabaseId,
+        communityRulesCollectionId,
+        [Query.equal("communityId", communityId)]
+      );
+      return res || [];
+    } catch (error) {
+      console.error("Error fetching rules:", error);
+      return [];
+    }
+  };
 
   const saveRule = async (communityId, ruleText) => {
     await createDocument(usersDatabaseId, communityRulesCollectionId, {
       communityId,
-      rule: ruleText,
+      ruleText: ruleText,
       created_by: currentUser?.user_id,
     });
+  };
+
+  const addRule = () => {
+    if (newRule.trim() === "") return;
+    // Add to temporary list (not yet saved to database)
+    setCommunityRules([
+      ...communityRules,
+      {
+        rule: newRule,
+        id: Date.now().toString(), // temporary ID
+        isNew: true, // flag to identify unsaved rules
+      },
+    ]);
+    setNewRule("");
+  };
+
+  const removeRule = (index) => {
+    setCommunityRules(communityRules.filter((_, i) => i !== index));
+  };
+
+  const handleSaveRules = async () => {
+    if (!selectedCommunity) return;
+
+    setSavingRules(true);
+    try {
+      // Save only new rules
+      const savePromises = communityRules
+        .filter((rule) => rule.isNew)
+        .map((rule) => saveRule(selectedCommunity.$id, rule.rule));
+
+      await Promise.all(savePromises);
+      Alert.alert("Success", "Community rules have been updated");
+      rulesBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error("Error saving rules:", error);
+      Alert.alert("Error", "Failed to save community rules");
+    } finally {
+      setSavingRules(false);
+    }
   };
 
   const uploadProfilePicture = async (uri) => {
@@ -321,7 +379,7 @@ const ManageCommunities = () => {
 
                 <Text
                   numberOfLines={2}
-                  className="text-sm mt-1"
+                  className="text-xs mt-1"
                   style={{ color: mutedTextColor }}
                 >
                   {community.bio}
@@ -357,7 +415,16 @@ const ManageCommunities = () => {
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity className="flex-row items-center">
+                  <TouchableOpacity
+                    onPress={async () => {
+                      const rules = await fetchCommunityRules(
+                        selectedCommunity.$id
+                      );
+                      setCommunityRules(rules);
+                      rulesBottomSheetRef.current?.expand();
+                    }}
+                    className="flex-row items-center"
+                  >
                     <MaterialCommunityIcons
                       name="gavel"
                       size={16}
@@ -563,7 +630,16 @@ const ManageCommunities = () => {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity className="flex-row items-center p-4 mb-2 rounded-xl bg-gray-100 dark:bg-gray-800">
+              <TouchableOpacity
+                className="flex-row items-center p-4 mb-2 rounded-xl bg-gray-100 dark:bg-gray-800"
+                onPress={async () => {
+                  const rules = await fetchCommunityRules(
+                    selectedCommunity.$id
+                  );
+                  setCommunityRules(rules);
+                  rulesBottomSheetRef.current?.expand();
+                }}
+              >
                 <MaterialCommunityIcons
                   name="gavel"
                   size={24}
@@ -626,6 +702,107 @@ const ManageCommunities = () => {
               </TouchableOpacity>
             </>
           )}
+        </BottomSheetView>
+      </BottomSheet>
+      {/* Community Rules Bottom Sheet */}
+      <BottomSheet
+        ref={rulesBottomSheetRef}
+        index={-1}
+        snapPoints={["75%"]}
+        enablePanDownToClose
+        backgroundStyle={{ backgroundColor: cardBackground }}
+      >
+        <BottomSheetView className="flex-1 p-4">
+          <Text
+            className="text-xl font-bold mb-4 text-center"
+            style={{ color: textColor }}
+          >
+            Community Rules
+          </Text>
+
+          {/* Add new rule input */}
+          <View className="flex-row mb-6">
+            <TextInput
+              className="flex-1 p-3 rounded-l-xl bg-gray-100 dark:bg-gray-800 text-base"
+              placeholder="Add a new rule..."
+              placeholderTextColor={mutedTextColor}
+              value={newRule}
+              onChangeText={setNewRule}
+              style={{ color: textColor }}
+            />
+            <TouchableOpacity
+              className="bg-orange-500 rounded-r-xl px-4 items-center justify-center"
+              onPress={addRule}
+            >
+              <Ionicons name="add" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Rules list */}
+          <ScrollView className="flex-1 mb-4">
+            {communityRules.length > 0 ? (
+              communityRules.map((rule, index) => (
+                <View
+                  key={rule.$id || rule.id}
+                  className="flex-row items-center p-3 mb-2 rounded-xl bg-gray-100 dark:bg-gray-800"
+                >
+                  <View className="w-6 h-6 rounded-full bg-orange-500 items-center justify-center mr-3">
+                    <Text className="text-white font-bold">{index + 1}</Text>
+                  </View>
+                  <Text className="flex-1" style={{ color: textColor }}>
+                    {rule.ruleText}
+                  </Text>
+                  <TouchableOpacity
+                    className="p-2"
+                    onPress={() => removeRule(index)}
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#ff3b30" />
+                  </TouchableOpacity>
+                </View>
+              ))
+            ) : (
+              <View className="items-center justify-center py-10">
+                <MaterialCommunityIcons
+                  name="gavel"
+                  size={50}
+                  color={mutedTextColor}
+                />
+                <Text
+                  className="mt-4 text-center"
+                  style={{ color: mutedTextColor }}
+                >
+                  No rules yet. Add some guidelines for your community.
+                </Text>
+              </View>
+            )}
+          </ScrollView>
+
+          {/* Actions */}
+          <View className="flex-row pb-12 space-x-3">
+            <TouchableOpacity
+              className="flex-1 py-3 rounded-xl items-center justify-center bg-gray-200 dark:bg-gray-700"
+              onPress={() => rulesBottomSheetRef.current?.close()}
+            >
+              <Text className="font-bold" style={{ color: textColor }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-1 py-3 rounded-xl items-center justify-center bg-orange-500"
+              onPress={handleSaveRules}
+              disabled={
+                savingRules ||
+                communityRules.filter((r) => r.isNew).length === 0
+              }
+            >
+              {savingRules ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="font-bold text-white">Save Rules</Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </BottomSheetView>
       </BottomSheet>
     </View>

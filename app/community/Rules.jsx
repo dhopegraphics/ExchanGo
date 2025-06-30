@@ -27,7 +27,7 @@ const Rules = () => {
       communityRulesCollectionId,
       [Query.equal("communityId", communityId)]
     );
-    return res.documents || [];
+    return res || [];
   };
 
   React.useEffect(() => {
@@ -63,7 +63,7 @@ const Rules = () => {
 
           <View className="space-y-4">
             {rules.map((r, i) => (
-              <BulletPoint key={i} text={r.rule} />
+              <BulletPoint key={i} text={r.ruleText} />
             ))}
           </View>
         </View>
