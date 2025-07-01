@@ -27,7 +27,7 @@ const CommunityPage = () => {
   const insets = useSafeAreaInsets();
   const filterSheetBottomSheetRef = useRef(null);
   const handleUnjoinedModalPress = useCallback(() => {
-    filterSheetBottomSheetRef.current?.present();
+    filterSheetBottomSheetRef.current?.expand();
   }, []);
   const { communityId, communityName, memberCount, avatars, bio } =
     useLocalSearchParams();
@@ -45,7 +45,7 @@ const CommunityPage = () => {
 
   const handlePress = () => {
     if (isJoined(communityId)) {
-      filterSheetBottomSheetRef.current?.present();
+      filterSheetBottomSheetRef.current?.expand();
     } else {
       // Navigate to Rules page
       router.push({
@@ -81,7 +81,6 @@ const CommunityPage = () => {
           <StatusBar style="auto" />
           <View className="p-4 mb-20">
             {/* Header */}
-
             {/* Community Info */}
             <View className="flex-row items-center justify-between mb-4">
               <AvatarPreviews parsedAvatars={parsedAvatars} />
@@ -123,7 +122,7 @@ const CommunityPage = () => {
         <BottomSheet
           ref={filterSheetBottomSheetRef}
           index={-1}
-          snapPoints={["40%"]}
+          snapPoints={["60%"]}
           animationConfigs={{
             duration: 800,
             easing: Easing.elastic(1),
@@ -133,7 +132,7 @@ const CommunityPage = () => {
           }}
           enablePanDownToClose={true}
         >
-          <BottomSheetView>
+          <BottomSheetView className="flex-1 bg-white rounded-t-3xl">
             <View className="flex-1 p-6">
               <Text className="text-xl font-JakartaBold text-center mb-4">
                 Are you sure you want to leave {communityName}?

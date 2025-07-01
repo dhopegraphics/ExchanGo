@@ -70,7 +70,7 @@ const Rules = () => {
       </ScrollView>
 
       {/* Footer */}
-      <View className="p-4">
+      <View className="p-4 pb-16">
         <TouchableOpacity
           onPress={handleAgreeAndJoin}
           className="bg-orange-500 rounded-full py-3 items-center"
