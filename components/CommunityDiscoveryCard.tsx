@@ -28,6 +28,7 @@ type CommunityDiscoverCardProps = {
   users?: User[];
   joinedCommunities?: any[];
   onPress?: (community: Community) => void;
+  loadingJoined?: boolean;
 };
 
 const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
@@ -35,6 +36,7 @@ const CommunityDiscoverCard: React.FC<CommunityDiscoverCardProps> = ({
   users = [],
   joinedCommunities = [],
   onPress,
+  loadingJoined,
 }) => {
   const textColor = useThemeColor({}, "text");
   const tintText = useThemeColor({}, "tintText");

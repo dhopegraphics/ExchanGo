@@ -294,6 +294,7 @@ const CommunityCenter = () => {
                 community={lastVisitedCommunity}
                 users={users}
                 joinedCommunities={joinedCommunities}
+                loadingJoined={loadingJoined}
               />
             ) : (
               <Text style={{ color: textColor }}>
