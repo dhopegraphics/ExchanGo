@@ -31,14 +31,14 @@ const SettingsScreen = () => {
     // Handle logout logic here
     setLogoutModalVisible(false);
     // Add auth logout logic
-    router.replace("/auth/login");
+    router.replace("/(auth)/logIn");
   };
 
   const handleDeleteAccount = () => {
     // Handle account deletion logic
     setDeleteModalVisible(false);
     // Add account deletion API call
-    router.replace("/auth/login");
+    router.replace("/(auth)/signUp");
   };
 
   return (
