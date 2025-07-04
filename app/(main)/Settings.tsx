@@ -22,9 +22,16 @@ const SettingsScreen = () => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
 
+  // In the handlePress function
   const handlePress = (label: string) => {
     console.log(`Pressed: ${label}`);
-    // Add your navigation or action logic here
+
+    if (label === "Account") {
+      router.push("/account/AccountSettings");
+    } else if (label === "Privacy") {
+      router.push("/account/PrivacySettings");
+    }
+    // Handle other menu items...
   };
 
   const handleLogout = () => {
