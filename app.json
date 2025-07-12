@@ -43,7 +43,8 @@
           "photosPermission": "The app accesses your photos to let you set Up Your Profile."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
