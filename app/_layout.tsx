@@ -24,6 +24,10 @@ const MainLayout = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="account/PrivacySettings"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name="ProfileSetup/fieldOfInterest"
         options={{ headerShown: false }}
       />
