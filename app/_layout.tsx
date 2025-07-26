@@ -56,15 +56,15 @@ const MainLayout = () => {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <ToastProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ToastProvider>
           <JoinProvider>
             <AppwriteProvider>
               <MainLayout />
             </AppwriteProvider>
           </JoinProvider>
-        </GestureHandlerRootView>
-      </ToastProvider>
+        </ToastProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }
